@@ -1,4 +1,6 @@
 interface:
-  display_name: "Setup Wizard"
-  short_description: "First-run setup: SDK, Play Console, keystore"
-  default_prompt: "Use $setup-wizard to set up the plugin for the first time"
+  display_name: Setup Wizard
+  short_description: 'First-run setup: SDK, Play Console, keystore'
+  default_prompt: Use $setup-wizard to set up the plugin for the first time
+policy:
+  allow_implicit_invocation: false

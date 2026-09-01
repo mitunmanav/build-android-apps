@@ -60,6 +60,11 @@ def _run_curl(args: list[str]) -> tuple[int, str, str]:
         idempotent_hint=True, open_world_hint=True,
     ),
 )
+def shutil_which_path(name: str) -> str | None:
+    import shutil
+    return shutil.which(name)
+
+
 async def auth(service_account_json: str = ".build-android/service-account.json") -> dict[str, Any]:
     sa = Path(service_account_json)
     if not sa.exists():
@@ -81,9 +86,6 @@ async def auth(service_account_json: str = ".build-android/service-account.json"
     return {"ok": True, "expires_in": 3600}
 
 
-def shutil_which_path(name: str) -> str | None:
-    import shutil
-    return shutil.which(name)
 
 
 @mcp.tool(

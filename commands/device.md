@@ -1,11 +1,11 @@
 ---
 description: List connected devices and pick one. Optionally launch an AVD by name.
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__select_device
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
-  - mcp__plugin_build_android_app_plugin_adb__getprop
-  - mcp__plugin_build_android_app_plugin_adb__wait_for_device
+  - mcp__plugin_build_android_apps_adb__list_devices
+  - mcp__plugin_build_android_apps_adb__select_device
+  - mcp__plugin_build_android_apps_adb__shell_command
+  - mcp__plugin_build_android_apps_adb__getprop
+  - mcp__plugin_build_android_apps_adb__wait_for_device
   - Bash
 ---
 
@@ -29,7 +29,7 @@ $ARGUMENTS
 ### Step 1: List connected
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__list_devices
+tool: mcp__plugin_build_android_apps_adb__list_devices
 ```
 
 ### Step 2: Decide
@@ -42,19 +42,19 @@ tool: mcp__plugin_build_android_app_plugin_adb__list_devices
 ### Step 3: Select (if multi-device)
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__select_device
+tool: mcp__plugin_build_android_apps_adb__select_device
 args: { "serial": "<chosen serial>" }
 ```
 
 ### Step 4: Confirm readiness
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__wait_for_device
+tool: mcp__plugin_build_android_apps_adb__wait_for_device
 args: { "timeout": 60 }
 ```
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__getprop
+tool: mcp__plugin_build_android_apps_adb__getprop
 args: { "name": "ro.build.version.release" }
 ```
 

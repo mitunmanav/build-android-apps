@@ -1,8 +1,16 @@
 # Skills Catalog
 
-Nine skills teach your AI assistant how to do specific Android jobs. Each skill is **prose-only** (no scripts) — the heavy lifting is done by the MCP servers (`adb-mcp`, `gradlew-mcp`) for typed tool calls, and the slash commands for fast invocation.
+27 specialist skills + 1 frontdoor teach your AI assistant how to do Android jobs. Frontdoor `build-android-apps` routes plain English to the right specialist — progressive disclosure keeps startup cheap (only frontdoor description loaded, specialists lazy).
 
-## All 9 skills
+## Frontdoor
+
+### `build-android-apps` — **START HERE**
+
+One skill routes to 27 specialists via state-aware intent table. User says plain English, frontdoor delegates to one specialist at a time.
+
+**Use when**: any build/ship task — "make an app", "add auth", "debug crash", "publish". **Pairs with**: all specialists, `state/router.py` (Kahn, deterministic).
+
+## All 27 specialist skills
 
 ### 1. `android-debugger-agent`
 
@@ -104,9 +112,32 @@ Skills are designed to **compose**. Common combinations:
 [/test] confirms regression-free
 ```
 
-## Skill loading
+## Remaining 18 specialists (lifecycle + domain)
 
-Skills are loaded **on-demand** when the agent sees `$skill-name` in the conversation, or when the slash command frontmatter triggers them. The skill body is read into context — keep it under 500 lines per the agentskills.io spec.
+| # | Skill | Purpose |
+|---|-------|---------|
+| 10 | `app-intake` | Vague prompt → spec (1–5 plain-English questions) |
+| 11 | `app-planner` | Spec → sequenced plan (Kahn) |
+| 12 | `android-scaffold` | Gradle + Compose + signing + Crashlytics |
+| 13 | `android-run` | Install + launch + screenshot (adb-mcp) |
+| 14 | `android-debug-fix` | Logcat → fix loop (3 strikes) |
+| 15 | `android-backend` | Room + DataStore + Retrofit (Supabase/Firebase) |
+| 16 | `android-auth` | Credential Manager (Google/passkey) |
+| 17 | `android-ops` | FCM + Analytics + WorkManager + Crashlytics |
+| 18 | `android-media` | CameraX + Media3 |
+| 19 | `android-edge-to-edge` | SDK 35 edge-to-edge |
+| 20 | `android-restore-credentials` | Restore keys (multi-device) |
+| 21 | `android-verified-email` | SD-JWT verified email |
+| 22 | `android-icons-assets` | Icons (5 densities) + feature graphic (asset-mcp) |
+| 23 | `android-store-listing` | Title/desc/screenshots/privacy/data safety |
+| 24 | `android-publish-update` | Version bump + signed AAB + Play upload |
+| 25 | `android-r8-analyzer` | APK size + keep-rule audit |
+| 26 | `android-importer` | Import foreign project (snapshot + audit) |
+| 27 | `setup-wizard` | 10-step cold-start (SDK/Play/keystore) |
+
+## Skill loading (progressive disclosure)
+
+Codex loads `name+description` for all skills at startup, capped at **2% of context or 8,000 chars** (see `references/codex-docs-audit.md`). Frontdoor is `allow_implicit_invocation:true`; specialists are `false` — only frontdoor matches implicitly, specialists load only when delegated. Keep each `SKILL.md` <500 lines, detail in `references/`.
 
 ## Adding a new skill
 

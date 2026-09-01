@@ -1,6 +1,6 @@
 # MCP Servers Reference
 
-Two Python MCP servers ship with this plugin: `adb-mcp` and `gradlew-mcp`. Both communicate over **stdio** (per Codex + Claude Code + agentskills.io open-standard recommendation).
+Five Python MCP servers ship with this plugin, all over **stdio** (per Codex + Claude Code + agentskills.io spec). Config: `.mcp.json`.
 
 ## adb-mcp
 
@@ -76,24 +76,37 @@ pip install -e ./mcp-servers/gradlew-mcp
 gradlew-mcp   # or: python -m gradlew_mcp
 ```
 
+## play-store-mcp
+
+9 tools for Google Play Developer API: `auth`, `upload_aab`, `upload_listing`, `upload_screenshot`, `get_review_status`, `list_rejections`, `submit_for_review`, `rollout_staged`, `get_stats`.
+
+## keystore-mcp
+
+5 tools for upload keystore: `generate`, `verify`, `rotate`, `backup`, `fingerprint` (via `keytool`).
+
+## asset-mcp
+
+4 tools for launcher icons/feature graphics/screenshots: `generate_icon` (5 densities + adaptive), `generate_feature_graphic`, `generate_screenshot`, `compose_marketing` (requires `Pillow`).
+
 ## Transport
 
-Both servers use **stdio** transport — no HTTP, no SSE, no WebSocket. The host launches the server as a subprocess and exchanges newline-delimited JSON-RPC 2.0 messages over the child's stdin/stdout.
+All 5 servers use **stdio** transport — no HTTP, no SSE, no WebSocket. The host launches each server as a subprocess and exchanges newline-delimited JSON-RPC 2.0 messages over stdin/stdout.
 
 ## Resource + prompt surface
 
-Both servers can additionally expose:
+Servers may additionally expose:
 
-- **Resources** (subscribable): `adb://logcat/{device}/{buffer}` for live logcat streaming; `gradle://project/info` for project metadata
+- **Resources** (subscribable): `adb://logcat/{device}/{buffer}`, `gradle://project/info`, `gradle://build/{id}/report`
 - **Prompts**: `diagnose-app-crash` (adb-mcp), `explain-error` (gradlew-mcp)
 
-These are added in v0.2. See [SPEC.md §9](../SPEC.md) for the full list.
+See [SPEC.md §9](../SPEC.md) for the full tool tables.
 
 ## Testing
 
 ```bash
 cd mcp-servers/adb-mcp && pytest
 cd mcp-servers/gradlew-mcp && pytest
+# keystore-mcp / play-store-mcp / asset-mcp — smoke via stdio (see scripts/smoke.sh)
 ```
 
-10 tests per server, mocking the subprocess calls so no real adb/gradle required.
+10 tests per server (adb/gradlew), mocking subprocess so no real adb/gradle required.

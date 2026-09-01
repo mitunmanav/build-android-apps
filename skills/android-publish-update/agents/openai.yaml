@@ -1,4 +1,6 @@
 interface:
-  display_name: "Publish Update"
-  short_description: "Ship a new version to Play Store"
-  default_prompt: "Use $android-publish-update to release a new version"
+  display_name: Publish Update
+  short_description: Ship a new version to Play Store
+  default_prompt: Use $android-publish-update to release a new version
+policy:
+  allow_implicit_invocation: false

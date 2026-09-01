@@ -1,14 +1,14 @@
 ---
 description: Build (if needed), install the APK, and launch the app on a connected device.
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
-  - mcp__plugin_build_android_app_plugin_gradlew__list_tasks
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__select_device
-  - mcp__plugin_build_android_app_plugin_adb__install_apk
-  - mcp__plugin_build_android_app_plugin_adb__start_activity
-  - mcp__plugin_build_android_app_plugin_adb__wait_for_device
-  - mcp__plugin_build_android_app_plugin_adb__logcat_dump
+  - mcp__plugin_build_android_apps_gradlew__run_task
+  - mcp__plugin_build_android_apps_gradlew__list_tasks
+  - mcp__plugin_build_android_apps_adb__list_devices
+  - mcp__plugin_build_android_apps_adb__select_device
+  - mcp__plugin_build_android_apps_adb__install_apk
+  - mcp__plugin_build_android_apps_adb__start_activity
+  - mcp__plugin_build_android_apps_adb__wait_for_device
+  - mcp__plugin_build_android_apps_adb__logcat_dump
   - Read
   - Bash
 ---
@@ -31,18 +31,18 @@ $ARGUMENTS
 
 ### Step 1: Pick a device
 
-Call `mcp__plugin_build_android_app_plugin_adb__list_devices`. If empty, ask the user to start an emulator or connect a device. If multiple, call `mcp__plugin_build_android_app_plugin_adb__select_device` with the chosen serial.
+Call `mcp__plugin_build_android_apps_adb__list_devices`. If empty, ask the user to start an emulator or connect a device. If multiple, call `mcp__plugin_build_android_apps_adb__select_device` with the chosen serial.
 
 ### Step 2: Wait for device
 
-Call `mcp__plugin_build_android_app_plugin_adb__wait_for_device` to ensure boot complete.
+Call `mcp__plugin_build_android_apps_adb__wait_for_device` to ensure boot complete.
 
 ### Step 3: Build (skip if no Kotlin/Java sources changed since last build)
 
-Call `mcp__plugin_build_android_app_plugin_gradlew__run_task`:
+Call `mcp__plugin_build_android_apps_gradlew__run_task`:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "assembleDebug", "timeout": 600 }
 ```
 
@@ -50,10 +50,10 @@ Use `assembleRelease` if `$ARGUMENTS` says release. The MCP server returns the A
 
 ### Step 4: Install
 
-Call `mcp__plugin_build_android_app_plugin_adb__install_apk`:
+Call `mcp__plugin_build_android_apps_adb__install_apk`:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__install_apk
+tool: mcp__plugin_build_android_apps_adb__install_apk
 args: { "apk_path": "<returned apk path>", "device": "<serial>" }
 ```
 
@@ -68,7 +68,7 @@ grep -A1 "LAUNCHER" app/src/main/AndroidManifest.xml
 Then call:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__start_activity
+tool: mcp__plugin_build_android_apps_adb__start_activity
 args: { "component": "<package>/<activity>", "device": "<serial>" }
 ```
 
@@ -76,7 +76,7 @@ If `$ARGUMENTS` provides a custom activity or deeplink action, use that instead.
 
 ### Step 6: Confirm launch
 
-Use `mcp__plugin_build_android_app_plugin_adb__logcat_dump` to confirm the app's process started. Report the PID + first 5 lines of logcat.
+Use `mcp__plugin_build_android_apps_adb__logcat_dump` to confirm the app's process started. Report the PID + first 5 lines of logcat.
 
 ## Anti-patterns
 

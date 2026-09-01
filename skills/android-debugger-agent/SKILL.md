@@ -1,32 +1,41 @@
 ---
 name: android-debugger-agent
-description: >
-  Drive an interactive Android debug session: connect to a device via adb, attach the
-  JDWP debugger, set breakpoints by line number, step through code, inspect variables,
-  and triage stack traces from logcat or a crash report. Use this skill when the user
-  asks to "debug this", "attach a debugger", "why is this happening", "trace through
-  the call", or after a crash/ANR to localize the failing call site. Do not use this
-  skill for build errors (use compose-performance-audit or run `/build`), for UI design
-  questions, or for release-signed APK signing issues. Pairs with the `adb` MCP server
-  and the `/debug`, `/crash`, `/log` slash commands.
+description: 'Drive an interactive Android debug session: connect to a device via
+  adb, attach the JDWP debugger, set breakpoints by line number, step through code,
+  inspect variables, and triage stack traces from logcat or a crash report. Use this
+  skill when the user asks to "debug this", "attach a debugger", "why is this happening",
+  "trace through the call", or after a crash/ANR to localize the failing call site.
+  Do not use this skill for build errors (use compose-performance-audit or run `/build`),
+  for UI design questions, or for release-signed APK signing issues. Pairs with the
+  `adb` MCP server and the `/debug`, `/crash`, `/log` slash commands.
+
+  '
 license: Apache-2.0
-compatibility: >
-  Requires ANDROID_HOME on PATH (adb), an Android device or emulator connected via adb,
-  and an app with `android:debuggable="true"` (the default for debug build type).
-  Pairs with the `adb` MCP server shipped by this plugin.
-allowed-tools:
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__select_device
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
-  - mcp__plugin_build_android_app_plugin_adb__logcat_dump
-  - mcp__plugin_build_android_app_plugin_adb__pull_file
+compatibility: 'Requires ANDROID_HOME on PATH (adb), an Android device or emulator
+  connected via adb, and an app with `android:debuggable="true"` (the default for
+  debug build type). Pairs with the `adb` MCP server shipped by this plugin.
+
+  '
+allowed-tools: mcp__plugin_build_android_apps_adb__list_devices mcp__plugin_build_android_apps_adb__select_device
+  mcp__plugin_build_android_apps_adb__shell_command mcp__plugin_build_android_apps_adb__logcat_dump
+  mcp__plugin_build_android_apps_adb__pull_file
 metadata:
   author: Mitun
   last-updated: '2026-09-01'
-  keywords: [android, kotlin, jetpack-compose, debugger, jdwp, adb, logcat, crash, anr]
+  keywords:
+  - android
+  - kotlin
+  - jetpack-compose
+  - debugger
+  - jdwp
+  - adb
+  - logcat
+  - crash
+  - anr
   platform: android
   version: 0.1.0
 ---
+
 
 # Android Debugger Agent
 

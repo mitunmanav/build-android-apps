@@ -1,9 +1,9 @@
 ---
 description: Run unit tests and summarize the results (pass/fail/flake counts, top failures).
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_gradlew__run_tests
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
-  - mcp__plugin_build_android_app_plugin_gradlew__list_tasks
+  - mcp__plugin_build_android_apps_gradlew__run_tests
+  - mcp__plugin_build_android_apps_gradlew__run_task
+  - mcp__plugin_build_android_apps_gradlew__list_tasks
   - Read
   - Bash
 ---
@@ -26,14 +26,14 @@ $ARGUMENTS
 ### Step 1: Run tests
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_tests
+tool: mcp__plugin_build_android_apps_gradlew__run_tests
 args: { "variant": "<variant | null>", "timeout": 900 }
 ```
 
 For instrumentation tests, use `run_task` directly:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "connectedDebugAndroidTest", "timeout": 900 }
 ```
 

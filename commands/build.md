@@ -1,10 +1,10 @@
 ---
 description: Build the Android app via Gradle (assembles the default debug variant).
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_gradlew__list_tasks
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
-  - mcp__plugin_build_android_app_plugin_gradlew__parse_dependencies
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
+  - mcp__plugin_build_android_apps_gradlew__list_tasks
+  - mcp__plugin_build_android_apps_gradlew__run_task
+  - mcp__plugin_build_android_apps_gradlew__parse_dependencies
+  - mcp__plugin_build_android_apps_adb__list_devices
   - Read
   - Grep
   - Bash
@@ -33,21 +33,21 @@ If `gradlew` is missing, abort with a clear message: "No gradlew script. Run thi
 
 ### Step 2: Pick the device (only if the user wants install after build)
 
-If the user's request implies install-after-build (e.g. "build and install"), call `mcp__plugin_build_android_app_plugin_adb__list_devices` first. If empty, warn.
+If the user's request implies install-after-build (e.g. "build and install"), call `mcp__plugin_build_android_apps_adb__list_devices` first. If empty, warn.
 
 ### Step 3: Run the build
 
-Call `mcp__plugin_build_android_app_plugin_gradlew__run_task`:
+Call `mcp__plugin_build_android_apps_gradlew__run_task`:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "<assembleDebug | user's task>", "timeout": 600 }
 ```
 
 If `parse_dependencies` is requested in `$ARGUMENTS`, swap to:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__parse_dependencies
+tool: mcp__plugin_build_android_apps_gradlew__parse_dependencies
 args: { "module": ":app", "configuration": "debugRuntimeClasspath" }
 ```
 

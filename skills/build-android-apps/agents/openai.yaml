@@ -1,0 +1,16 @@
+interface:
+  display_name: "Build Android Apps"
+  short_description: "One skill to build, run, debug, and ship — plain English in, routed action out"
+  icon_small: "../../assets/build-android-app-small.svg"
+  brand_color: "#3DDC84"
+  default_prompt: "Use $build-android-apps to make an app from one sentence — it routes to the right specialist"
+policy:
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "adb-mcp"
+      transport: "stdio"
+    - type: "mcp"
+      value: "gradlew-mcp"
+      transport: "stdio"

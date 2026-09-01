@@ -1,6 +1,6 @@
 # Privacy Policy
 
-This plugin (build-android-app-plugin) does not collect, transmit, or share user data.
+This plugin (build-android-apps) does not collect, transmit, or share user data.
 
 ## What the plugin does
 
@@ -25,6 +25,6 @@ The plugin is a set of skills, slash commands, subagents, and MCP servers that r
 
 ## Contact
 
-Open an issue at https://github.com/mitunmanav/build-android-app-plugin/issues for privacy questions.
+Open an issue at https://github.com/mitunmanav/build-android-apps/issues for privacy questions.
 
 Last updated: 2026-09-01.

@@ -1,29 +1,36 @@
 ---
 name: android-leak-analyzer
-description: >
-  Detect, triage, and fix memory leaks in Android apps using LeakCanary (debug builds),
-  heap dumps, and reference-chain analysis. Use this skill when the user reports
-  "memory keeps growing", "OOM crash", "Activity destroyed but still held", or asks
-  to "find the leak". Do not use for transient GC pauses (use android-profiler) or for
-  build-time dependency conflicts (use gradlew parse_dependencies). Pairs with the
-  `adb` MCP server.
+description: 'Detect, triage, and fix memory leaks in Android apps using LeakCanary
+  (debug builds), heap dumps, and reference-chain analysis. Use this skill when the
+  user reports "memory keeps growing", "OOM crash", "Activity destroyed but still
+  held", or asks to "find the leak". Do not use for transient GC pauses (use android-profiler)
+  or for build-time dependency conflicts (use gradlew parse_dependencies). Pairs with
+  the `adb` MCP server.
+
+  '
 license: Apache-2.0
-compatibility: >
-  Requires ANDROID_HOME on PATH, a debug build with LeakCanary 3.x integrated (or
-  ability to add it), and ~500MB free storage for heap dumps.
-allowed-tools:
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__select_device
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
-  - mcp__plugin_build_android_app_plugin_adb__pull_file
-  - mcp__plugin_build_android_app_plugin_adb__start_activity
+compatibility: 'Requires ANDROID_HOME on PATH, a debug build with LeakCanary 3.x integrated
+  (or ability to add it), and ~500MB free storage for heap dumps.
+
+  '
+allowed-tools: mcp__plugin_build_android_apps_adb__list_devices mcp__plugin_build_android_apps_adb__select_device
+  mcp__plugin_build_android_apps_adb__shell_command mcp__plugin_build_android_apps_adb__pull_file
+  mcp__plugin_build_android_apps_adb__start_activity
 metadata:
   author: Mitun
   last-updated: '2026-09-01'
-  keywords: [android, leak, leakcanary, heap-dump, hprof, oom, memory]
+  keywords:
+  - android
+  - leak
+  - leakcanary
+  - heap-dump
+  - hprof
+  - oom
+  - memory
   platform: android
   version: 0.1.0
 ---
+
 
 # Android Leak Analyzer
 

@@ -35,7 +35,7 @@ body:
       label: Environment
       description: OS, Python version, plugin version, host (Codex/Claude/.agents).
       placeholder: |
-        macOS 14.4, Python 3.12.1, build-android-app-plugin v1.0.0,
+        macOS 14.4, Python 3.12.1, build-android-apps v1.0.0,
         Claude Code CLI, Android SDK 35, JDK 17
     validations:
       required: true

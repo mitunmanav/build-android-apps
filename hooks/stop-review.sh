@@ -28,7 +28,7 @@ if [ -z "$SUMMARY" ]; then
 fi
 
 cat <<EOF
-{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"[build-android-app-plugin] Review summary:\n$SUMMARY"}}
+{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"[build-android-apps] Review summary:\n$SUMMARY"}}
 EOF
 
 exit 0

@@ -1,4 +1,6 @@
 interface:
-  display_name: "Store Listing"
-  short_description: "Generate Play Store metadata"
-  default_prompt: "Use $android-store-listing to draft my Play Store listing"
+  display_name: Store Listing
+  short_description: Generate Play Store metadata
+  default_prompt: Use $android-store-listing to draft my Play Store listing
+policy:
+  allow_implicit_invocation: false

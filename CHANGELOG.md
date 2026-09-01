@@ -2,6 +2,40 @@
 
 All notable changes to this plugin are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-09-01
+
+### Added
+- **Frontdoor skill `build-android-apps`** — one skill routes to 27 specialists via state-aware intent table (`references/routing-table.md`). Progressive disclosure: only frontdoor description at startup (under Codex 2%/8k budget), specialists lazy-load — efficiency without losing smartness. Specialists now `allow_implicit_invocation:false`, frontdoor `true`.
+- **28 skills total** (was 22): adds `android-debugger-agent`, `android-emulator-browser`, `android-profiler`, `android-leak-analyzer`, `android-app-functions`, `compose-performance-audit`, `compose-ui-patterns`, `compose-view-refactor`, `material3-expressive`, `android-importer` to lock (all were present on disk, now pinned).
+- **Renamed plugin `build-android-app-plugin` → `build-android-apps`** (`pluginId` `com.mitun.build-android-apps`, repo `github.com/mitunmanav/build-android-apps`, tool prefix `mcp__plugin_build_android_apps_*`). Per-project runtime dir stays `.build-android/` with shim for `.build-android-apps/`.
+- **Verified against official Codex docs** (`developers.openai.com/codex/*` + `agentskills.io/specification`) — see `references/codex-docs-audit.md`.
+
+### Changed
+- **Version 2.0.0** (breaking: `pluginId` and tool prefix change per semver; migrate: `codex plugin remove build-android-app-plugin && codex plugin install github.com/mitunmanav/build-android-apps`).
+- `.codex-plugin/plugin.json` version 2.0.0, `interface.defaultPrompt` now frontdoor.
+- `plugin.lock.json`: 28 skills / 22 commands / 4 subagents / 5 hooks (was 17/13/4/5).
+- `hooks/hooks.json`: `PreSubmit` → `PreToolUse` with tool matcher (Codex has no `PreSubmit` event); `CLAUDE_PLUGIN_ROOT` → `${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}` compat.
+- `hooks/release-check.sh`: now denies via `permissionDecision: deny` (was `additionalContext` + exit 2).
+- `hooks/session-start.sh`: 5s adb devices cache + frontdoor reminder.
+- `skills/*/SKILL.md` `allowed-tools` list → space-separated string (per `agentskills.io` spec); all `agents/openai.yaml` set correctly.
+- `mcp-servers/*/pyproject.toml`: `asset-mcp`/`keystore-mcp`/`play-store-mcp` now full `build-system` + classifiers (was minimal); `README.md` added.
+- `spec` bumped to 2.0.0, `skills` 22→28, `commands` 21→22, `subagents` 6→4 (canonical 4 on disk), `hooks` 6→5 handlers/4 events.
+- Docs `ARCHITECTURE.md`/`HOOKS.md`/`MCP.md`/`SKILLS-CATALOG.md` updated from stale 9/2/4 counts to 28/5/5.
+- CI `.github/workflows/test-mcp-servers.yml` matrix now covers all 5 servers (was 2).
+
+### Fixed
+- `play-store-mcp/server.py` duplicate `shutil_which_path` definition; `keystore-mcp/server.py` `_fingerprint_of` `None` guard; `asset-mcp/server.py` `LANCZOS` Pillow 10 compat (`_RESAMPLE` helper).
+- `scripts/verify-install.py` counts 9→28/22/4 and PreToolUse 2 handlers.
+- `mcp-servers/asset-mcp` `Pillow` now `mcp>=2.0` + `pydantic>=2.0` to match siblings.
+
+### How to migrate from 1.0.0
+```bash
+codex plugin remove build-android-app-plugin  # if installed via marketplace
+codex plugin install github.com/mitunmanav/build-android-apps
+# or: claude plugin update / .agents hosts: git clone to new path
+```
+No state.json migration needed if you keep `.build-android/` (recommended). If you use `.build-android-apps/`, move: `mv .build-android .build-android-apps`.
+
 ## [1.0.0] - 2026-09-01
 
 ### Added — full lifecycle
@@ -76,5 +110,5 @@ All notable changes to this plugin are documented here. The format is based on [
 - 2 Python MCP servers: `adb-mcp`, `gradlew-mcp`
 - Multi-host packaging: `.codex-plugin/`, `.claude-plugin/`, `.agents/plugins/`
 
-[1.0.0]: https://github.com/mitunmanav/build-android-app-plugin/releases/tag/v1.0.0
-[0.1.0]: https://github.com/mitunmanav/build-android-app-plugin/releases/tag/v0.1.0
+[1.0.0]: https://github.com/mitunmanav/build-android-apps/releases/tag/v1.0.0
+[0.1.0]: https://github.com/mitunmanav/build-android-apps/releases/tag/v0.1.0

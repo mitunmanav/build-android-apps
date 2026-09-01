@@ -1,7 +1,7 @@
 ---
 name: setup-wizard
 description: >
-  First-run setup wizard for build-android-app-plugin. Detects missing
+  First-run setup wizard for build-android-apps. Detects missing
   prerequisites (JDK, Android SDK, adb, AVD), walks the user through Google
   Play Console signup and service-account setup, generates an upload keystore.
   Idempotent: skips steps that already pass. Use this only on first run, or
@@ -53,7 +53,7 @@ If missing:
 
 ### Step 4: SDK packages
 
-Use `mcp__plugin_build_android_app_plugin_gradlew__manage_sdk` with:
+Use `mcp__plugin_build_android_apps_gradlew__manage_sdk` with:
 
 ```
 args: { "action": "install", "packages": ["platform-tools", "platforms;android-35", "build-tools;35.0.0"] }
@@ -95,7 +95,7 @@ Walk the user through:
 
 ### Step 9: Verify API access
 
-Use `mcp__plugin_build_android_app_plugin_play_store__auth` (when Phase 13 lands) or run a quick check via curl:
+Use `mcp__plugin_build_android_apps_play_store__auth` (when Phase 13 lands) or run a quick check via curl:
 
 ```bash
 curl -H "Authorization: Bearer $(cat .build-android/sa-token.json | jq -r .access_token)" \
@@ -109,7 +109,7 @@ If the call returns 200, the API is wired. If 403, the role in Play Console wasn
 Generate the upload keystore:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__generate_keystore
+tool: mcp__plugin_build_android_apps_gradlew__generate_keystore
 args: { "password": "<from user>", "key_password": "<from user>" }
 ```
 

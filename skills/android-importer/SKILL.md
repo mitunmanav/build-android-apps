@@ -42,7 +42,7 @@ If `rsync` is missing, fall back to `cp -R`.
 ### Step 2: Detect project type
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__describe_project
+tool: mcp__plugin_build_android_apps_gradlew__describe_project
 args: { "cwd": "." }
 ```
 

@@ -3,8 +3,8 @@ description: Diagnose a Play Store rejection and propose a fix. Reads state.json
 allowed-tools:
   - Bash
   - Read
-  - mcp__plugin_build_android_app_plugin_play_store__list_rejections
-  - mcp__plugin_build_android_app_plugin_play_store__get_review_status
+  - mcp__plugin_build_android_apps_play_store__list_rejections
+  - mcp__plugin_build_android_apps_play_store__get_review_status
 ---
 
 # /why-rejected
@@ -25,7 +25,7 @@ Tell me why Play Store rejected my submission and how to fix it.
 ### Step 1: Pull rejections
 
 ```
-tool: mcp__plugin_build_android_app_plugin_play_store__list_rejections
+tool: mcp__plugin_build_android_apps_play_store__list_rejections
 args: { "package_name": "<from spec.md>" }
 ```
 

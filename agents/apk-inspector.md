@@ -16,9 +16,9 @@ description: >
   </example>
 
 tools:
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
-  - mcp__plugin_build_android_app_plugin_adb__pull_file
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
+  - mcp__plugin_build_android_apps_adb__shell_command
+  - mcp__plugin_build_android_apps_adb__pull_file
+  - mcp__plugin_build_android_apps_gradlew__run_task
   - Bash
   - Read
   - Grep

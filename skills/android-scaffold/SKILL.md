@@ -84,7 +84,7 @@ buildTypes {
 If the keystore doesn't exist, generate it now:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__generate_keystore
+tool: mcp__plugin_build_android_apps_gradlew__generate_keystore
 args: { "password": "<from user>", "key_password": "<from user or same>" }
 ```
 
@@ -112,14 +112,14 @@ Write `app/google-services.json` placeholder with a comment saying "replace with
 ### Step 5: First build verification
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_help
+tool: mcp__plugin_build_android_apps_gradlew__run_help
 args: { "cwd": "." }
 ```
 
 Then:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "assembleDebug", "cwd": ".", "timeout": 600 }
 ```
 

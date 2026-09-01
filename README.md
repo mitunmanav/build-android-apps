@@ -93,11 +93,11 @@ You type the idea. The plugin handles the rest — scaffold, state, signing, sto
 flowchart TB
     Host["AI Host<br/>Codex CLI · Claude Code · .agents"]
     Host --> Manifests["Plugin manifests<br/>3 hosts + plugin.lock.json"]
-    Manifests --> Skills["27 Skills<br/>intake → scaffold → ship"]
-    Manifests --> Commands["21 Commands<br/>plain English"]
+    Manifests --> Skills["28 Skills<br/>1 frontdoor (build-android-apps) + 27 specialists<br/>progressive disclosure"]
+    Manifests --> Commands["22 Commands<br/>plain English → frontdoor"]
     Manifests --> MCP["5 MCP servers<br/>adb · gradlew · play-store<br/>keystore · asset"]
-    Skills --> Agents["6 Subagents<br/>clarifier · validator · release-readiness<br/>rejection-parser · phase-router · asset-gen"]
-    Commands --> Hooks["6 Hooks<br/>SessionStart · Pre/Post · PreSubmit · Stop"]
+    Skills --> Agents["4 Subagents<br/>clarifier · validator · release-auditor · apk-inspector"]
+    Commands --> Hooks["5 Hooks<br/>SessionStart · PreToolUse×2 · PostToolUse · Stop"]
     Agents --> State[(".build-android/state.json<br/>plan · cursor · build · device · store<br/>keystore · env · crashlytics · history[50]")]
     Hooks --> State
     MCP --> State
@@ -113,7 +113,7 @@ Every `/add` / `/change` / `/remove` / `/undo` mutates `state.json`. `/where` re
 - **One-liner to app** — `/make-app "<idea>"` runs intake (1–5 plain-English questions) → spec → sequenced plan → scaffold.
 - **Mid-flight changes without restart** — `/add "user profiles"` patches the plan; only affected phases re-run.
 - **Real device loop** — `/preview` and `/debug` drive `adb` (install, logcat, JDWP, layout dump) with a 3-strike fix loop.
-- **Ship with confidence** — `/publish` is gated by `PreSubmit` (keystore, listing, screenshots must exist). `/why-rejected` diagnoses Play rejections by file.
+- **Ship with confidence** — `/publish` is gated by `PreToolUse` on `play-store` MCP tools (keystore, listing, screenshots must exist). `/why-rejected` diagnoses Play rejections by file.
 - **Store assets from code** — `asset-mcp` generates launcher icons (5 densities + adaptive), feature graphic, screenshots.
 - **Take ownership** — `/import` snapshots first, then audits any Lovable / Bolt / v0 / Cursor-built project.
 
@@ -121,7 +121,7 @@ Every `/add` / `/change` / `/remove` / `/undo` mutates `state.json`. `/where` re
 
 ## Skills
 
-> 27 skills, each `skills/<name>/SKILL.md` + `references/`. Invoke with `$<skill>` (Codex) or `<skill>` (Claude).
+> **28 skills** — 1 frontdoor `build-android-apps` + 27 specialists, each `skills/<name>/SKILL.md` + `references/`. **Use `$build-android-apps`** for everything (it routes); specialists are lazy-loaded. Progressive disclosure keeps startup under the 8k budget.
 
 <details open>
 <summary><strong>Lifecycle (intake → plan → scaffold → run → ship)</strong></summary>
@@ -240,13 +240,13 @@ Config: [`.mcp.json`](.mcp.json) — all five declared.
 
 ```bash
 codex plugin install \
-  github.com/mitunmanav/build-android-app-plugin
+  github.com/mitunmanav/build-android-apps
 ```
 
 <details><summary>Local dev</summary>
 
 ```bash
-git clone https://github.com/mitunmanav/build-android-app-plugin
+git clone https://github.com/mitunmanav/build-android-apps
 codex --plugin-dir .
 ```
 </details>
@@ -256,13 +256,13 @@ codex --plugin-dir .
 
 ```bash
 claude plugin marketplace add mitun/mitun
-claude plugin install build-android-app-plugin@mitun
+claude plugin install build-android-apps@mitun
 ```
 
 <details><summary>Local dev</summary>
 
 ```bash
-git clone https://github.com/mitunmanav/build-android-app-plugin
+git clone https://github.com/mitunmanav/build-android-apps
 claude --plugin-dir .
 ```
 </details>
@@ -271,8 +271,8 @@ claude --plugin-dir .
 <td>
 
 ```bash
-git clone https://github.com/mitunmanav/build-android-app-plugin \
-  ~/.agents/plugins/build-android-app-plugin
+git clone https://github.com/mitunmanav/build-android-apps \
+  ~/.agents/plugins/build-android-apps
 # restart host: VS Code Copilot / Cursor / Gemini CLI …
 ```
 

@@ -1,12 +1,12 @@
 ---
 description: Attach the JDWP debugger, set up logcat streaming, and prepare for breakpoint debugging.
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__select_device
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
-  - mcp__plugin_build_android_app_plugin_adb__logcat_dump
-  - mcp__plugin_build_android_app_plugin_adb__getprop
-  - mcp__plugin_build_android_app_plugin_adb__start_activity
+  - mcp__plugin_build_android_apps_adb__list_devices
+  - mcp__plugin_build_android_apps_adb__select_device
+  - mcp__plugin_build_android_apps_adb__shell_command
+  - mcp__plugin_build_android_apps_adb__logcat_dump
+  - mcp__plugin_build_android_apps_adb__getprop
+  - mcp__plugin_build_android_apps_adb__start_activity
   - Read
   - Grep
 ---
@@ -29,7 +29,7 @@ $ARGUMENTS
 
 ### Step 1: Confirm device
 
-Call `mcp__plugin_build_android_app_plugin_adb__list_devices`. If empty, abort with: "Connect a device or start an emulator first."
+Call `mcp__plugin_build_android_apps_adb__list_devices`. If empty, abort with: "Connect a device or start an emulator first."
 
 ### Step 2: Identify the package
 
@@ -43,17 +43,17 @@ Otherwise parse from `$ARGUMENTS`.
 
 ### Step 3: Set debug-app flag and re-launch (recommended for startup breakpoints)
 
-Call `mcp__plugin_build_android_app_plugin_adb__shell_command`:
+Call `mcp__plugin_build_android_apps_adb__shell_command`:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__shell_command
+tool: mcp__plugin_build_android_apps_adb__shell_command
 args: { "command": "am set-debug-app -w <package>" }
 ```
 
 Then find the launcher activity (read AndroidManifest.xml) and:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__start_activity
+tool: mcp__plugin_build_android_apps_adb__start_activity
 args: { "component": "<package>/<activity>" }
 ```
 
@@ -62,7 +62,7 @@ The app should now be paused at startup, waiting for a JDWP debugger.
 ### Step 4: Confirm JDWP port
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__shell_command
+tool: mcp__plugin_build_android_apps_adb__shell_command
 args: { "command": "cat /proc/net/unix | grep -i jdwp" }
 ```
 
@@ -71,7 +71,7 @@ Expect a row like `00000000: 0000 0000 00000000 0000 0000 00000000 00000000 02 1
 ### Step 5: Start logcat streaming
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__logcat_dump
+tool: mcp__plugin_build_android_apps_adb__logcat_dump
 args: { "tag": "<package>", "level": "V", "max_lines": 200 }
 ```
 

@@ -1,10 +1,10 @@
 ---
-description: Deep audit of an Android project: deps, lint, signing, gaps for Play Store.
+description: "Deep audit of an Android project: deps, lint, signing, gaps for Play Store."
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_gradlew__parse_dependencies
-  - mcp__plugin_build_android_app_plugin_gradlew__find_duplicate_classes
-  - mcp__plugin_build_android_app_plugin_gradlew__run_lint
-  - mcp__plugin_build_android_app_plugin_gradlew__describe_project
+  - mcp__plugin_build_android_apps_gradlew__parse_dependencies
+  - mcp__plugin_build_android_apps_gradlew__find_duplicate_classes
+  - mcp__plugin_build_android_apps_gradlew__run_lint
+  - mcp__plugin_build_android_apps_gradlew__describe_project
   - Read
   - Bash
 ---
@@ -27,26 +27,26 @@ Deep audit of an Android project. Checks dependency tree, duplicate classes, lin
 ### Step 1: Project shape
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__describe_project
+tool: mcp__plugin_build_android_apps_gradlew__describe_project
 args: { "cwd": "." }
 ```
 
 ### Step 2: Dependencies + duplicates
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__parse_dependencies
+tool: mcp__plugin_build_android_apps_gradlew__parse_dependencies
 args: { "module": ":app", "configuration": "releaseRuntimeClasspath", "cwd": "." }
 ```
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__find_duplicate_classes
+tool: mcp__plugin_build_android_apps_gradlew__find_duplicate_classes
 args: { "module": ":app", "cwd": "." }
 ```
 
 ### Step 3: Lint
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_lint
+tool: mcp__plugin_build_android_apps_gradlew__run_lint
 args: { "variant": "Debug", "cwd": ".", "timeout": 600 }
 ```
 

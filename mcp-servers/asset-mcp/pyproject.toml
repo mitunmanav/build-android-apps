@@ -1,12 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "asset-mcp"
 version = "0.1.0"
 description = "MCP server for generating Android launcher icons, feature graphics, and store screenshots"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [{name = "Mitun"}]
 requires-python = ">=3.10"
+keywords = ["mcp", "android", "asset", "icons"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
 dependencies = [
-    "mcp>=1.0.0",
+    "mcp>=2.0",
     "Pillow>=10.0.0",
+    "pydantic>=2.0",
 ]
 
 [project.scripts]
 asset-mcp = "asset_mcp.server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["asset_mcp*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

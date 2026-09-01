@@ -1,9 +1,9 @@
 ---
 description: "Run ./gradlew clean. Destructive: removes build/ and .gradle/. Confirms with user before running."
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_gradlew__clean
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
+  - mcp__plugin_build_android_apps_gradlew__clean
+  - mcp__plugin_build_android_apps_gradlew__run_task
+  - mcp__plugin_build_android_apps_adb__list_devices
   - Read
 ---
 
@@ -41,14 +41,14 @@ Wait for the user's response. If `force`, skip.
 ### Step 2: Stop any running gradle daemon
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "--stop", "timeout": 30 }
 ```
 
 ### Step 3: Run clean
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__clean
+tool: mcp__plugin_build_android_apps_gradlew__clean
 args: { "timeout": 120 }
 ```
 

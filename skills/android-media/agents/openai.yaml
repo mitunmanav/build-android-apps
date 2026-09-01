@@ -1,4 +1,6 @@
 interface:
-  display_name: "Android Media"
-  short_description: "Add CameraX and ExoPlayer support"
-  default_prompt: "Use $android-media to add camera or playback"
+  display_name: Android Media
+  short_description: Add CameraX and ExoPlayer support
+  default_prompt: Use $android-media to add camera or playback
+policy:
+  allow_implicit_invocation: false

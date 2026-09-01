@@ -1,9 +1,9 @@
 ---
 description: Run Android lint and summarize the results.
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_gradlew__run_lint
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
-  - mcp__plugin_build_android_app_plugin_gradlew__list_tasks
+  - mcp__plugin_build_android_apps_gradlew__run_lint
+  - mcp__plugin_build_android_apps_gradlew__run_task
+  - mcp__plugin_build_android_apps_gradlew__list_tasks
   - Read
   - Bash
 ---
@@ -27,7 +27,7 @@ $ARGUMENTS
 ### Step 1: Run lint
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_lint
+tool: mcp__plugin_build_android_apps_gradlew__run_lint
 args: { "variant": "<variant | null>", "timeout": 600 }
 ```
 
@@ -41,7 +41,7 @@ find app/build/reports -name "lint-results-*" 2>/dev/null | head -5
 
 ### Step 3: Parse and summarize
 
-Use `mcp__plugin_build_android_app_plugin_gradlew__run_lint`'s returned `summary` for high-level counts. For deeper analysis, read the XML and bucket issues:
+Use `mcp__plugin_build_android_apps_gradlew__run_lint`'s returned `summary` for high-level counts. For deeper analysis, read the XML and bucket issues:
 
 - **Errors** (must fix before ship)
 - **Warnings** (review; many are auto-suppressable with valid justification)

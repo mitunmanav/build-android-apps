@@ -3,7 +3,7 @@ description: Import an existing Android project from another tool. Snapshots fir
 allowed-tools:
   - Bash
   - Read
-  - mcp__plugin_build_android_app_plugin_gradlew__describe_project
+  - mcp__plugin_build_android_apps_gradlew__describe_project
 ---
 
 # /import

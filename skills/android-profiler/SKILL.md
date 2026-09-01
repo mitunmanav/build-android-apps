@@ -1,30 +1,38 @@
 ---
 name: android-profiler
-description: >
-  Capture and analyze Android performance traces using Perfetto (system-level traces),
-  Android Studio's CPU profiler, and macrobenchmark output. Diagnose jank, dropped
-  frames, slow startups, high memory use, and excessive wakeups. Use this skill when
-  the user reports "it's slow", "scroll is janky", "startup takes forever", or asks
-  to "profile" or "capture a trace". Do not use for one-shot UI bugs (use
+description: 'Capture and analyze Android performance traces using Perfetto (system-level
+  traces), Android Studio''s CPU profiler, and macrobenchmark output. Diagnose jank,
+  dropped frames, slow startups, high memory use, and excessive wakeups. Use this
+  skill when the user reports "it''s slow", "scroll is janky", "startup takes forever",
+  or asks to "profile" or "capture a trace". Do not use for one-shot UI bugs (use
   android-debugger-agent), for build speed issues (use gradlew run_task with `--profile`),
   or for memory leak detection (use android-leak-analyzer). Pairs with the `adb` and
   `gradlew` MCP servers.
+
+  '
 license: Apache-2.0
-compatibility: >
-  Requires ANDROID_HOME on PATH, a connected device running Android 8+ (API 26+ for
-  Perfetto tracing), and ~200MB free storage for trace output.
-allowed-tools:
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
-  - mcp__plugin_build_android_app_plugin_adb__pull_file
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
+compatibility: 'Requires ANDROID_HOME on PATH, a connected device running Android
+  8+ (API 26+ for Perfetto tracing), and ~200MB free storage for trace output.
+
+  '
+allowed-tools: mcp__plugin_build_android_apps_adb__list_devices mcp__plugin_build_android_apps_adb__shell_command
+  mcp__plugin_build_android_apps_adb__pull_file mcp__plugin_build_android_apps_gradlew__run_task
 metadata:
   author: Mitun
   last-updated: '2026-09-01'
-  keywords: [android, perfetto, profiler, jank, frame, macrobenchmark, startup, tracing]
+  keywords:
+  - android
+  - perfetto
+  - profiler
+  - jank
+  - frame
+  - macrobenchmark
+  - startup
+  - tracing
   platform: android
   version: 0.1.0
 ---
+
 
 # Android Profiler
 

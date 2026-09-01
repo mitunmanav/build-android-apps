@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# scripts/smoke.sh — end-to-end smoke test for build-android-app-plugin v1.0.0
+# scripts/smoke.sh — end-to-end smoke test for build-android-apps v1.0.0
 #
 # Verifies that:
 #   1. All Python modules import cleanly
@@ -19,7 +19,7 @@ cd "$ROOT"
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
 fail() { printf "  \033[31m✗\033[0m %s\n" "$1"; exit 1; }
 
-echo "=== build-android-app-plugin v1.0.0 smoke test ==="
+echo "=== build-android-apps v1.0.0 smoke test ==="
 
 echo
 echo "[1] Python state module imports"

@@ -1,4 +1,6 @@
 interface:
-  display_name: "Verified Email"
-  short_description: "OTP-less email verification"
-  default_prompt: "Use $android-verified-email to add passwordless sign-in"
+  display_name: Verified Email
+  short_description: OTP-less email verification
+  default_prompt: Use $android-verified-email to add passwordless sign-in
+policy:
+  allow_implicit_invocation: false

@@ -109,14 +109,16 @@ def verify_manifests() -> None:
 # ---------- 2. Skills ----------
 
 def verify_skills() -> None:
-    section("2. Skills (9 expected)")
+    section("2. Skills (28 expected: 27 specialists + 1 frontdoor)")
     skills_dir = ROOT / "skills"
     if not skills_dir.is_dir():
         check("skills/ exists", False, "missing")
         return
     check("skills/ exists", True)
     skill_dirs = sorted([p for p in skills_dir.iterdir() if p.is_dir()])
-    check("9 skills", len(skill_dirs) == 9, f"got {len(skill_dirs)}")
+    # 27 before frontdoor, 28 after P3 — allow both during migration
+    expected = {27, 28}
+    check(f"27-28 skills (got {len(skill_dirs)})", len(skill_dirs) in expected, f"got {len(skill_dirs)} expected 27 or 28")
 
     NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
     for sd in skill_dirs:
@@ -157,13 +159,13 @@ def verify_skills() -> None:
 # ---------- 3. Slash commands ----------
 
 def verify_commands() -> None:
-    section("3. Slash commands (9 expected)")
+    section("3. Slash commands (22 expected)")
     cmds_dir = ROOT / "commands"
     if not cmds_dir.is_dir():
         check("commands/ exists", False, "missing")
         return
     cmd_files = sorted(cmds_dir.glob("*.md"))
-    check("9 commands", len(cmd_files) == 9, f"got {len(cmd_files)}")
+    check("22 commands", len(cmd_files) == 22, f"got {len(cmd_files)}")
     for f in cmd_files:
         text = f.read_text()
         parts = text.split("---", 2)
@@ -181,20 +183,20 @@ def verify_commands() -> None:
         # Verify all allowed-tools reference MCP servers in our plugin
         for tool in fm.get("allowed-tools", []):
             if tool.startswith("mcp__"):
-                check(f"{f.name} tool name format", "mcp__plugin_build_android_app_plugin_" in tool,
+                check(f"{f.name} tool name format", "mcp__plugin_build_android_apps_" in tool,
                       f"unexpected format: {tool}")
 
 
 # ---------- 4. Subagents ----------
 
 def verify_agents() -> None:
-    section("4. Subagents (3 expected)")
+    section("4. Subagents (4 expected)")
     agents_dir = ROOT / "agents"
     if not agents_dir.is_dir():
         check("agents/ exists", False, "missing")
         return
     agent_files = sorted(agents_dir.glob("*.md"))
-    check("3 subagents", len(agent_files) == 3, f"got {len(agent_files)}")
+    check("4 subagents", len(agent_files) == 4, f"got {len(agent_files)}")
     for f in agent_files:
         text = f.read_text()
         parts = text.split("---", 2)
@@ -214,7 +216,7 @@ def verify_agents() -> None:
 # ---------- 5. Hooks ----------
 
 def verify_hooks() -> None:
-    section("5. Hooks (4 events expected)")
+    section("5. Hooks (4 events, 5 handlers expected)")
     hjson = ROOT / "hooks" / "hooks.json"
     check("hooks/hooks.json", hjson.is_file())
     if not hjson.is_file():
@@ -228,6 +230,10 @@ def verify_hooks() -> None:
     expected = {"SessionStart", "PreToolUse", "PostToolUse", "Stop"}
     check("hooks.json has 4 expected events", set(events) == expected,
           f"got {events}, expected {expected}")
+    # also verify we have 2 PreToolUse handlers (block-destructive + release-check)
+    pre_handlers = h["hooks"].get("PreToolUse", [])
+    check("PreToolUse has 2 handlers (block + release-check)", len(pre_handlers) == 2,
+          f"got {len(pre_handlers)}")
 
     # Check each script exists and is executable
     for ev, matchers in h["hooks"].items():

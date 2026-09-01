@@ -5,9 +5,9 @@ allowed-tools:
   - Read
   - Write
   - Edit
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
-  - mcp__plugin_build_android_app_plugin_gradlew__generate_keystore
-  - mcp__plugin_build_android_app_plugin_gradlew__verify_keystore
+  - mcp__plugin_build_android_apps_gradlew__run_task
+  - mcp__plugin_build_android_apps_gradlew__generate_keystore
+  - mcp__plugin_build_android_apps_gradlew__verify_keystore
 ---
 
 # /finish
@@ -49,7 +49,7 @@ For each auto-fix, do the smallest possible change. Build between fixes if any a
 ### Step 4: Build signed release AAB
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "bundleRelease", "cwd": ".", "timeout": 600 }
 ```
 

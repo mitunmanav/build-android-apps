@@ -1,4 +1,6 @@
 interface:
-  display_name: "Android Debug Fix"
-  short_description: "Diagnose, localize, fix, and verify crashes"
-  default_prompt: "Use $android-debug-fix to fix a crash or runtime error"
+  display_name: Android Debug Fix
+  short_description: Diagnose, localize, fix, and verify crashes
+  default_prompt: Use $android-debug-fix to fix a crash or runtime error
+policy:
+  allow_implicit_invocation: false

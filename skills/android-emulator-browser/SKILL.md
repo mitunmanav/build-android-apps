@@ -1,30 +1,37 @@
 ---
 name: android-emulator-browser
-description: >
-  Launch, control, and inspect an Android emulator or connected device from the AI
-  assistant. Capture screenshots, drive the UI by tapping/swiping, dump the view
-  hierarchy, and inspect element bounds. Use this skill when the user wants to "see
-  what's on screen", "drive the app", "show me the UI", or verify a visual change on
-  a real device or AVD. Do not use for unit-test runs, profiler traces, or anything
-  that needs the host machine's GPU. Pairs with the `adb` MCP server and the `/device`
-  and `/run` slash commands.
+description: 'Launch, control, and inspect an Android emulator or connected device
+  from the AI assistant. Capture screenshots, drive the UI by tapping/swiping, dump
+  the view hierarchy, and inspect element bounds. Use this skill when the user wants
+  to "see what''s on screen", "drive the app", "show me the UI", or verify a visual
+  change on a real device or AVD. Do not use for unit-test runs, profiler traces,
+  or anything that needs the host machine''s GPU. Pairs with the `adb` MCP server
+  and the `/device` and `/run` slash commands.
+
+  '
 license: Apache-2.0
-compatibility: >
-  Requires ANDROID_HOME on PATH (adb), an Android emulator (AVD) created via avdmanager
-  or a USB-connected device with USB debugging enabled.
-allowed-tools:
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__select_device
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
-  - mcp__plugin_build_android_app_plugin_adb__start_activity
-  - mcp__plugin_build_android_app_plugin_adb__screencap
+compatibility: 'Requires ANDROID_HOME on PATH (adb), an Android emulator (AVD) created
+  via avdmanager or a USB-connected device with USB debugging enabled.
+
+  '
+allowed-tools: mcp__plugin_build_android_apps_adb__list_devices mcp__plugin_build_android_apps_adb__select_device
+  mcp__plugin_build_android_apps_adb__shell_command mcp__plugin_build_android_apps_adb__start_activity
+  mcp__plugin_build_android_apps_adb__screencap
 metadata:
   author: Mitun
   last-updated: '2026-09-01'
-  keywords: [android, emulator, avd, screencap, uiautomator, view-hierarchy, adb]
+  keywords:
+  - android
+  - emulator
+  - avd
+  - screencap
+  - uiautomator
+  - view-hierarchy
+  - adb
   platform: android
   version: 0.1.0
 ---
+
 
 # Android Emulator Browser
 

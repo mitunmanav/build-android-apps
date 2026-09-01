@@ -14,12 +14,12 @@ description: >
   </example>
 
 tools:
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
-  - mcp__plugin_build_android_app_plugin_gradlew__run_lint
-  - mcp__plugin_build_android_app_plugin_gradlew__run_tests
-  - mcp__plugin_build_android_app_plugin_gradlew__parse_dependencies
-  - mcp__plugin_build_android_app_plugin_gradlew__find_duplicate_classes
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
+  - mcp__plugin_build_android_apps_gradlew__run_task
+  - mcp__plugin_build_android_apps_gradlew__run_lint
+  - mcp__plugin_build_android_apps_gradlew__run_tests
+  - mcp__plugin_build_android_apps_gradlew__parse_dependencies
+  - mcp__plugin_build_android_apps_gradlew__find_duplicate_classes
+  - mcp__plugin_build_android_apps_adb__list_devices
   - Read
   - Grep
   - Bash
@@ -45,11 +45,11 @@ You are a build health specialist. Your job is to run a fast, parallel pre-fligh
 
 2. Run the following in parallel (each is an independent gradle task or MCP tool):
 
-   - **Lint**: `mcp__plugin_build_android_app_plugin_gradlew__run_lint {"variant": "debug", "timeout": 300}`
-   - **Unit tests**: `mcp__plugin_build_android_app_plugin_gradlew__run_tests {"variant": "debug", "timeout": 600}`
-   - **Dependency analysis**: `mcp__plugin_build_android_app_plugin_gradlew__parse_dependencies {"module": ":app", "configuration": "debugRuntimeClasspath", "timeout": 300}`
-   - **Duplicate classes**: `mcp__plugin_build_android_app_plugin_gradlew__find_duplicate_classes {"module": ":app", "timeout": 300}`
-   - **Quick assemble**: `mcp__plugin_build_android_app_plugin_gradlew__run_task {"task": "assembleDebug", "timeout": 600}`
+   - **Lint**: `mcp__plugin_build_android_apps_gradlew__run_lint {"variant": "debug", "timeout": 300}`
+   - **Unit tests**: `mcp__plugin_build_android_apps_gradlew__run_tests {"variant": "debug", "timeout": 600}`
+   - **Dependency analysis**: `mcp__plugin_build_android_apps_gradlew__parse_dependencies {"module": ":app", "configuration": "debugRuntimeClasspath", "timeout": 300}`
+   - **Duplicate classes**: `mcp__plugin_build_android_apps_gradlew__find_duplicate_classes {"module": ":app", "timeout": 300}`
+   - **Quick assemble**: `mcp__plugin_build_android_apps_gradlew__run_task {"task": "assembleDebug", "timeout": 600}`
 
 3. Wait for all to complete. Aggregate the results.
 

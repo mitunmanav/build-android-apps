@@ -15,11 +15,11 @@ description: >
   </example>
 
 tools:
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
-  - mcp__plugin_build_android_app_plugin_gradlew__run_lint
-  - mcp__plugin_build_android_app_plugin_gradlew__run_tests
-  - mcp__plugin_build_android_app_plugin_gradlew__parse_dependencies
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
+  - mcp__plugin_build_android_apps_gradlew__run_task
+  - mcp__plugin_build_android_apps_gradlew__run_lint
+  - mcp__plugin_build_android_apps_gradlew__run_tests
+  - mcp__plugin_build_android_apps_gradlew__parse_dependencies
+  - mcp__plugin_build_android_apps_adb__shell_command
   - Read
   - Grep
   - Bash
@@ -44,18 +44,18 @@ Run the following checks in parallel:
 2. **Keystore configuration**
    - Read `app/build.gradle.kts`. Confirm `signingConfigs.release` is present and references a keystore file.
    - Read the `release` block. Confirm `signingConfig signingConfigs.release` is set (not the debug keystore).
-   - Run `mcp__plugin_build_android_app_plugin_gradlew__run_task {"task": "assembleRelease", "timeout": 900}` to verify the signed APK builds.
+   - Run `mcp__plugin_build_android_apps_gradlew__run_task {"task": "assembleRelease", "timeout": 900}` to verify the signed APK builds.
 
 3. **R8 / ProGuard**
    - Confirm `isMinifyEnabled = true` and `isShrinkResources = true` for the release build type.
    - Confirm a `proguard-rules.pro` exists. Read it; flag any overly broad `-keep class **` rules.
 
 4. **Lint**
-   - Run `mcp__plugin_build_android_app_plugin_gradlew__run_lint {"variant": "release", "timeout": 600}`.
+   - Run `mcp__plugin_build_android_apps_gradlew__run_lint {"variant": "release", "timeout": 600}`.
    - Report errors (warnings are acceptable but should be reviewed).
 
 5. **Unit tests**
-   - Run `mcp__plugin_build_android_app_plugin_gradlew__run_tests {"variant": "release", "timeout": 900}`.
+   - Run `mcp__plugin_build_android_apps_gradlew__run_tests {"variant": "release", "timeout": 900}`.
 
 6. **Changelog**
    - Read `CHANGELOG.md`. Confirm the current version has an entry.

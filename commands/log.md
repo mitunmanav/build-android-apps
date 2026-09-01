@@ -1,11 +1,11 @@
 ---
 description: Filter and stream logcat by tag, level, or regex. Supports one-shot dump or live subscription.
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__select_device
-  - mcp__plugin_build_android_app_plugin_adb__logcat_dump
-  - mcp__plugin_build_android_app_plugin_adb__logcat_clear
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
+  - mcp__plugin_build_android_apps_adb__list_devices
+  - mcp__plugin_build_android_apps_adb__select_device
+  - mcp__plugin_build_android_apps_adb__logcat_dump
+  - mcp__plugin_build_android_apps_adb__logcat_clear
+  - mcp__plugin_build_android_apps_adb__shell_command
   - Read
 ---
 
@@ -34,12 +34,12 @@ If multiple filters are provided, AND them together. If only a level is given, f
 
 ### Step 1: Pick a device
 
-Call `mcp__plugin_build_android_app_plugin_adb__list_devices`. If empty, abort.
+Call `mcp__plugin_build_android_apps_adb__list_devices`. If empty, abort.
 
 ### Step 2: Clear (optional, only if user says "clear" or "fresh")
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__logcat_clear
+tool: mcp__plugin_build_android_apps_adb__logcat_clear
 ```
 
 Confirm before clearing: clearing logcat is destructive.
@@ -47,14 +47,14 @@ Confirm before clearing: clearing logcat is destructive.
 ### Step 3: Dump
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__logcat_dump
+tool: mcp__plugin_build_android_apps_adb__logcat_dump
 args: { "tag": "<tag>", "level": "<level>", "since": "<since>", "max_lines": 200 }
 ```
 
 For regex matching, fall back to:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__shell_command
+tool: mcp__plugin_build_android_apps_adb__shell_command
 args: { "command": "logcat -d | grep -E '<regex>' | tail -200" }
 ```
 

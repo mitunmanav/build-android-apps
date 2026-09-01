@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        server: [adb-mcp, gradlew-mcp]
+        server: [adb-mcp, gradlew-mcp, keystore-mcp, play-store-mcp, asset-mcp]
     defaults:
       run:
         working-directory: mcp-servers/${{ matrix.server }}

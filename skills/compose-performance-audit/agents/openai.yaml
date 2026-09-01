@@ -1,4 +1,7 @@
 interface:
-  display_name: "Compose Performance Audit"
-  short_description: "Audit recomposition, stability, and baseline profiles"
-  default_prompt: "Use $compose-performance-audit to find why this screen recomposes on every state change."
+  display_name: Compose Performance Audit
+  short_description: Audit recomposition, stability, and baseline profiles
+  default_prompt: Use $compose-performance-audit to find why this screen recomposes
+    on every state change.
+policy:
+  allow_implicit_invocation: false

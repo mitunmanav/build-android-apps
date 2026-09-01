@@ -32,8 +32,11 @@ def _keytool() -> str | None:
 
 def _fingerprint_of(path: Path, password: str, alias: str, key_password: str | None = None) -> str:
     key_password = key_password or password
+    kt = _keytool()
+    if not kt:
+        return ""
     proc = subprocess.run(
-        [_keytool(), "-list", "-v", "-keystore", str(path),
+        [kt, "-list", "-v", "-keystore", str(path),
          "-storepass", password, "-alias", alias, "-keypass", key_password],
         capture_output=True, text=True, timeout=30,
     )

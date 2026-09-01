@@ -30,7 +30,7 @@ metadata:
 ### Step 1: Pick the device
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__list_devices
+tool: mcp__plugin_build_android_apps_adb__list_devices
 args: {}
 ```
 
@@ -39,7 +39,7 @@ If multiple devices, call `adb.select_device` and ask the user. Wrong serial = w
 ### Step 2: Confirm the APK exists
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__describe_project
+tool: mcp__plugin_build_android_apps_gradlew__describe_project
 args: { "cwd": "." }
 ```
 
@@ -48,7 +48,7 @@ The response includes `apk_path`. If the file is missing, run `assembleDebug` fi
 ### Step 3: Install
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__install_apk
+tool: mcp__plugin_build_android_apps_adb__install_apk
 args: { "serial": "<serial>", "path": "<apk_path>" }
 ```
 
@@ -57,7 +57,7 @@ If the package is already installed and signatures differ, the install fails. As
 ### Step 4: Launch
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__start_activity
+tool: mcp__plugin_build_android_apps_adb__start_activity
 args: { "serial": "<serial>", "package": "<application_id>", "activity": ".MainActivity" }
 ```
 
@@ -66,7 +66,7 @@ If `start_activity` returns no output, the app is starting. Wait 2 seconds befor
 ### Step 5: Capture screenshot
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__screencap
+tool: mcp__plugin_build_android_apps_adb__screencap
 args: { "serial": "<serial>", "path": "/tmp/preview.png" }
 ```
 

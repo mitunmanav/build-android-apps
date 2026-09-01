@@ -1,4 +1,7 @@
 interface:
-  display_name: "Android Leak Analyzer"
-  short_description: "Triage LeakCanary reports and heap dumps"
-  default_prompt: "Use $android-leak-analyzer to investigate the Activity leak after navigating back."
+  display_name: Android Leak Analyzer
+  short_description: Triage LeakCanary reports and heap dumps
+  default_prompt: Use $android-leak-analyzer to investigate the Activity leak after
+    navigating back.
+policy:
+  allow_implicit_invocation: false

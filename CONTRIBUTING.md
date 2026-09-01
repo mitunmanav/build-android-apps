@@ -1,4 +1,4 @@
-# Contributing to build-android-app-plugin
+# Contributing to build-android-apps
 
 :v1: **Thank you.** Every contribution is welcome.
 
@@ -12,7 +12,7 @@
 
 ## What to work on
 
-See the [v1.1 backlog](https://github.com/mitunmanav/build-android-app-plugin/issues?q=label%3Av1.1) for planned work. Good first issues are tagged `good first issue`.
+See the [v1.1 backlog](https://github.com/mitunmanav/build-android-apps/issues?q=label%3Av1.1) for planned work. Good first issues are tagged `good first issue`.
 
 ## Before you start
 

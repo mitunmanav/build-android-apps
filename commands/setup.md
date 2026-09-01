@@ -2,8 +2,8 @@
 description: First-run setup wizard. Idempotent. Run only when state.json or /setup indicates first-run.
 allowed-tools:
   - Bash
-  - mcp__plugin_build_android_app_plugin_gradlew__manage_sdk
-  - mcp__plugin_build_android_app_plugin_gradlew__generate_keystore
+  - mcp__plugin_build_android_apps_gradlew__manage_sdk
+  - mcp__plugin_build_android_apps_gradlew__generate_keystore
 ---
 
 # /setup

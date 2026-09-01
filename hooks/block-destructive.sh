@@ -47,7 +47,7 @@ fi
 
 # 4. adb shell pm clear (clears app data)
 if echo "$CMD" | grep -qE '\badb\s+(shell\s+)?pm\s+clear\b'; then
-    deny "Refused: 'pm clear' wipes app data. Use mcp__plugin_build_android_app_plugin_adb__clear_app_data via the adb-mcp server (it prompts) or run /crash to see if a clear is even needed."
+    deny "Refused: 'pm clear' wipes app data. Use mcp__plugin_build_android_apps_adb__clear_app_data via the adb-mcp server (it prompts) or run /crash to see if a clear is even needed."
 fi
 
 # 5. wipe data via fastboot (locked devices)

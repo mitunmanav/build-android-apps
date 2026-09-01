@@ -1,15 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/codex-plugin.json",
-  "name": "build-android-app-plugin",
-  "version": "1.0.0",
-  "description": "Build and ship Android apps from your AI assistant: 22 skills, 21 plain-English slash commands, 6 subagents, 5 MCP servers, 6 hooks, per-project resumable build loop. Built for non-technical vibe coders, end-to-end: intake → scaffold → debug → publish to Play Store internal test track.",
+  "name": "build-android-apps",
+  "version": "2.0.0",
+  "description": "Build and ship Android apps from your AI assistant: 28 skills (1 frontdoor + 27 specialists), 22 plain-English slash commands, 4 subagents, 5 MCP servers, 5 hooks — progressive disclosure keeps startup under the 8k budget. Per-project resumable build loop with Kahn router.",
   "author": {
     "name": "Mitun",
     "email": "[email protected]",
     "url": "https://github.com/mitunmanav"
   },
-  "homepage": "https://github.com/mitunmanav/build-android-app-plugin",
-  "repository": "https://github.com/mitunmanav/build-android-app-plugin",
+  "homepage": "https://github.com/mitunmanav/build-android-apps",
+  "repository": "https://github.com/mitunmanav/build-android-apps",
   "license": "Apache-2.0",
   "keywords": [
     "android",
@@ -28,16 +28,20 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Build Android App",
-    "shortDescription": "Build, run, debug, and ship Android apps — from idea to Play Store in one plugin",
-    "longDescription": "Use Build Android App to turn a one-line idea into a working Android app and submit it to the Play Store. The plugin handles intake, scaffolding, signing, listing, and uploading. 22 skills cover the full lifecycle (intake → ship → update). 21 slash commands use plain English. 6 subagents run in parallel. 5 MCP servers drive adb, Gradle, the Play Developer API, keystore operations, and asset generation. Per-project state.json makes every loop resumable.",
+    "shortDescription": "Build, run, debug, and ship Android apps — one frontdoor skill routes to 27 specialists",
+    "longDescription": "Use Build Android Apps: $build-android-apps turns a one-line idea into a working app and Play Store submission. Frontdoor classifies intent and delegates to 27 specialists (intake → scaffold → debug → publish). 22 commands are aliases to frontdoor intents. 5 MCP servers drive adb, Gradle, Play, keystore, assets. Per-project state.json + Kahn router makes every loop resumable and deterministic (no LLM for planning).",
     "developerName": "Mitun",
     "category": "Developer Tools",
-    "capabilities": ["Interactive", "Read", "Write"],
-    "websiteURL": "https://github.com/mitunmanav/build-android-app-plugin",
-    "privacyPolicyURL": "https://github.com/mitunmanav/build-android-app-plugin/blob/main/PRIVACY.md",
-    "termsOfServiceURL": "https://github.com/mitunmanav/build-android-app-plugin/blob/main/TERMS.md",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/mitunmanav/build-android-apps",
+    "privacyPolicyURL": "https://github.com/mitunmanav/build-android-apps/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/mitunmanav/build-android-apps/blob/main/TERMS.md",
     "defaultPrompt": [
-      "Build or ship an Android app: type /make-app for a new app, /import to take ownership of an existing one, or /publish to ship to the Play Store."
+      "Build or ship an Android app: use $build-android-apps for anything — it routes to the right specialist. Try 'make a habit tracker with streaks' or 'add dark mode' or 'publish to Play Store'."
     ],
     "brandColor": "#3DDC84",
     "composerIcon": "./assets/build-android-app-small.svg",

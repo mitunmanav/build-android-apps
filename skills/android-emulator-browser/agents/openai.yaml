@@ -1,4 +1,7 @@
 interface:
-  display_name: "Android Emulator Browser"
-  short_description: "Drive emulators and inspect live UI on devices"
-  default_prompt: "Use $android-emulator-browser to launch the emulator and capture a screenshot."
+  display_name: Android Emulator Browser
+  short_description: Drive emulators and inspect live UI on devices
+  default_prompt: Use $android-emulator-browser to launch the emulator and capture
+    a screenshot.
+policy:
+  allow_implicit_invocation: false

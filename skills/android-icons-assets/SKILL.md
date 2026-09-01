@@ -47,19 +47,19 @@ metadata:
 
 For launcher icon:
 ```
-tool: mcp__plugin_build_android_app_plugin_asset__generate_icon
+tool: mcp__plugin_build_android_apps_asset__generate_icon
 args: { "source": "<path>", "out_dir": "app/src/main/res" }
 ```
 
 For feature graphic:
 ```
-tool: mcp__plugin_build_android_app_plugin_asset__generate_feature_graphic
+tool: mcp__plugin_build_android_apps_asset__generate_feature_graphic
 args: { "source": "<path>", "out": "feature-graphic.png" }
 ```
 
 For store screenshots (from a running app on device):
 ```
-tool: mcp__plugin_build_android_app_plugin_asset__generate_screenshot
+tool: mcp__plugin_build_android_apps_asset__generate_screenshot
 args: { "adb_serial": "<serial>", "out": "screenshots/home.png" }
 ```
 
@@ -87,7 +87,7 @@ If `mipmap-anydpi-v26/ic_launcher.xml` is missing, create it:
 ### Step 4: Verify
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "assembleDebug", "cwd": ".", "timeout": 600 }
 ```
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SessionStart hook for build-android-app-plugin
+# SessionStart hook for build-android-apps
 # Detects Android SDK, adb, and connected devices. Warns if missing.
 
 set -u
@@ -33,9 +33,21 @@ elif [ ! -x "$JAVA_HOME/bin/java" ]; then
     emit "warning" "JAVA_HOME=$JAVA_HOME but $JAVA_HOME/bin/java is not executable"
 fi
 
-# 4. Connected devices (best-effort)
+# 4. Connected devices (best-effort, 5s cache for efficiency)
 if [ -n "$ADB" ]; then
-    DEVICES=$("$ADB" devices 2>/dev/null | tail -n +2 | grep -v '^$' | head -10 || true)
+    CACHE="/tmp/build-android-apps-adb-cache.json"
+    NOW=$(date +%s)
+    USE_CACHE=false
+    if [ -f "$CACHE" ]; then
+        AGE=$((NOW - $(stat -c %Y "$CACHE" 2>/dev/null || stat -f %m "$CACHE" 2>/dev/null || echo 0)))
+        if [ "$AGE" -lt 5 ]; then USE_CACHE=true; fi
+    fi
+    if [ "$USE_CACHE" = true ]; then
+        DEVICES=$(cat "$CACHE")
+    else
+        DEVICES=$("$ADB" devices 2>/dev/null | tail -n +2 | grep -v '^$' | head -10 || true)
+        printf '%s' "$DEVICES" > "$CACHE" 2>/dev/null || true
+    fi
     if [ -z "$DEVICES" ]; then
         emit "info" "No Android devices/emulators connected. Run 'emulator -avd <name>' or plug in a device with USB debugging enabled"
     else
@@ -44,15 +56,15 @@ if [ -n "$ADB" ]; then
     fi
 fi
 
-# 5. Plugin reminder
-emit "info" "build-android-app-plugin loaded. Try /build, /run, /debug, /device, or /lint. Skills: 9 (debugger, emulator, profiler, leak, app-functions, material3-expressive, compose-perf, compose-patterns, compose-refactor)"
+# 5. Plugin reminder — frontdoor is $build-android-apps; 27 specialists lazy-loaded
+emit "info" "build-android-apps loaded. Frontdoor: \$build-android-apps (one skill routes to 27 specialists). Try /build, /run, /debug, /device, /lint. Progressive disclosure: only frontdoor description at startup, specialists load on demand."
 
 # 6. Per-project state.json (Phase 1: load + report)
 PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 STATE_DIR="$PROJECT_ROOT/.build-android"
 STATE_FILE="$STATE_DIR/state.json"
 
-PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+PLUGIN_ROOT="${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}}"
 
 if [ -f "$PLUGIN_ROOT/state/__init__.py" ] && command -v python3 >/dev/null 2>&1; then
     STATE_JSON="$(PYTHONPATH="$PLUGIN_ROOT" python3 -m state load "$STATE_FILE" 2>/dev/null || true)"

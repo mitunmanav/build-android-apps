@@ -5,7 +5,7 @@ When multiple devices are connected, pick carefully.
 ## List devices
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__list_devices
+tool: mcp__plugin_build_android_apps_adb__list_devices
 ```
 
 Returns:

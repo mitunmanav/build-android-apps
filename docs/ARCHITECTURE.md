@@ -4,13 +4,16 @@
 graph TB
     Host["AI Host<br/>(Codex / Claude Code / .agents)"]
     Manifests["Manifests<br/>.codex-plugin/plugin.json<br/>.claude-plugin/marketplace.json<br/>.agents/plugins/marketplace.json"]
-    MCP[".mcp.json"]
-    Skills["skills/<br/>9 SKILL.md + openai.yaml"]
-    Cmds["commands/<br/>9 slash commands"]
-    Agents["agents/<br/>3 subagents"]
-    Hooks["hooks/<br/>4 events"]
+    MCP[".mcp.json<br/>5 MCP servers"]
+    Skills["skills/<br/>27 specialists + 1 frontdoor<br/>build-android-apps"]
+    Cmds["commands/<br/>22 slash commands"]
+    Agents["agents/<br/>4 subagents"]
+    Hooks["hooks/<br/>5 events (SessionStart, PreToolUse×2, PostToolUse, Stop)"]
     adb_mcp["adb-mcp<br/>Python stdio"]
     gradlew_mcp["gradlew-mcp<br/>Python stdio"]
+    play_store_mcp["play-store-mcp<br/>Python stdio"]
+    keystore_mcp["keystore-mcp<br/>Python stdio"]
+    asset_mcp["asset-mcp<br/>Python stdio"]
 
     Host -->|discovers| Manifests
     Manifests -->|loads| Skills
@@ -20,6 +23,9 @@ graph TB
     Manifests -->|launches via| MCP
     MCP --> adb_mcp
     MCP --> gradlew_mcp
+    MCP --> play_store_mcp
+    MCP --> keystore_mcp
+    MCP --> asset_mcp
     Cmds -->|pre-approve tools from| adb_mcp
     Cmds -->|pre-approve tools from| gradlew_mcp
     Hooks -->|fires on events| Host
@@ -30,11 +36,11 @@ graph TB
 | Component | Files | Purpose |
 |---|---|---|
 | **Manifests** | 3 JSON files | Tell each host what to load and how to display the plugin |
-| **Skills** | `skills/<name>/SKILL.md` + `agents/openai.yaml` | Domain knowledge loaded on-demand by `$skill-name` |
-| **Slash commands** | `commands/<name>.md` | Pre-approved tool sets invoked by `/name` |
-| **Subagents** | `agents/<name>.md` | Parallel workers with their own system prompt |
-| **Hooks** | `hooks/hooks.json` + 4 shell scripts | Lifecycle event handlers |
-| **MCP servers** | `mcp-servers/<name>/` (Python) | Typed tool surface over adb + gradlew |
+| **Skills** | `skills/<name>/SKILL.md` + `agents/openai.yaml` | 27 specialists + frontdoor `build-android-apps`; progressive disclosure (frontdoor only at startup) |
+| **Slash commands** | `commands/<name>.md` | 22 plain-English aliases that delegate to frontdoor |
+| **Subagents** | `agents/<name>.md` | 4 parallel workers (clarifier, validator, release-auditor, apk-inspector) |
+| **Hooks** | `hooks/hooks.json` + 5 shell scripts | Lifecycle event handlers (SessionStart, PreToolUse×2, PostToolUse, Stop) |
+| **MCP servers** | `mcp-servers/<name>/` (Python stdio) | 5 servers: adb, gradlew, play-store, keystore, asset |
 
 ## Request flow
 
@@ -43,7 +49,7 @@ User: /build
   ↓
 Codex loads commands/build.md
   ↓
-Codex invokes mcp__plugin_build_android_app_plugin_gradlew__run_task
+Codex invokes mcp__plugin_build_android_apps_gradlew__run_task
   ↓
 gradlew-mcp subprocess: ./gradlew assembleDebug
   ↓

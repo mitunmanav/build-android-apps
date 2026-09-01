@@ -1,19 +1,20 @@
 # Hooks Reference
 
-This plugin uses 4 hook events to provide safety, automation, and end-of-turn summaries.
+This plugin uses 5 hook handlers across 4 events to provide safety, automation, gating, and end-of-turn summaries.
 
 ## Hook events
 
 | Event | Matcher | Script | Purpose |
 |---|---|---|---|
-| `SessionStart` | `.*` | `session-start.sh` | Detect SDK / adb / connected devices; emit plugin reminder |
+| `SessionStart` | `startup\|resume\|clear\|compact` | `session-start.sh` | Detect SDK / adb / devices; state.json phase report; frontdoor reminder |
 | `PreToolUse` | `Bash` | `block-destructive.sh` | Block destructive shell commands before they run |
+| `PreToolUse` | `mcp__plugin_build_android_apps_play_store__submit_for_review\|upload_aab` | `release-check.sh` | Gate Play Store submissions (keystore/listing/screenshots) |
 | `PostToolUse` | `Edit\|Write\|MultiEdit` | `lint-kotlin.sh` | Run ktlint on edited Kotlin files |
 | `Stop` | `.*` | `stop-review.sh` | Print git diff stat at end of turn |
 
 ## Configuration
 
-All hooks are registered in `hooks/hooks.json`. Each hook uses the `${CLAUDE_PLUGIN_ROOT}` env var so paths resolve correctly regardless of install location.
+All hooks are registered in `hooks/hooks.json`. Each hook uses `${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}` (Codex canonical + Claude compat) so paths resolve regardless of host.
 
 ## Output format
 
@@ -44,15 +45,16 @@ For non-blocking hooks (SessionStart, PostToolUse), use `additionalContext` inst
 
 1. Add the script to `hooks/`.
 2. Register it in `hooks/hooks.json` under the relevant event.
-3. Use `${CLAUDE_PLUGIN_ROOT}` in paths.
+3. Use `${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}` in paths.
 4. Test by editing the script and triggering the event manually.
 
 ## Hook scripts
 
 | Script | Lines | Blocks? |
 |---|---|---|
-| `session-start.sh` | 50 | No — emits info context |
+| `session-start.sh` | ~70 | No — emits info context (frontdoor + state) |
 | `block-destructive.sh` | 60 | Yes — denies 5 destructive patterns |
+| `release-check.sh` | 50 | Yes — denies submit if keystore/listing missing (via PreToolUse) |
 | `lint-kotlin.sh` | 50 | No — emits ktlint findings |
 | `stop-review.sh` | 30 | No — emits git diff stat |
 

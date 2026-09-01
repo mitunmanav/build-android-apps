@@ -1,4 +1,6 @@
 interface:
-  display_name: "Android Ops"
-  short_description: "Add push, analytics, background work"
-  default_prompt: "Use $android-ops to add notifications and analytics"
+  display_name: Android Ops
+  short_description: Add push, analytics, background work
+  default_prompt: Use $android-ops to add notifications and analytics
+policy:
+  allow_implicit_invocation: false

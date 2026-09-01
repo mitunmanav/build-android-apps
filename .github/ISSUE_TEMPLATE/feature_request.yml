@@ -10,7 +10,7 @@ body:
         ## Before submitting
 
         - [ ] Search existing issues and discussions — your idea may already exist.
-        - [ ] Check the [v1.1 backlog](https://github.com/mitunmanav/build-android-app-plugin/labels/v1.1) to see if it's already planned.
+        - [ ] Check the [v1.1 backlog](https://github.com/mitunmanav/build-android-apps/labels/v1.1) to see if it's already planned.
         - [ ] This plugin targets **non-technical vibe coders**. Will your feature help that user?
 
   - type: textarea

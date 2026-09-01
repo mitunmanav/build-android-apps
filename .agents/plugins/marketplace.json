@@ -1,8 +1,8 @@
 {
   "$schema": "https://agentskills.io/schemas/plugins-marketplace.json",
-  "name": "build-android-app-plugin",
-  "version": "1.0.0",
-  "description": "Build and ship Android apps from your AI assistant: 22 skills, 21 plain-English slash commands, 6 subagents, 5 MCP servers, 6 hooks, per-project resumable build loop. Built for non-technical vibe coders, end-to-end: intake → scaffold → debug → publish to Play Store internal test track.",
+  "name": "build-android-apps",
+  "version": "2.0.0",
+  "description": "Build and ship Android apps from your AI assistant: 28 skills (1 frontdoor + 27), 22 plain-English slash commands, 4 subagents, 5 MCP servers, 5 hooks, per-project resumable build loop. Built for non-technical vibe coders, end-to-end: intake → scaffold → debug → publish to Play Store internal test track.",
   "interface": {
     "displayName": "Build Android App"
   },
@@ -11,8 +11,8 @@
     "email": "[email protected]",
     "url": "https://github.com/mitunmanav"
   },
-  "homepage": "https://github.com/mitunmanav/build-android-app-plugin",
-  "repository": "https://github.com/mitunmanav/build-android-app-plugin",
+  "homepage": "https://github.com/mitunmanav/build-android-apps",
+  "repository": "https://github.com/mitunmanav/build-android-apps",
   "license": "Apache-2.0",
   "keywords": [
     "android",
@@ -27,8 +27,8 @@
   ],
   "plugins": [
     {
-      "name": "build-android-app-plugin",
-      "version": "1.0.0",
+      "name": "build-android-apps",
+      "version": "2.0.0",
       "description": "Self-hosted entry point. This plugin conforms to the open standard at https://agentskills.io/specification.",
       "source": {
         "source": "local",

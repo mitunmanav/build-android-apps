@@ -58,21 +58,21 @@ Format: short, scannable, user-facing language. Skip internal refactors.
 ### Step 3: Build signed AAB
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "bundleRelease", "cwd": ".", "timeout": 600 }
 ```
 
 Verify `app/build/outputs/bundle/release/app-release.aab` exists and is signed:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_keystore__verify
+tool: mcp__plugin_build_android_apps_keystore__verify
 args: { "keystore_path": ".build-android/upload-keystore.jks", "alias": "upload", "password": "<from env>" }
 ```
 
 ### Step 4: Upload
 
 ```
-tool: mcp__plugin_build_android_app_plugin_play_store__upload_aab
+tool: mcp__plugin_build_android_apps_play_store__upload_aab
 args: { "package_name": "<from spec>", "aab_path": "app/build/outputs/bundle/release/app-release.aab", "track": "internal" }
 ```
 

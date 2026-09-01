@@ -1,13 +1,13 @@
 ---
 description: Install + launch + screenshot the app on a connected device. Reports what it sees.
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__select_device
-  - mcp__plugin_build_android_app_plugin_adb__install_apk
-  - mcp__plugin_build_android_app_plugin_adb__start_activity
-  - mcp__plugin_build_android_app_plugin_adb__screencap
-  - mcp__plugin_build_android_app_plugin_gradlew__describe_project
-  - mcp__plugin_build_android_app_plugin_gradlew__run_task
+  - mcp__plugin_build_android_apps_adb__list_devices
+  - mcp__plugin_build_android_apps_adb__select_device
+  - mcp__plugin_build_android_apps_adb__install_apk
+  - mcp__plugin_build_android_apps_adb__start_activity
+  - mcp__plugin_build_android_apps_adb__screencap
+  - mcp__plugin_build_android_apps_gradlew__describe_project
+  - mcp__plugin_build_android_apps_gradlew__run_task
 ---
 
 # /preview
@@ -29,14 +29,14 @@ Install + launch + screenshot the app. One-shot. No fixes (use `/build` then com
 ### Step 1: Confirm APK exists
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__describe_project
+tool: mcp__plugin_build_android_apps_gradlew__describe_project
 args: { "cwd": "." }
 ```
 
 If the response says `is_android_app: false` or the APK path doesn't exist, run `assembleDebug` first:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "assembleDebug", "cwd": ".", "timeout": 600 }
 ```
 

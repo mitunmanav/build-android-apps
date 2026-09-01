@@ -1,13 +1,13 @@
 ---
 description: Pull and analyze an Android crash report (tombstone, ANR trace, or logcat crash buffer).
 allowed-tools:
-  - mcp__plugin_build_android_app_plugin_adb__list_devices
-  - mcp__plugin_build_android_app_plugin_adb__select_device
-  - mcp__plugin_build_android_app_plugin_adb__logcat_dump
-  - mcp__plugin_build_android_app_plugin_adb__shell_command
-  - mcp__plugin_build_android_app_plugin_adb__pull_file
-  - mcp__plugin_build_android_app_plugin_adb__push_file
-  - mcp__plugin_build_android_app_plugin_adb__unzip
+  - mcp__plugin_build_android_apps_adb__list_devices
+  - mcp__plugin_build_android_apps_adb__select_device
+  - mcp__plugin_build_android_apps_adb__logcat_dump
+  - mcp__plugin_build_android_apps_adb__shell_command
+  - mcp__plugin_build_android_apps_adb__pull_file
+  - mcp__plugin_build_android_apps_adb__push_file
+  - mcp__plugin_build_android_apps_adb__unzip
   - Read
   - Grep
 ---
@@ -36,7 +36,7 @@ Skip to Step 3 with the file path.
 #### Case B: Crash on a connected device
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__logcat_dump
+tool: mcp__plugin_build_android_apps_adb__logcat_dump
 args: { "tag": "AndroidRuntime", "level": "E", "max_lines": 100 }
 ```
 
@@ -45,9 +45,9 @@ Look for `FATAL EXCEPTION`. Note the package name and exception type.
 #### Case C: ANR
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__shell_command
+tool: mcp__plugin_build_android_apps_adb__shell_command
 args: { "command": "ls /data/anr/" }
-tool: mcp__plugin_build_android_app_plugin_adb__pull_file
+tool: mcp__plugin_build_android_apps_adb__pull_file
 args: { "remote_path": "/data/anr/traces.txt", "local_path": "./anr_traces.txt" }
 ```
 
@@ -56,9 +56,9 @@ Read `./anr_traces.txt` and find the offending thread (usually `main`).
 #### Case D: Tombstone (native crash)
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__shell_command
+tool: mcp__plugin_build_android_apps_adb__shell_command
 args: { "command": "ls /data/tombstones/" }
-tool: mcp__plugin_build_android_app_plugin_adb__pull_file
+tool: mcp__plugin_build_android_apps_adb__pull_file
 args: { "remote_path": "/data/tombstones/tombstone_0X", "local_path": "./tombstone_0X" }
 ```
 
@@ -69,9 +69,9 @@ The tombstone format includes a register dump and a backtrace. For symbol resolu
 If the user wants the crash saved:
 
 ```
-tool: mcp__plugin_build_android_app_plugin_adb__shell_command
+tool: mcp__plugin_build_android_apps_adb__shell_command
 args: { "command": "logcat -b crash -d -f /sdcard/crash.txt" }
-tool: mcp__plugin_build_android_app_plugin_adb__pull_file
+tool: mcp__plugin_build_android_apps_adb__pull_file
 args: { "remote_path": "/sdcard/crash.txt", "local_path": "./crash.txt" }
 ```
 

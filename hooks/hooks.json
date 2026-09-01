@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-hooks.json",
+  "$schema": "https://json.schemastore.org/codex-hooks.json",
   "hooks": {
     "SessionStart": [
       {
@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh",
+            "command": "${PLUGIN_ROOT}/hooks/session-start.sh",
             "timeout": 15
           }
         ]
@@ -19,8 +19,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-destructive.sh",
+            "command": "${PLUGIN_ROOT}/hooks/block-destructive.sh",
             "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__plugin_build_android_apps_play_store__submit_for_review|mcp__plugin_build_android_apps_play_store__upload_aab",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${PLUGIN_ROOT}/hooks/release-check.sh",
+            "timeout": 60
           }
         ]
       }
@@ -31,20 +41,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/lint-kotlin.sh",
+            "command": "${PLUGIN_ROOT}/hooks/lint-kotlin.sh",
             "timeout": 30
-          }
-        ]
-      }
-    ],
-    "PreSubmit": [
-      {
-        "matcher": "mcp__plugin_.*_play_store__submit_for_review|mcp__plugin_.*_play_store__upload_aab",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/release-check.sh",
-            "timeout": 60
           }
         ]
       }
@@ -54,7 +52,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/stop-review.sh",
+            "command": "${PLUGIN_ROOT}/hooks/stop-review.sh",
             "timeout": 60
           }
         ]

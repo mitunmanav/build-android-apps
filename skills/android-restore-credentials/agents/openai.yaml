@@ -1,4 +1,6 @@
 interface:
-  display_name: "Restore Credentials"
-  short_description: "Sign in on a new device via restore keys"
-  default_prompt: "Use $android-restore-credentials to restore my sign-in"
+  display_name: Restore Credentials
+  short_description: Sign in on a new device via restore keys
+  default_prompt: Use $android-restore-credentials to restore my sign-in
+policy:
+  allow_implicit_invocation: false

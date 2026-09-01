@@ -18,6 +18,16 @@ except ImportError:
 
 log = logging.getLogger("asset_mcp")
 
+def _resample():
+    if not HAS_PIL:
+        return None
+    try:
+        return Image.Resampling.LANCZOS  # Pillow 10+
+    except AttributeError:
+        return _RESAMPLE
+
+_RESAMPLE = _resample()
+
 mcp = MCPServer(
     name="asset-mcp",
     version="0.1.0",
@@ -58,10 +68,10 @@ async def generate_icon(source: str, out_dir: str) -> dict[str, Any]:
         d = out / f"mipmap-{density}"
         d.mkdir(parents=True, exist_ok=True)
         for name in ("ic_launcher", "ic_launcher_round"):
-            img.resize((size, size), Image.LANCZOS).save(d / f"{name}.png")
+            img.resize((size, size), _RESAMPLE).save(d / f"{name}.png")
             written.append(str(d / f"{name}.png"))
         fg_path = d / "ic_launcher_foreground.png"
-        img.resize((fg_sizes[density], fg_sizes[density]), Image.LANCZOS).save(fg_path)
+        img.resize((fg_sizes[density], fg_sizes[density]), _RESAMPLE).save(fg_path)
         written.append(str(fg_path))
     anydpi = out / "mipmap-anydpi-v26"
     anydpi.mkdir(parents=True, exist_ok=True)
@@ -97,7 +107,7 @@ async def generate_feature_graphic(source: str, out: str) -> dict[str, Any]:
         return {"ok": False, "error": f"source not found: {src}"}
     img = Image.open(src).convert("RGBA")
     canvas = Image.new("RGBA", (1024, 500), (0, 0, 0, 0))
-    img.thumbnail((1024, 500), Image.LANCZOS)
+    img.thumbnail((1024, 500), _RESAMPLE)
     x = (1024 - img.width) // 2
     y = (500 - img.height) // 2
     canvas.paste(img, (x, y), img)
@@ -134,7 +144,7 @@ async def generate_screenshot(adb_serial: str, out: str, package: str | None = N
     if HAS_PIL:
         img = Image.open(out_path)
         if img.size != (1080, 1920):
-            img = img.resize((1080, 1920), Image.LANCZOS)
+            img = img.resize((1080, 1920), _RESAMPLE)
             img.save(out_path)
     return {"ok": True, "path": str(out_path), "size": [1080, 1920]}
 
@@ -159,7 +169,7 @@ async def compose_marketing(screenshot: str, headline: str, out: str) -> dict[st
         return {"ok": False, "error": f"screenshot not found: {src}"}
     img = Image.open(src).convert("RGBA")
     canvas = Image.new("RGBA", (1200, 1200), (255, 255, 255, 255))
-    img.thumbnail((1000, 1000), Image.LANCZOS)
+    img.thumbnail((1000, 1000), _RESAMPLE)
     canvas.paste(img, ((1200 - img.width) // 2, 100), img)
     out_path = Path(out)
     out_path.parent.mkdir(parents=True, exist_ok=True)

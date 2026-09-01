@@ -38,7 +38,7 @@ mkdir -p "$SCRATCH"
 ### Step 2: Run the analyze task
 
 ```
-tool: mcp__plugin_build_android_app_plugin_gradlew__run_task
+tool: mcp__plugin_build_android_apps_gradlew__run_task
 args: { "task": "analyzeReleaseBundle", "cwd": ".", "timeout": 300 }
 ```
 
