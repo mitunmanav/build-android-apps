@@ -8,6 +8,7 @@ allowed-tools:
   - mcp__plugin_build_android_app_plugin_adb__install_apk
   - mcp__plugin_build_android_app_plugin_adb__start_activity
   - mcp__plugin_build_android_app_plugin_adb__wait_for_device
+  - mcp__plugin_build_android_app_plugin_adb__logcat_dump
   - Read
   - Bash
 ---
