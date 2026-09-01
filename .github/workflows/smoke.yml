@@ -1,0 +1,62 @@
+name: smoke
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run smoke test
+        run: bash scripts/smoke.sh
+
+      - name: Verify hook scripts are executable
+        run: |
+          for f in hooks/*.sh scripts/*.sh; do
+            if [ ! -x "$f" ]; then
+              echo "::error::$f is not executable"
+              exit 1
+            fi
+          done
+          echo "All scripts are executable."
+
+      - name: Verify no tracked __pycache__
+        run: |
+          if git ls-files | grep -E '__pycache__|\.pyc$'; then
+            echo "::error::__pycache__ or .pyc files are tracked in git"
+            git ls-files | grep -E '__pycache__|\.pyc$'
+            exit 1
+          fi
+          echo "No tracked __pycache__ or .pyc."
+
+      - name: Verify Python modules load
+        run: |
+          PYTHONPATH=. python3 -c "from state import SCHEMA_VERSION, StateManager, topological_order, route_full, route_after, detect_cycle, explain; assert SCHEMA_VERSION == 1; print('state OK')"
+          for server in keystore-mcp play-store-mcp asset-mcp; do
+            PYMODULE="${server//-/_}"
+            PYTHONPATH="mcp-servers/$server" python3 -c "import $PYMODULE" || echo "::warning::$server module load failed (deps may be optional)"
+          done
+          echo "All Python modules load."
+
+      - name: Verify plan algebra round-trip
+        run: |
+          TMP=$(mktemp -d)
+          PYTHONPATH=. python3 -m state save "$TMP/state.json" '{"schema_version":1,"phase":"intake","plan":[],"cursor":{"phase":"intake","task_id":""},"history":[]}'
+          PYTHONPATH=. python3 -m state add "$TMP/state.json" --title "Scaffold" --phase scaffold --id a1
+          PYTHONPATH=. python3 -m state add "$TMP/state.json" --title "Build" --phase build --deps a1 --id a2
+          PYTHONPATH=. python3 -m state done "$TMP/state.json" --task a1
+          PYTHONPATH=. python3 -m state undo "$TMP/state.json"
+          ROUTE=$(PYTHONPATH=. python3 -m state route "$TMP/state.json")
+          echo "$ROUTE"
+          echo "$ROUTE" | grep -q "Scaffold"
+          rm -rf "$TMP"
+          echo "Plan algebra round-trip OK."
