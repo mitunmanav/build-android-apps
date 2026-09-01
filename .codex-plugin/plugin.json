@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/codex-plugin.json",
   "name": "build-android-app-plugin",
   "version": "1.0.0",
   "description": "Build and ship Android apps from your AI assistant: 22 skills, 21 plain-English slash commands, 6 subagents, 5 MCP servers, 6 hooks, per-project resumable build loop. Built for non-technical vibe coders, end-to-end: intake → scaffold → debug → publish to Play Store internal test track.",

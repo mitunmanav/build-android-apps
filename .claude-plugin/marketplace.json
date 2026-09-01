@@ -3,6 +3,9 @@
   "name": "build-android-app-plugin",
   "version": "1.0.0",
   "description": "Build and ship Android apps from your AI assistant: 22 skills, 21 plain-English slash commands, 6 subagents, 5 MCP servers, 6 hooks, per-project resumable build loop. Built for non-technical vibe coders, end-to-end: intake → scaffold → debug → publish to Play Store internal test track.",
+  "interface": {
+    "displayName": "Build Android App"
+  },
   "author": {
     "name": "Mitun",
     "email": "[email protected]",
@@ -28,6 +31,15 @@
       "name": "build-android-app-plugin",
       "version": "1.0.0",
       "description": "Full lifecycle: intake → scaffold → debug → publish to Play Store internal test track.",
+      "source": {
+        "source": "local",
+        "path": "."
+      },
+      "category": "development",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
       "skills": "./skills/",
       "commands": "./commands/",
       "agents": "./agents/",
