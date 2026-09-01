@@ -16,6 +16,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install mcp SDK
+        run: pip install mcp
+
       - name: Run smoke test
         run: bash scripts/smoke.sh
 
@@ -43,7 +46,12 @@ jobs:
           PYTHONPATH=. python3 -c "from state import SCHEMA_VERSION, StateManager, topological_order, route_full, route_after, detect_cycle, explain; assert SCHEMA_VERSION == 1; print('state OK')"
           for server in keystore-mcp play-store-mcp asset-mcp; do
             PYMODULE="${server//-/_}"
-            PYTHONPATH="mcp-servers/$server" python3 -c "import $PYMODULE" || echo "::warning::$server module load failed (deps may be optional)"
+            if [ -d "mcp-servers/$server/src/$PYMODULE" ]; then
+              PYPATH="mcp-servers/$server/src"
+            else
+              PYPATH="mcp-servers/$server"
+            fi
+            PYTHONPATH="$PYPATH" python3 -c "import $PYMODULE" || echo "::warning::$server module load failed (deps may be optional)"
           done
           echo "All Python modules load."
 
