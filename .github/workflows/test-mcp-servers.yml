@@ -30,7 +30,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e . --quiet
-          pip install pytest --quiet
+          pip install pytest pytest-asyncio --quiet
 
       - name: Run pytest
         run: pytest -v
