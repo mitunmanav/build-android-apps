@@ -41,7 +41,7 @@ The server speaks MCP over stdio. Pair it with any MCP host (Codex, Claude Code,
 | `select_device` | read-only, idempotent | Pick from multi-device (returns selection) |
 | `install_apk` | destructive | `adb install -r <apk>` |
 
-More tools arrive in later slices. See `/home/mitun/build-android-app-plugin/SPEC.md §9` for the full tool list.
+More tools arrive in later slices. See `../../SPEC.md §9` for the full tool list.
 
 ## Configuration
 
