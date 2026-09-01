@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compose UI Patterns"
+  short_description: "Idiomatic Compose patterns for everyday screens"
+  default_prompt: "Use $compose-ui-patterns to find the right way to build this Compose screen."

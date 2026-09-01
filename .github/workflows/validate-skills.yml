@@ -1,0 +1,64 @@
+name: validate-skills
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'skills/**'
+      - 'scripts/validate-skills.py'
+  pull_request:
+    paths:
+      - 'skills/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pyyaml
+        run: pip install pyyaml
+
+      - name: Validate all skills
+        run: python3 scripts/validate-skills.py .
+
+      - name: Check description length
+        run: |
+          python3 - <<'PY'
+          import yaml, sys
+          from pathlib import Path
+          ok = True
+          for sd in sorted(Path("skills").iterdir()):
+              md = sd / "SKILL.md"
+              if not md.is_file(): continue
+              fm = yaml.safe_load(md.read_text().split("---")[1])
+              desc = fm.get("description", "").strip()
+              if len(desc) > 1024:
+                  print(f"FAIL {fm['name']}: description {len(desc)} chars > 1024", file=sys.stderr)
+                  ok = False
+              elif len(desc) < 50:
+                  print(f"WARN {fm['name']}: description {len(desc)} chars is short")
+          sys.exit(0 if ok else 1)
+          PY
+
+      - name: Check body line count
+        run: |
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          ok = True
+          for sd in sorted(Path("skills").iterdir()):
+              md = sd / "SKILL.md"
+              if not md.is_file(): continue
+              body = md.read_text().split("---", 2)[2]
+              line_count = body.count("\n") + 1
+              if line_count > 500:
+                  print(f"FAIL {sd.name}: body {line_count} lines > 500 (split to references/)", file=sys.stderr)
+                  ok = False
+          sys.exit(0 if ok else 1)
+          PY

@@ -1,0 +1,75 @@
+name: test-mcp-servers
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'mcp-servers/**'
+      - '.github/workflows/test-mcp-servers.yml'
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        server: [adb-mcp, gradlew-mcp]
+    defaults:
+      run:
+        working-directory: mcp-servers/${{ matrix.server }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install server
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run pytest
+        run: pytest -v
+
+      - name: Smoke test stdio
+        run: |
+          python3 - <<'PY'
+          import asyncio, json, sys
+          from importlib import import_module
+          mod = import_module("${{ matrix.server }}".replace('-', '_'))
+          async def go():
+              proc = await asyncio.create_subprocess_exec(
+                  sys.executable, "-m", mod.__name__,
+                  stdin=asyncio.subprocess.PIPE,
+                  stdout=asyncio.subprocess.PIPE,
+                  stderr=asyncio.subprocess.PIPE,
+              )
+              init = {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+                      "params": {"protocolVersion": "2024-11-05",
+                                 "capabilities": {},
+                                 "clientInfo": {"name": "ci", "version": "0.1"}}}
+              proc.stdin.write((json.dumps(init) + "\n").encode())
+              await proc.stdin.drain()
+              line = await asyncio.wait_for(proc.stdout.readline(), 5.0)
+              assert line, "no response from server"
+              resp = json.loads(line)
+              assert "result" in resp, f"init failed: {resp}"
+              print(f"  initialize OK: {resp['result']['serverInfo']['name']}")
+
+              proc.stdin.write((json.dumps({"jsonrpc":"2.0","method":"notifications/initialized"}) + "\n").encode())
+              await proc.stdin.drain()
+
+              proc.stdin.write((json.dumps({"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}) + "\n").encode())
+              await proc.stdin.drain()
+              line = await asyncio.wait_for(proc.stdout.readline(), 5.0)
+              resp = json.loads(line)
+              tools = resp["result"]["tools"]
+              assert len(tools) > 0, "no tools registered"
+              print(f"  tools/list OK: {len(tools)} tools: {[t['name'] for t in tools]}")
+              proc.terminate()
+              await proc.wait()
+          asyncio.run(go())
+          PY

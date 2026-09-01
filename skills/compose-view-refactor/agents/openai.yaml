@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compose View Refactor"
+  short_description: "Split monolithic composables into testable pieces"
+  default_prompt: "Use $compose-view-refactor to break this 800-line composable into smaller pieces."

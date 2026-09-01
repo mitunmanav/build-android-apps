@@ -1,0 +1,73 @@
+name: validate-manifests
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - '.codex-plugin/**'
+      - '.claude-plugin/**'
+      - '.agents/plugins/**'
+      - '.mcp.json'
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          for f in .codex-plugin/plugin.json .claude-plugin/marketplace.json .agents/plugins/marketplace.json .mcp.json; do
+            echo "Validating $f..."
+            python3 -c "import json; json.load(open('$f'))" && echo "  OK"
+          done
+
+      - name: Check required Codex manifest fields
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          with open('.codex-plugin/plugin.json') as f:
+              m = json.load(f)
+          required = ['name', 'version', 'description', 'author', 'interface', 'skills', 'mcpServers']
+          missing = [k for k in required if k not in m]
+          assert not missing, f"Codex manifest missing fields: {missing}"
+          interface_required = ['displayName', 'shortDescription', 'category', 'capabilities', 'defaultPrompt']
+          missing_i = [k for k in interface_required if k not in m['interface']]
+          assert not missing_i, f"interface block missing fields: {missing_i}"
+          print(f"Codex manifest OK: name={m['name']}, version={m['version']}")
+          PY
+
+      - name: Check MCP server config
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          with open('.mcp.json') as f:
+              cfg = json.load(f)
+          assert 'mcpServers' in cfg, "missing mcpServers"
+          for name, srv in cfg['mcpServers'].items():
+              assert 'command' in srv, f"{name}: missing command"
+              assert 'args' in srv, f"{name}: missing args"
+              print(f"  {name}: command={srv['command']}, args={srv['args']}")
+          print(f"MCP config OK: {len(cfg['mcpServers'])} server(s)")
+          PY
+
+      - name: Check path references resolve
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          with open('.codex-plugin/plugin.json') as f:
+              m = json.load(f)
+          for path in [m['skills'], m['mcpServers']]:
+              assert os.path.exists(path), f"Plugin manifest references missing path: {path}"
+              print(f"  {path}: OK")
+          with open('.claude-plugin/marketplace.json') as f:
+              m = json.load(f)
+          for plugin in m.get('plugins', []):
+              for key in ('skills', 'commands', 'agents', 'mcpServers'):
+                  if key in plugin:
+                      p = plugin[key]
+                      if p.startswith('./'): p = p[2:]
+                      assert os.path.exists(p) or os.path.exists(p.rstrip('/')), f"Claude manifest references missing path: {p}"
+          print("All path references resolve.")
+          PY

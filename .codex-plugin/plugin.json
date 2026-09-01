@@ -1,0 +1,49 @@
+{
+  "name": "build-android-app-plugin",
+  "version": "0.1.0",
+  "description": "Build Android apps with workflows for Jetpack Compose UI work, adb-driven emulator mirroring, Gradle build loop, performance profiling, leak investigation, AppFunctions integration, and on-device debugging.",
+  "author": {
+    "name": "Mitun",
+    "email": "[email protected]",
+    "url": "https://github.com/mitun"
+  },
+  "homepage": "https://github.com/mitun/build-android-app-plugin",
+  "repository": "https://github.com/mitun/build-android-app-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "android",
+    "kotlin",
+    "jetpack-compose",
+    "gradle",
+    "adb",
+    "app-actions",
+    "performance",
+    "debugging",
+    "leaks",
+    "profiling"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Build Android App",
+    "shortDescription": "Build, run, debug, and profile Android apps with Compose, adb, and Gradle",
+    "longDescription": "Use Build Android App to design Compose UI with Material 3 Expressive patterns, drive an Android emulator from Codex, audit Compose performance, capture Perfetto traces, investigate memory leaks with LeakCanary, integrate AppFunctions and App Shortcuts, and debug apps on devices via adb-mcp and gradlew-mcp MCP servers.",
+    "developerName": "Mitun",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/mitun/build-android-app-plugin",
+    "privacyPolicyURL": "https://github.com/mitun/build-android-app-plugin/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/mitun/build-android-app-plugin/blob/main/TERMS.md",
+    "defaultPrompt": [
+      "Build or debug an Android app with Jetpack Compose, adb, and Gradle."
+    ],
+    "brandColor": "#3DDC84",
+    "composerIcon": "./assets/build-android-app-small.svg",
+    "logo": "./assets/app-icon.png",
+    "screenshots": []
+  }
+}

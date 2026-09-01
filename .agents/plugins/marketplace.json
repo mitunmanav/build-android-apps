@@ -1,0 +1,42 @@
+{
+  "$schema": "https://agentskills.io/schemas/plugins-marketplace.json",
+  "name": "build-android-app-plugin",
+  "version": "0.1.0",
+  "description": "Agentic Android development plugin for open-standard agentskills.io hosts. Provides 9 Compose-focused skills, 9 slash commands, 3 subagents, 4 hooks, and 2 Python MCP servers (adb + gradlew).",
+  "author": {
+    "name": "Mitun",
+    "email": "[email protected]",
+    "url": "https://github.com/mitun"
+  },
+  "homepage": "https://github.com/mitun/build-android-app-plugin",
+  "repository": "https://github.com/mitun/build-android-app-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "android",
+    "kotlin",
+    "jetpack-compose",
+    "gradle",
+    "adb"
+  ],
+  "plugins": [
+    {
+      "name": "build-android-app-plugin",
+      "version": "0.1.0",
+      "description": "Self-hosted entry point. This plugin conforms to the open standard at https://agentskills.io/specification.",
+      "source": {
+        "source": "local",
+        "path": "."
+      },
+      "category": "Developer Tools",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
+      "skills": "./skills/",
+      "commands": "./commands/",
+      "agents": "./agents/",
+      "hooks": "./hooks/hooks.json",
+      "mcpServers": "./.mcp.json"
+    }
+  ]
+}

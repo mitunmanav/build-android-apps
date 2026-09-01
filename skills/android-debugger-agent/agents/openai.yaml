@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Debugger Agent"
+  short_description: "Connect, set breakpoints, and trace through Android app crashes"
+  default_prompt: "Use $android-debugger-agent to attach a debugger and step through the failing call."

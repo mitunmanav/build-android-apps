@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-marketplace.json",
+  "name": "build-android-app-plugin",
+  "version": "0.1.0",
+  "description": "Agentic Android development: build, run, debug, profile via slash commands, subagents, MCP-driven adb/gradlew servers, and 9 Compose-focused skills.",
+  "author": {
+    "name": "Mitun",
+    "email": "[email protected]",
+    "url": "https://github.com/mitun"
+  },
+  "homepage": "https://github.com/mitun/build-android-app-plugin",
+  "repository": "https://github.com/mitun/build-android-app-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "android",
+    "kotlin",
+    "jetpack-compose",
+    "gradle",
+    "adb",
+    "performance",
+    "debugging"
+  ],
+  "category": "development",
+  "plugins": [
+    {
+      "name": "build-android-app-plugin",
+      "version": "0.1.0",
+      "description": "Same plugin surface as the parent manifest. Loaded into Claude Code when this directory is added as a plugin source.",
+      "skills": "./skills/",
+      "commands": "./commands/",
+      "agents": "./agents/",
+      "hooks": "./hooks/hooks.json",
+      "mcpServers": "./.mcp.json"
+    }
+  ]
+}

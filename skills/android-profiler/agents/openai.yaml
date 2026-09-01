@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Profiler"
+  short_description: "Capture and analyze Perfetto + macrobenchmark traces"
+  default_prompt: "Use $android-profiler to capture a Perfetto trace and identify the bottleneck."

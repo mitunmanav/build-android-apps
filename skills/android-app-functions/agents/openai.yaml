@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android App Functions"
+  short_description: "Expose app capabilities to system agents and shortcuts"
+  default_prompt: "Use $android-app-functions to add an App Shortcut and an AppFunction for the create-note flow."

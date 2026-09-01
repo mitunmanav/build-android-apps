@@ -1,0 +1,4 @@
+interface:
+  display_name: "Material 3 Expressive"
+  short_description: "Apply Material 3 Expressive design to Compose UI"
+  default_prompt: "Use $material3-expressive to add shape morphing and motion to this card."
