@@ -6,13 +6,19 @@ set -u
 
 INPUT="$(cat)"
 
-# Extract file path from Edit/Write tool input
+# Extract file path from Edit/Write/MultiEdit (Claude Code) or apply_patch (Codex) tool input
 FILE="$(printf '%s' "$INPUT" | python3 -c "
-import json, sys
+import json, sys, re
 try:
     d = json.load(sys.stdin)
     inp = d.get('tool_input', {})
-    print(inp.get('file_path', inp.get('filepath', '')))
+    f = inp.get('file_path', inp.get('filepath', ''))
+    if not f and 'command' in inp:
+        # Codex apply_patch: parse '*** Begin Patch' or '*** Update File: <path>'
+        m = re.search(r'\*\*\* (?:Begin Patch|Update File):\s*(\S+)', inp.get('command',''))
+        if m:
+            f = m.group(1)
+    print(f)
 except Exception:
     print('')
 ")"
