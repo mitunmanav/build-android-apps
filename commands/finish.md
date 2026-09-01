@@ -6,8 +6,9 @@ allowed-tools:
   - Write
   - Edit
   - mcp__plugin_build_android_apps_gradlew__run_task
-  - mcp__plugin_build_android_apps_gradlew__generate_keystore
-  - mcp__plugin_build_android_apps_gradlew__verify_keystore
+  - mcp__plugin_build_android_apps_keystore__generate
+  - mcp__plugin_build_android_apps_keystore__verify
+  - mcp__plugin_build_android_apps_keystore__fingerprint
 ---
 
 # /finish

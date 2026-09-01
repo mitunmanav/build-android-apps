@@ -21,6 +21,11 @@ Set up a debug session: open JDWP socket, start logcat, ready the agent for brea
 - Connected devices: !`adb devices -l 2>/dev/null | head -10`
 - Recent crash logs: !`adb logcat -d -b crash 2>/dev/null | tail -20`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /debug."
+
 ## Your task
 
 $ARGUMENTS

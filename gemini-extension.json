@@ -1,7 +1,12 @@
 {
   "name": "build-android-apps",
   "version": "2.0.0",
-  "description": "Build and ship Android apps from your AI assistant: 28 skills (1 frontdoor + 27 specialists), 22 plain-English slash commands, 4 subagents, 5 MCP servers, 5 hooks \u2014 progressive disclosure keeps startu",
+  "description": "Build and ship Android apps from your AI assistant: 28 skills (1 frontdoor + 27 specialists), 30 plain-English slash commands, 4 subagents, 5 MCP servers, 5 hooks \u2014 progressive disclosure keeps...",
+  "author": {
+    "name": "Mitun",
+    "url": "https://github.com/mitunmanav"
+  },
+  "homepage": "https://github.com/mitunmanav/build-android-apps",
   "mcpServers": {
     "adb": {
       "command": "python",
@@ -33,7 +38,7 @@
       ],
       "env": {
         "PATH": "${env:PATH}",
-        "PLAY_STORE_CACHE": "${workspaceFolder}/.build-android/play-cache"
+        "PLAY_STORE_CACHE": "${env:HOME}/.cache/build-android-apps/play-cache"
       }
     },
     "keystore": {

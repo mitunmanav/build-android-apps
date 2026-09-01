@@ -21,6 +21,11 @@ Run a Gradle build for the Android project.
 - Project layout (root): !`ls -la | head -20`
 - Gradle wrapper present: !`ls gradlew 2>/dev/null && echo "yes" || echo "no"`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /build."
+
 ## Your task
 
 $ARGUMENTS

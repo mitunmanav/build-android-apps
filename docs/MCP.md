@@ -68,6 +68,9 @@ asyncio.run(go())
 | `clean` | destructive, idempotent | `./gradlew clean` |
 | `parse_dependencies` | RO | `./gradlew :app:dependencies` |
 | `find_duplicate_classes` | RO | Find class duplicates in the dep tree |
+| `describe_project` | RO | JSON targets + APK/AAB paths (matches `android describe`) |
+| `manage_sdk` | destructive | `sdkmanager` install/upgrade wrapper |
+| `run_help` / `run_build_dry` | RO | Lightweight verification (`help` / `build --dry-run`) |
 
 ### Install
 

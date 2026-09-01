@@ -14,6 +14,11 @@ Tell me exactly where we are: which phase, what's done, what's next.
 - Working directory: !`pwd`
 - State file: !`ls -la .build-android/state.json 2>/dev/null || echo "no state.json yet"`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /where."
+
 ## Your task
 
 Run this and report the result to the user in plain English.

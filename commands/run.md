@@ -23,6 +23,11 @@ Build, install, and launch the app on a connected device.
 - Connected devices: !`adb devices -l 2>/dev/null | head -10`
 - Recent changes: !`git log --oneline -3 2>/dev/null`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /run."
+
 ## Your task
 
 $ARGUMENTS

@@ -20,6 +20,11 @@ List connected devices, pick one (or launch a new AVD), and confirm it's the act
 - Available AVDs: !`$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd 2>/dev/null | grep -E 'Name:|Tag/' | head -20`
 - ANDROID_HOME: !`echo "${ANDROID_HOME:-unset}"`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /device."
+
 ## Your task
 
 $ARGUMENTS

@@ -30,7 +30,7 @@
       ],
       "env": {
         "PATH": "${env:PATH}",
-        "PLAY_STORE_CACHE": "${workspaceFolder}/.build-android/play-cache"
+        "PLAY_STORE_CACHE": "${env:HOME}/.cache/build-android-apps/play-cache"
       }
     },
     "keystore": {

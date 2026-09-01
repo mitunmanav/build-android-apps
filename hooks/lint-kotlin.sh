@@ -52,15 +52,24 @@ if [ -z "$KTLINT" ]; then
     exit 0
 fi
 
-# Run ktlint on the single file
+# Run ktlint on the single file (token-cheap: never full project scan)
 if [ "$KTLINT" = "./gradlew ktlintCheck" ]; then
-    OUT=$(./gradlew ktlintCheck --quiet 2>&1 || true)
+    # Prefer single-file ktlint if installed, else fallback to quiet single-file check via ktlint binary search
+    if command -v ktlint >/dev/null 2>&1; then
+        OUT=$(ktlint "$FILE" 2>&1 || true)
+    else
+        # Full project scan is expensive — skip and hint
+        printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[info] ktlint binary not found for single-file lint; skipping full ./gradlew ktlintCheck to save tokens for %s"}}\n' "$FILE" >&2
+        exit 0
+    fi
 else
     OUT=$("$KTLINT" "$FILE" 2>&1 || true)
 fi
 
 if [ -n "$OUT" ] && echo "$OUT" | grep -qiE 'error|warning'; then
-    printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[warning] ktlint findings for %s:\n%s"}}\n' "$FILE" "$OUT" >&2
+    ESC_OUT=$(printf '%s' "$OUT" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])' 2>/dev/null || printf '%s' "$OUT")
+    ESC_FILE=$(printf '%s' "$FILE" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])' 2>/dev/null || printf '%s' "$FILE")
+    printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[warning] ktlint findings for %s:\n%s"}}\n' "$ESC_FILE" "$ESC_OUT" >&2
 fi
 
 exit 0

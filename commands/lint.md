@@ -18,6 +18,11 @@ Run `./gradlew lint` and present the issue summary.
 - Gradle wrapper present: !`ls gradlew 2>/dev/null && echo yes || echo no`
 - Existing lint reports: !`find . -name 'lint-results-*.xml' 2>/dev/null | head -5`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /lint."
+
 ## Your task
 
 $ARGUMENTS

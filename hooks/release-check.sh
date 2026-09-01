@@ -7,19 +7,27 @@ set -euo pipefail
 
 emit() {
     local level="$1"; shift
-    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"[%s] %s"}}\n' "$level" "$*" >&2
+    local raw="$*"
+    local esc
+    esc=$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1])[1:-1])' "$raw" 2>/dev/null || printf '%s' "$raw" | sed 's/"/\\"/g')
+    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"[%s] %s"}}\n' "$level" "$esc" >&2
 }
 deny() {
     local reason="$1"
+    local esc
+    esc=$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$reason" 2>/dev/null || printf '"%s"' "$reason" | sed 's/"/\\"/g')
+    # Use esc without outer quotes for permissionDecisionReason string (need quoted value)
+    # esc already includes quotes from json.dumps, strip and re-add via python
+    local reason_json
+    reason_json=$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$reason" 2>/dev/null || printf '"%s"' "$reason")
     cat <<EOF
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"$reason"}}
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":$reason_json}}
 EOF
-    # also emit to stderr for Codex UI
-    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason" >&2
+    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":%s}}\n' "$reason_json" >&2
     exit 0
 }
 
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}"
 STATE_FILE="$PROJECT_ROOT/.build-android/state.json"
 
 if [ ! -f "$STATE_FILE" ]; then

@@ -17,6 +17,11 @@ Run `./gradlew clean`. **Destructive.** Always confirms first.
 - Gradle wrapper present: !`ls gradlew 2>/dev/null && echo yes || echo no`
 - Build dir size: !`du -sh build 2>/dev/null || echo "no build dir"`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /clean."
+
 ## Your task
 
 $ARGUMENTS

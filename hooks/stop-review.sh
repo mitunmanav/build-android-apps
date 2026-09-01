@@ -27,8 +27,9 @@ if [ -z "$SUMMARY" ]; then
     SUMMARY="No uncommitted changes."
 fi
 
+ESC_SUMMARY=$(printf '%s' "$SUMMARY" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])' 2>/dev/null || printf '%s' "$SUMMARY" | sed 's/"/\\"/g')
 cat <<EOF
-{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"[build-android-apps] Review summary:\n$SUMMARY"}}
+{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"[build-android-apps] Review summary:\n$ESC_SUMMARY"}}
 EOF
 
 exit 0

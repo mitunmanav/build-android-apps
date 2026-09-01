@@ -18,6 +18,11 @@ Filter and inspect logcat output.
 - Working directory: !`pwd`
 - Connected devices: !`adb devices -l 2>/dev/null | head -10`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /log."
+
 ## Your task
 
 $ARGUMENTS

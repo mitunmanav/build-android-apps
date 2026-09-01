@@ -6,7 +6,10 @@ set -u
 
 emit() {
     local level="$1"; shift
-    printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[%s] %s"}}\n' "$level" "$*" >&2
+    local raw="$*"
+    local esc
+    esc=$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1])[1:-1])' "$raw" 2>/dev/null || printf '%s' "$raw" | sed 's/"/\\"/g')
+    printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[%s] %s"}}\n' "$level" "$esc" >&2
 }
 
 # 1. ANDROID_HOME
@@ -56,11 +59,14 @@ if [ -n "$ADB" ]; then
     fi
 fi
 
-# 5. Plugin reminder — frontdoor is $build-android-apps; 27 specialists lazy-loaded
-emit "info" "build-android-apps loaded. Frontdoor: \$build-android-apps (one skill routes to 27 specialists). Try /build, /run, /debug, /device, /lint. Progressive disclosure: only frontdoor description at startup, specialists load on demand."
+# 5. Plugin reminder — frontdoor is $build-android-apps; 27 specialists lazy-loaded (gate to startup to save tokens)
+HOOK_EVENT="${HOOK_EVENT_NAME:-${hook_event_name:-startup}}"
+if echo "$HOOK_EVENT" | grep -qiE "startup"; then
+    emit "info" "build-android-apps loaded. Frontdoor: \$build-android-apps (one skill routes to 27 specialists). Try /build, /run, /debug, /device, /lint. Progressive disclosure: only frontdoor description at startup, specialists load on demand."
+fi
 
 # 6. Per-project state.json (Phase 1: load + report)
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}"
 STATE_DIR="$PROJECT_ROOT/.build-android"
 STATE_FILE="$STATE_DIR/state.json"
 

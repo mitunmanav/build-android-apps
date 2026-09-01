@@ -17,6 +17,11 @@ Run unit tests and report.
 - Working directory: !`pwd`
 - Test source dirs: !`find . -path '*/src/test/*Test.kt' -o -path '*/src/test/*Test.java' 2>/dev/null | head -10`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /test."
+
 ## Your task
 
 $ARGUMENTS

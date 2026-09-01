@@ -77,18 +77,34 @@ def load_canonical() -> dict:
     return servers
 
 
+def _transform_env_for_host(servers: dict, host_id: str) -> dict:
+    """Map PLAY_STORE_CACHE to host-appropriate variable."""
+    import copy
+
+    out = copy.deepcopy(servers)
+    for srv_cfg in out.values():
+        env = srv_cfg.get("env", {})
+        if "PLAY_STORE_CACHE" in env:
+            if host_id == "vscode":
+                env["PLAY_STORE_CACHE"] = "${workspaceFolder}/.build-android/play-cache"
+            else:
+                # Codex/Claude/Cursor/Gemini use ${env:HOME} (all support ${env:VAR})
+                env["PLAY_STORE_CACHE"] = "${env:HOME}/.cache/build-android-apps/play-cache"
+    return out
+
+
 def build_vscode(servers: dict) -> dict:
-    # VS Code Copilot: {servers:{}} + needs chat.mcp.enabled hint in docs
-    return {"servers": servers}
+    # VS Code Copilot: {servers:{}} — must use ${workspaceFolder}
+    return {"servers": _transform_env_for_host(servers, "vscode")}
 
 
 def build_cursor(servers: dict) -> dict:
-    return {"mcpServers": servers}
+    return {"mcpServers": _transform_env_for_host(servers, "cursor")}
 
 
 def build_claude_desktop(servers: dict) -> dict:
     # Claude Desktop: identical shape to canonical, but example file with comment guard
-    return {"mcpServers": servers}
+    return {"mcpServers": _transform_env_for_host(servers, "claude-desktop")}
 
 
 def build_gemini_extension(servers: dict) -> dict:
@@ -96,6 +112,8 @@ def build_gemini_extension(servers: dict) -> dict:
     # Gemini CLI: gemini extensions install https://github.com/mitunmanav/build-android-apps
     # Antigravity CLI: same, shares harness. Keep minimal required fields.
     # Read version/name from .codex-plugin/plugin.json or fallback
+    import textwrap
+
     plugin_json = ROOT / ".codex-plugin" / "plugin.json"
     name = "build-android-apps"
     version = "2.0.0"
@@ -105,14 +123,18 @@ def build_gemini_extension(servers: dict) -> dict:
             pj = json.loads(plugin_json.read_text())
             name = pj.get("name", name)
             version = pj.get("version", version)
-            description = pj.get("description", description)[:200]
+            raw_desc = pj.get("description", description)
+            # Word-boundary truncate to 200, no mid-word cut
+            description = textwrap.shorten(raw_desc, width=197, placeholder="...")
         except Exception:
             pass
     return {
         "name": name,
         "version": version,
         "description": description,
-        "mcpServers": servers,
+        "author": {"name": "Mitun", "url": "https://github.com/mitunmanav"},
+        "homepage": "https://github.com/mitunmanav/build-android-apps",
+        "mcpServers": _transform_env_for_host(servers, "gemini"),
         "skills": "./skills/",
         "hooks": "./hooks/hooks.json",
     }

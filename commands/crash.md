@@ -21,6 +21,11 @@ Analyze a crash: pull the crash report, read the offending stack frames, localiz
 - Working directory: !`pwd`
 - Recent crash logs on default device: !`adb logcat -d -b crash 2>/dev/null | tail -10`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /crash."
+
 ## Your task
 
 $ARGUMENTS

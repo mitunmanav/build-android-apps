@@ -18,6 +18,11 @@ Edit an existing plan item. Use it to:
 - Working directory: !`pwd`
 - State file: !`ls -la .build-android/state.json 2>/dev/null || echo "no state.json yet"`
 
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will run /change."
+
 ## Your task
 
 ### Step 1: Identify the task
