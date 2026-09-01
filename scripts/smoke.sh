@@ -43,19 +43,23 @@ done
 echo
 echo "[4] MCP server modules import cleanly"
 for server in adb-mcp gradlew-mcp keystore-mcp play-store-mcp asset-mcp; do
-    case "$server" in
-        adb-mcp|gradlew-mcp) PYMODULE="${server//-/_}" ;;
-        *)                   PYMODULE="${server//-/_}" ;;
-    esac
-    if PYTHONPATH="$ROOT/mcp-servers/$server" python3 -c "import $PYMODULE" 2>/dev/null; then
-        ok "$server imports"
+    PYMODULE="${server//-/_}"
+    # detect src-layout vs flat-layout
+    if [ -d "$ROOT/mcp-servers/$server/src/$PYMODULE" ]; then
+        PYPATH="$ROOT/mcp-servers/$server/src"
     else
-        # tolerate missing deps for asset-mcp (Pillow) — module just needs to load
-        if PYTHONPATH="$ROOT/mcp-servers/$server" python3 -c "import $PYMODULE" 2>&1 | grep -q "Pillow"; then
-            ok "$server loads (Pillow optional)"
-        else
-            fail "$server module import"
-        fi
+        PYPATH="$ROOT/mcp-servers/$server"
+    fi
+    set +e
+    OUT=$(PYTHONPATH="$PYPATH" python3 -c "import $PYMODULE" 2>&1)
+    RC=$?
+    set -e
+    if [ $RC -eq 0 ]; then
+        ok "$server imports"
+    elif echo "$OUT" | grep -q "Pillow"; then
+        ok "$server loads (Pillow optional)"
+    else
+        fail "$server module import: $OUT"
     fi
 done
 
