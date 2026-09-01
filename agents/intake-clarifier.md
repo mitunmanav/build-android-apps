@@ -14,6 +14,9 @@ description: >
 tools:
   - Read
 model: haiku
+developer_instructions: |
+  You classify a user's app idea prompt by how much context is missing. Be fast — your only output is a single JSON line.
+  Follow the workflow defined in the body below.
 ---
 
 # Intake Clarifier
