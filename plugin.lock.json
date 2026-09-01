@@ -3,7 +3,7 @@
   "lockVersion": 1,
   "pluginId": "com.mitun.build-android-apps",
   "pluginVersion": "2.0.0",
-  "generatedAt": "2026-09-01T15:53:45Z",
+  "generatedAt": "2026-09-01T15:56:55Z",
   "skills": [
     {
       "id": "android-app-functions",
@@ -649,41 +649,104 @@
   "agents": [
     {
       "id": "intake-clarifier",
-      "vendoredPath": "agents/intake-clarifier.md"
+      "vendoredPath": "agents/intake-clarifier.md",
+      "integrity": "sha256-15e559bde3b29856515b5cf1ceaebac9963d840535fc073442b4b0093f0ab3f2",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "agents/intake-clarifier.md",
+        "ref": "main"
+      }
     },
     {
       "id": "build-validator",
-      "vendoredPath": "agents/build-validator.md"
+      "vendoredPath": "agents/build-validator.md",
+      "integrity": "sha256-39333bdd6ce8245d6f1843983d01b559627b9a3cb46199bfa7f44b54536e7ef2",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "agents/build-validator.md",
+        "ref": "main"
+      }
     },
     {
       "id": "release-auditor",
-      "vendoredPath": "agents/release-auditor.md"
+      "vendoredPath": "agents/release-auditor.md",
+      "integrity": "sha256-aa80199521877e51b7faa190a6764bf2532a7e2c036063b0bec2be13e95b3616",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "agents/release-auditor.md",
+        "ref": "main"
+      }
     },
     {
       "id": "apk-inspector",
-      "vendoredPath": "agents/apk-inspector.md"
+      "vendoredPath": "agents/apk-inspector.md",
+      "integrity": "sha256-0c12aa89afc5b3f04fa80006ac1569e718836315318bca6e0b0e12ab491b41c2",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "agents/apk-inspector.md",
+        "ref": "main"
+      }
     }
   ],
   "mcpServers": [
     {
       "id": "adb-mcp",
-      "command": "python -m adb_mcp"
+      "command": "python -m adb_mcp",
+      "integrity": "sha256-04a55484b8e14297cbfbf90b9b41980a1edc83efa717449cdf863dc42b8f411a",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "mcp-servers/adb-mcp",
+        "ref": "main"
+      }
     },
     {
       "id": "gradlew-mcp",
-      "command": "python -m gradlew_mcp"
+      "command": "python -m gradlew_mcp",
+      "integrity": "sha256-480bafd97dbe364b415d3e16b21d96b7ce96b7964bfed527012479db8f20726c",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "mcp-servers/gradlew-mcp",
+        "ref": "main"
+      }
     },
     {
       "id": "play-store-mcp",
-      "command": "python -m play_store_mcp"
+      "command": "python -m play_store_mcp",
+      "integrity": "sha256-cafb5438e982bfc58344edf5bc2745f9b96e4d615f7e77a9be46302b8841857e",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "mcp-servers/play-store-mcp",
+        "ref": "main"
+      }
     },
     {
       "id": "keystore-mcp",
-      "command": "python -m keystore_mcp"
+      "command": "python -m keystore_mcp",
+      "integrity": "sha256-533ad3b338689880eb6806b0131856661d8a2be7699c4e476bf75766193e2a13",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "mcp-servers/keystore-mcp",
+        "ref": "main"
+      }
     },
     {
       "id": "asset-mcp",
-      "command": "python -m asset_mcp"
+      "command": "python -m asset_mcp",
+      "integrity": "sha256-b4d04464a6a12a4af4ded60770c78bcdfb67aa39524d5dc0ee0974ed026eaf0e",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "mcp-servers/asset-mcp",
+        "ref": "main"
+      }
     }
   ],
   "hooks": [
@@ -691,31 +754,66 @@
       "id": "session-start",
       "events": [
         "SessionStart"
-      ]
+      ],
+      "integrity": "sha256-e6814fdaf2649d0eec7333b448a7169868db6cfcc5191b8296e7a73feaa6b87c",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "hooks/session-start.sh",
+        "ref": "main"
+      }
     },
     {
       "id": "block-destructive",
       "events": [
         "PreToolUse"
-      ]
+      ],
+      "integrity": "sha256-243e063eb449efae2c77965e9fa545b610bdd3230f85dc7adb58dccf09b0d56d",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "hooks/block-destructive.sh",
+        "ref": "main"
+      }
     },
     {
       "id": "lint-kotlin",
       "events": [
         "PostToolUse"
-      ]
+      ],
+      "integrity": "sha256-5fa252d5b56a76c9fa18fe75612e4e14ef587b131795d88f551705766d6d3076",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "hooks/lint-kotlin.sh",
+        "ref": "main"
+      }
     },
     {
       "id": "release-check",
       "events": [
         "PreToolUse"
-      ]
+      ],
+      "integrity": "sha256-7c78d2bed0d5a0f742238b0b12065e276fd4be5dffa042c812e14de112985670",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "hooks/release-check.sh",
+        "ref": "main"
+      }
     },
     {
       "id": "stop-review",
       "events": [
         "Stop"
-      ]
+      ],
+      "integrity": "sha256-2a85bd066f4a307d1cf5a6f287456ac46ebdfefc62dbc9182d111473a524aff5",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-apps",
+        "path": "hooks/stop-review.sh",
+        "ref": "main"
+      }
     }
   ]
 }

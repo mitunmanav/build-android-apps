@@ -2,7 +2,7 @@
 
 Phase 2a+2c slices: list_devices, select_device, install_apk, shell_command,
 start_activity, stop_app, uninstall_app, clear_app_data, logcat_dump, logcat_clear,
-screencap, pull_file, push_file, getprop, setprop, wait_for_device, unzip.
+screencap, pull_file, push_file, getprop, setprop, wait_for_device, dump_layout, unzip.
 """
 
 from __future__ import annotations

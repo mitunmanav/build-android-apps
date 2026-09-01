@@ -48,31 +48,45 @@ def _run_curl(args: list[str]) -> tuple[int, str, str]:
     return proc.returncode, proc.stdout, proc.stderr
 
 
+def shutil_which_path(name: str) -> str | None:
+    import shutil
+    return shutil.which(name)
+
+
 @mcp.tool(
     name="auth",
     title="Authenticate via service account",
     description=(
         "Authenticate to the Google Play Developer API using a service account "
-        "JSON key. Caches the OAuth token at .build-android/play-cache/token.json."
+        "JSON key. Caches the OAuth token at .build-android/play-cache/token.json. "
+        "Uses gcloud if available, otherwise falls back to direct JWT via google-auth."
     ),
     annotations=ToolAnnotations(
         title="Auth", read_only_hint=False, destructive_hint=False,
         idempotent_hint=True, open_world_hint=True,
     ),
 )
-def shutil_which_path(name: str) -> str | None:
-    import shutil
-    return shutil.which(name)
-
-
 async def auth(service_account_json: str = ".build-android/service-account.json") -> dict[str, Any]:
     sa = Path(service_account_json)
     if not sa.exists():
         return {"ok": False, "error": f"service account JSON not found at {sa}"}
-    # Use gcloud if available; otherwise instruct the user
+    # Try gcloud first; fallback to google-auth JWT if available
     gcloud_path = shutil_which_path("gcloud")
     if not gcloud_path:
-        return {"ok": False, "error": "gcloud CLI not on PATH. Install from https://cloud.google.com/sdk"}
+        try:
+            from google.oauth2 import service_account
+            from google.auth.transport.requests import Request
+
+            creds = service_account.Credentials.from_service_account_file(
+                str(sa), scopes=["https://www.googleapis.com/auth/androidpublisher"]
+            )
+            creds.refresh(Request())
+            _save_token({"access_token": creds.token, "scopes": "androidpublisher"})
+            return {"ok": True, "expires_in": 3600, "via": "google-auth"}
+        except ImportError:
+            return {"ok": False, "error": "gcloud CLI not on PATH and google-auth not installed. Install via: pip install google-auth OR https://cloud.google.com/sdk"}
+        except Exception as e:
+            return {"ok": False, "error": f"JWT auth failed: {e}"}
     cmd = ["gcloud", "auth", "activate-service-account", "--key-file", str(sa)]
     code, out, err = _run_curl(cmd)
     if code != 0:

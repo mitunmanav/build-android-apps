@@ -284,6 +284,89 @@ def register(server) -> None:
         return {"ready": False, "error": f"device not ready after {timeout}s"}
 
     @server.tool(
+        name="dump_layout",
+        title="Dump UI layout as JSON",
+        description=(
+            "Dump the current view hierarchy as JSON. Uses `uiautomator dump` to capture "
+            "the window dump XML and converts to a structured tree with fields: text, "
+            "resourceId, contentDesc, className, bounds, center, clickable, enabled, etc. "
+            "Matches Google's `android layout` shape for annotated screenshots. "
+            "Falls back to `dumpsys activity top` if uiautomator fails."
+        ),
+        annotations=ToolAnnotations(
+            title="Dump Layout", read_only_hint=True, destructive_hint=False,
+            idempotent_hint=True, open_world_hint=False,
+        ),
+    )
+    async def dump_layout(device: str | None = None) -> dict[str, Any]:
+        import xml.etree.ElementTree as ET
+
+        def parse_bounds(b: str) -> dict[str, Any]:
+            # "[0,0][1080,1920]" -> {x,y,width,height}
+            try:
+                m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", b)
+                if m:
+                    x1, y1, x2, y2 = map(int, m.groups())
+                    return {"x": x1, "y": y1, "width": x2 - x1, "height": y2 - y1, "raw": b}
+            except Exception:
+                pass
+            return {"raw": b}
+
+        def node_to_dict(elem) -> dict[str, Any]:
+            bounds_raw = elem.get("bounds", "")
+            bounds = parse_bounds(bounds_raw)
+            cx = cy = None
+            if "width" in bounds and "height" in bounds:
+                cx = bounds["x"] + bounds["width"] // 2
+                cy = bounds["y"] + bounds["height"] // 2
+            return {
+                "text": elem.get("text", ""),
+                "resourceId": elem.get("resource-id", ""),
+                "contentDesc": elem.get("content-desc", ""),
+                "className": elem.get("class", ""),
+                "package": elem.get("package", ""),
+                "bounds": bounds,
+                "center": {"x": cx, "y": cy} if cx is not None else None,
+                "clickable": elem.get("clickable", "false") == "true",
+                "enabled": elem.get("enabled", "true") == "true",
+                "checkable": elem.get("checkable", "false") == "true",
+                "checked": elem.get("checked", "false") == "true",
+                "scrollable": elem.get("scrollable", "false") == "true",
+                "focused": elem.get("focused", "false") == "true",
+                "selected": elem.get("selected", "false") == "true",
+                "children": [node_to_dict(c) for c in elem.findall("node")],
+            }
+
+        # Try uiautomator
+        xml_content = ""
+        try:
+            await runner.run("shell", "uiautomator dump /data/local/tmp/window_dump.xml", device=device, timeout=10.0)
+            r = await runner.run("exec-out", "cat /data/local/tmp/window_dump.xml", device=device, timeout=10.0)
+            if r.ok and r.stdout.strip().startswith("<?xml"):
+                xml_content = r.stdout
+            elif r.ok and "<hierarchy" in r.stdout:
+                xml_content = r.stdout
+        except Exception:
+            pass
+        if xml_content:
+            try:
+                root = ET.fromstring(xml_content)
+                # root is <hierarchy>, children are <node>
+                nodes = [node_to_dict(n) for n in root.findall("node")]
+                # Also handle nested: if root has single node that contains all
+                if not nodes and root.tag == "node":
+                    nodes = [node_to_dict(root)]
+                return {"ok": True, "source": "uiautomator", "nodes": nodes, "count": len(nodes)}
+            except Exception as e:
+                return {"ok": False, "error": f"XML parse failed: {e}", "raw": xml_content[:2000]}
+        # Fallback: dumpsys
+        try:
+            r2 = await runner.run("shell", "dumpsys window windows | head -100", device=device, timeout=10.0)
+            return {"ok": False, "error": "uiautomator dump failed or empty", "fallback": r2.stdout[:2000]}
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
+
+    @server.tool(
         name="unzip",
         title="Extract zip on host",
         description=(
