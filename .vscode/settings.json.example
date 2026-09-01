@@ -1,0 +1,5 @@
+{
+  "_comment": "Copy to .vscode/settings.json or merge \u2014 enables MCP in VS Code Copilot",
+  "chat.mcp.enabled": true,
+  "chat.mcp.discovery.enabled": true
+}

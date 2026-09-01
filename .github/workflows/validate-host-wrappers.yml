@@ -1,0 +1,62 @@
+name: validate-host-wrappers
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - '.mcp.json'
+      - 'scripts/generate-host-wrappers.py'
+      - '.vscode/mcp.json'
+      - '.cursor/mcp.json'
+      - 'claude_desktop_config.example.json'
+      - 'gemini-extension.json'
+      - '.github/workflows/validate-host-wrappers.yml'
+  pull_request:
+    paths:
+      - '.mcp.json'
+      - 'scripts/generate-host-wrappers.py'
+      - '.vscode/mcp.json'
+      - '.cursor/mcp.json'
+      - 'claude_desktop_config.example.json'
+      - 'gemini-extension.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate host wrappers are in sync
+        run: python3 scripts/generate-host-wrappers.py --check
+
+      - name: Validate JSON syntax
+        run: |
+          for f in .mcp.json .vscode/mcp.json .cursor/mcp.json claude_desktop_config.example.json gemini-extension.json; do
+            echo "Validating $f..."
+            python3 -c "import json; json.load(open('$f'))" && echo "  OK $f"
+          done
+
+      - name: Check VS Code key trap
+        run: |
+          python3 - <<'PY'
+          import json
+          vscode = json.load(open('.vscode/mcp.json'))
+          assert 'servers' in vscode, "VS Code must use 'servers' not 'mcpServers'"
+          assert 'mcpServers' not in vscode, "VS Code must NOT have 'mcpServers'"
+          print("VS Code trap OK: uses 'servers'")
+          cursor = json.load(open('.cursor/mcp.json'))
+          assert 'mcpServers' in cursor, "Cursor must use 'mcpServers'"
+          print("Cursor OK: uses 'mcpServers'")
+          claude = json.load(open('claude_desktop_config.example.json'))
+          assert 'mcpServers' in claude, "Claude Desktop must use 'mcpServers'"
+          print("Claude Desktop OK")
+          gemini = json.load(open('gemini-extension.json'))
+          assert 'mcpServers' in gemini, "gemini-extension.json must have mcpServers"
+          assert 'name' in gemini and 'version' in gemini, "gemini-extension missing name/version"
+          print("Gemini OK")
+          PY

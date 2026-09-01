@@ -26,9 +26,9 @@
   <a href="#install">Install</a> •
   <a href="#skills">Skills</a> •
   <a href="#commands">Commands</a> •
+  <a href="docs/INSTALL_MATRIX.md">All hosts</a> •
   <a href="CONTRIBUTING.md">Contributing</a> •
-  <a href="SPEC.md">Spec</a> •
-  <a href="docs/ARCHITECTURE.md">Docs</a>
+  <a href="SPEC.md">Spec</a>
 </p>
 
 <p align="center">
@@ -185,7 +185,7 @@ git clone https://github.com/mitunmanav/build-android-apps ~/.agents/plugins/bui
 # restart host
 ```
 
-Verify: `bash scripts/smoke.sh` (6 checks must pass). Optional: `android skills add --all` (https://github.com/android/skills). No telemetry — local `adb`/Gradle/Play API only.
+Verify: `bash scripts/smoke.sh` (6 checks must pass). Optional: `android skills add --all` (https://github.com/android/skills). No telemetry — local `adb`/Gradle/Play API only. All hosts: see [`docs/INSTALL_MATRIX.md`](docs/INSTALL_MATRIX.md) (Claude Desktop, Cursor, VS Code, Gemini/Antigravity via `scripts/generate-host-wrappers.py`).
 
 ---
 

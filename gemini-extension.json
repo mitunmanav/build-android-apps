@@ -1,0 +1,62 @@
+{
+  "name": "build-android-apps",
+  "version": "2.0.0",
+  "description": "Build and ship Android apps from your AI assistant: 28 skills (1 frontdoor + 27 specialists), 22 plain-English slash commands, 4 subagents, 5 MCP servers, 5 hooks \u2014 progressive disclosure keeps startu",
+  "mcpServers": {
+    "adb": {
+      "command": "python",
+      "args": [
+        "-m",
+        "adb_mcp"
+      ],
+      "env": {
+        "ANDROID_HOME": "${env:ANDROID_HOME}",
+        "PATH": "${env:PATH}"
+      }
+    },
+    "gradlew": {
+      "command": "python",
+      "args": [
+        "-m",
+        "gradlew_mcp"
+      ],
+      "env": {
+        "JAVA_HOME": "${env:JAVA_HOME}",
+        "PATH": "${env:PATH}"
+      }
+    },
+    "play-store": {
+      "command": "python",
+      "args": [
+        "-m",
+        "play_store_mcp"
+      ],
+      "env": {
+        "PATH": "${env:PATH}",
+        "PLAY_STORE_CACHE": "${workspaceFolder}/.build-android/play-cache"
+      }
+    },
+    "keystore": {
+      "command": "python",
+      "args": [
+        "-m",
+        "keystore_mcp"
+      ],
+      "env": {
+        "PATH": "${env:PATH}"
+      }
+    },
+    "asset": {
+      "command": "python",
+      "args": [
+        "-m",
+        "asset_mcp"
+      ],
+      "env": {
+        "PATH": "${env:PATH}"
+      }
+    }
+  },
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json"
+}

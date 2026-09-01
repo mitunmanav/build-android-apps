@@ -1,0 +1,57 @@
+{
+  "servers": {
+    "adb": {
+      "command": "python",
+      "args": [
+        "-m",
+        "adb_mcp"
+      ],
+      "env": {
+        "ANDROID_HOME": "${env:ANDROID_HOME}",
+        "PATH": "${env:PATH}"
+      }
+    },
+    "gradlew": {
+      "command": "python",
+      "args": [
+        "-m",
+        "gradlew_mcp"
+      ],
+      "env": {
+        "JAVA_HOME": "${env:JAVA_HOME}",
+        "PATH": "${env:PATH}"
+      }
+    },
+    "play-store": {
+      "command": "python",
+      "args": [
+        "-m",
+        "play_store_mcp"
+      ],
+      "env": {
+        "PATH": "${env:PATH}",
+        "PLAY_STORE_CACHE": "${workspaceFolder}/.build-android/play-cache"
+      }
+    },
+    "keystore": {
+      "command": "python",
+      "args": [
+        "-m",
+        "keystore_mcp"
+      ],
+      "env": {
+        "PATH": "${env:PATH}"
+      }
+    },
+    "asset": {
+      "command": "python",
+      "args": [
+        "-m",
+        "asset_mcp"
+      ],
+      "env": {
+        "PATH": "${env:PATH}"
+      }
+    }
+  }
+}
