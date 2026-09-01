@@ -1,0 +1,12 @@
+[project]
+name = "asset-mcp"
+version = "0.1.0"
+description = "MCP server for generating Android launcher icons, feature graphics, and store screenshots"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+    "Pillow>=10.0.0",
+]
+
+[project.scripts]
+asset-mcp = "asset_mcp.server:main"

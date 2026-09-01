@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Ops"
+  short_description: "Add push, analytics, background work"
+  default_prompt: "Use $android-ops to add notifications and analytics"

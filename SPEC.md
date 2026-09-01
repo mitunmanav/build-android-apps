@@ -1,218 +1,151 @@
 # Build Android App Plugin — Specification
 
-**Version**: 0.1.0
-**Status**: Draft for approval (Phase 0)
+**Version**: 1.0.0
+**Status**: Active (v0.1.0 → v1.0.0)
 **Author**: Mitun
 **License**: Apache-2.0
 
 ## 1. Goals
 
-Build a plugin that gives AI agents hands-on capability for Android development. The plugin teaches the agent Android conventions and exposes typed tools for the build loop (connect device → write code → build → install → run → debug → iterate).
+A single plugin that lets a **non-technical person** ship an Android app to Google Play
+Store by typing plain English. The agent handles every Android-specific step
+(SDK, Gradle, Kotlin, Compose, signing, AAB, Play Store API, store listing, updates).
+The user only handles Google-side paperwork: Play Console account ($25), ID
+verification, and banking setup.
 
-### What this plugin does
+### 1.1 What this plugin does
 
-- Provides 9 focused skills covering the daily Android build loop (debugger, profiler, leaks, AppActions, Material 3, Compose patterns, refactor, emulator, build)
-- Provides 9 slash commands for fast invocation (`/build`, `/run`, `/debug`, `/crash`, `/log`, `/device`, `/lint`, `/test`, `/clean`)
-- Provides 3 subagents that run parallel validation (`build-validator`, `release-auditor`, `apk-inspector`)
-- Provides 4 event hooks for safety + automation (block destructive ops, lint on edit, SDK detection at session start, background review on stop)
-- Bundles 2 MCP servers written in Python: `adb-mcp` and `gradlew-mcp`
-- Ships to Codex, Claude Code, and `.agents` open-standard hosts
+- **22 skills** covering the full Android dev lifecycle (intake → build → ship → update)
+- **21 slash commands** in plain English (`/make-app`, `/add`, `/change`, `/publish`, `/update`, `/status`)
+- **6 subagents** for parallel validation, intake clarification, phase routing, asset generation, policy checking, rejection parsing
+- **5 MCP servers** (Python, stdio): `adb-mcp`, `gradlew-mcp`, `play-store-mcp`, `keystore-mcp`, `asset-mcp`
+- **6 hooks** (SessionStart, PreToolUse, PostToolUse, PreSubmit, Stop, monitors/)
+- **Per-project state.json** with deterministic resume from any phase
+- **Multi-host packaging**: Codex CLI, Claude Code CLI, `.agents` standard hosts
+- **Pairing** with Google's `android/skills` (via `android skills add --all`)
 
-### What this plugin does NOT do
+### 1.2 What this plugin does NOT do
 
-- Not a comprehensive Android reference (Google's `android/skills` covers 22 domains; we focus on the build loop)
-- Not a marketplace product (v0.1 installs from a Git URL; submission is a v0.2+ task)
-- Not an iOS port (iOS plugin was a structural reference for skill organization; iOS and Android are different platforms)
-- Not a Kotlin Multiplatform or Compose-for-Web plugin
+- Not iOS, Wear, TV, Auto, or XR (those are platform-specific sibling plugins)
+- Not custom backend hosting (Firebase + Supabase templates only; raw backend v1.1+)
+- Not multi-user collaboration (single-user per project state.json)
+- Not AGP 9.x (AGP 8.7 stable for v1.0; AGP 9 in v1.1)
+- Not a vibe-coder wrapper UI (plugin lives in Codex/Claude/.agents CLI hosts)
+- Not state schema v2+ migrations (only v1)
 
 ## 2. Differentiation
 
-Why build this when Google's [`android/skills`](https://github.com/android/skills) already exists?
+Why this plugin when Google's [`android/skills`](https://github.com/android/skills)
+(7.1k stars), [`test-android-apps`](https://github.com/openai/plugins) (OpenAI official),
+and [`ayush016/android-lead-agent-skills`](https://github.com/ayush016/android-lead-agent-skills)
+exist?
 
-| | Google's `android/skills` | **This plugin** |
-|---|---|---|
-| Shipping format | Markdown skills only (open standard) | Skills + commands + subagents + hooks + MCP tools |
-| Tool surface | Agent uses `adb` via shell | Typed MCP tools: `adb install`, `adb logcat`, etc. |
-| Slash commands | None | 9 (`/build`, `/run`, `/debug`, ...) |
-| Subagents | None | 3 parallel validators |
-| Event hooks | None | 4 (block destructive, lint on edit, SDK detect, async review) |
-| Structured user prompts | None | MCP elicitation (device picker, variant picker) |
-| Multi-host | 3 hosts | 3 hosts |
-| Skills count | 22 (broad coverage) | 9 (focused on build loop) |
+| | `android/skills` (Google) | `test-android-apps` (OpenAI) | `ayush016` | **This plugin** |
+|---|---|---|---|---|
+| Coverage | 16 domain SKILLs (Compose, camera, media, security, system, etc.) | Testing only (QA, Perfetto, leaks) | Team standards (architecture, theming, performance) | **Full lifecycle: intake→ship→update** |
+| Tooling | Skills only (no MCP, no commands) | Raw adb shell + 2 skills + scripts/ | Single SKILL + 17 references | 22 skills + 21 commands + 5 MCP + 6 hooks |
+| Shipping | No (knowledge only) | No | No | **Yes** (`/publish` → Play Store upload) |
+| Resume | No | No | No | **Yes** (state.json + Kahn's phase-router) |
+| Resume-aware | No | No | No | **Yes** (`/add` `/remove` `/change` mid-loop) |
+| Target user | Any AI assistant | Test engineers | Android lead engineers | **Non-technical vibe coders** |
+| Cold-start setup | No | No | No | **Yes** (`/setup` wizard) |
 
-This plugin complements Google's by being a **focused, opinionated, hands-on toolkit** for the build loop. Users can have both installed.
+**This plugin complements, does not replace**:
+- Install `android/skills` for domain knowledge (`android skills add --all`)
+- Install `test-android-apps` for advanced profiling
+- Reference `ayush016` for team standards (copy patterns into your project's `AGENTS.md`)
 
 ## 3. Target Users
 
-### Primary
+### 3.1 Primary
 
-- Codex users working on Android apps (the AI has the plugin loaded; the user types `/build`, `/run`, `/debug`, etc.)
+Non-technical vibe coders. They:
 
-### Secondary
+- Type plain English, sometimes vague or bad
+- Use Codex CLI / Claude Code CLI / `.agents` standard host
+- Don't know what Android SDK, Gradle, Kotlin, Compose, AAB, or signing mean
+- Handle only Google-side paperwork (Play Console account, ID, banking)
+- Expect the agent to fix its own errors and explain what happened in plain English
 
-- Claude Code users (same experience, different host)
-- `.agents` open-standard host users (developers using VS Code Copilot, Cursor, etc.)
+### 3.2 Secondary
 
-### Author
+Technical "facilitators" who run the plugin on behalf of non-tech clients. They:
 
-- Mitun — single maintainer, single brand, no co-authors
+- Use the same hosts
+- May have Android experience but want a faster loop
+- Need to ship apps that other AI tools (Lovable, Bolt, v0, Cursor, Replit, ChatGPT) generated
+
+### 3.3 Author
+
+Mitun — single maintainer, single brand, no co-authors.
 
 ## 4. Architecture
 
-This section consolidates the design decisions from:
-- [Codex Plugins docs](https://developers.openai.com/codex/plugins/)
-- [Codex Build Skills](https://developers.openai.com/codex/build-skills/)
-- [Claude Code Plugins](https://docs.claude.com/en/docs/claude-code/plugins)
-- [Claude Code Skills](https://docs.claude.com/en/docs/claude-code/skills)
-- [Claude Code Hooks](https://docs.claude.com/en/docs/claude-code/hooks)
-- [Claude Code MCP](https://docs.claude.com/en/docs/claude-code/mcp)
-- [Anthropic: Equipping agents with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills)
-- [agentskills.io spec](https://agentskills.io/specification)
-- [MCP spec 2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/)
-
-### Directory layout
-
 ```
-build-android-app-plugin/
-├── SPEC.md                            # this file
-├── LICENSE                            # Apache-2.0
-├── README.md                          # install + usage
-├── CHANGELOG.md                       # release history
-├── .gitignore
-├── .codex-plugin/
-│   └── plugin.json                    # Codex: rich interface + skills + mcpServers
-├── .claude-plugin/
-│   └── marketplace.json               # Claude: minimal manifest
-├── .agents/plugins/
-│   └── marketplace.json               # open-standard manifest
-├── .mcp.json                          # adb-mcp + gradlew-mcp
-├── skills/                            # 9 skills (prose-only)
-│   ├── android-debugger-agent/
-│   │   ├── SKILL.md
-│   │   └── agents/openai.yaml
-│   ├── android-emulator-browser/
-│   │   ├── SKILL.md
-│   │   ├── agents/openai.yaml
-│   │   └── references/                # if SKILL.md > 500 lines
-│   ├── android-profiler/
-│   ├── android-leak-analyzer/
-│   ├── android-appActions/
-│   ├── material3-expressive/
-│   ├── compose-performance-audit/
-│   ├── compose-ui-patterns/            # references/ subfolder split
-│   └── compose-view-refactor/
-├── commands/                          # 9 slash commands (commands-as-skills)
-│   ├── build.md
-│   ├── run.md
-│   ├── debug.md
-│   ├── crash.md
-│   ├── log.md
-│   ├── device.md
-│   ├── lint.md
-│   ├── test.md
-│   └── clean.md
-├── agents/                            # 3 subagents
-│   ├── build-validator.md
-│   ├── release-auditor.md
-│   └── apk-inspector.md
-├── hooks/
-│   ├── hooks.json
-│   ├── session-start.sh
-│   ├── block-destructive.sh
-│   ├── lint-kotlin.sh
-│   └── stop-review.sh
-├── mcp-servers/                       # 2 Python MCP servers (stdio)
-│   ├── adb-mcp/
-│   │   ├── pyproject.toml
-│   │   ├── README.md
-│   │   └── src/adb_mcp/
-│   │       ├── __init__.py
-│   │       ├── server.py
-│   │       ├── tools/
-│   │       ├── resources/
-│   │       └── prompts/
-│   │   └── tests/
-│   └── gradlew-mcp/
-│       ├── pyproject.toml
-│       ├── README.md
-│       └── src/gradlew_mcp/
-│           ├── __init__.py
-│           ├── server.py
-│           ├── tools/
-│           ├── resources/
-│           └── prompts/
-│       └── tests/
-├── assets/
-│   ├── composer-icon.svg
-│   ├── logo.svg
-│   └── skill-android-debugger.svg
-├── docs/
-│   ├── ARCHITECTURE.md                # component diagram (mermaid)
-│   ├── HOOKS.md                       # hook reference
-│   ├── MCP.md                         # MCP server reference
-│   └── SKILLS-CATALOG.md              # 9-skill guide
-└── .github/workflows/
-    ├── validate-skills.yml            # skills-ref validate
-    ├── validate-manifests.yml         # JSON schema for 3 manifests
-    └── test-mcp-servers.yml           # pytest
+┌─────────────────────────────────────────────────────────┐
+│                AI Host (Codex CLI / Claude Code CLI /
+│                .agents standard host)
+└─────────────────────┬───────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────┐
+│  Plugin manifests (.codex-plugin/, .claude-plugin/,
+│  .agents/plugins/) + plugin.lock.json (sha256)
+└──────────┬───────────────┬─────────────────┬─────────────┘
+           │               │                 │
+           ▼               ▼                 ▼
+       Skills (22)   Commands (21)   MCP servers (5)
+       references/   plain-English    adb, gradlew, play-store,
+       per skill                      keystore, asset
+              │                            │
+              ▼                            ▼
+          Subagents (6)              Hooks (6) + monitors/
+          intake-clarifier           SessionStart, PreToolUse,
+          build-validator            PostToolUse, PreSubmit, Stop,
+          release-readiness          monitors/ (logcat + gradle)
+          rejection-parser
+          phase-router
+          asset-generator
+              │
+              ▼
+┌─────────────────────────────────────────────────────────┐
+│  Per-project state.json (<project>/.build-android/)
+│  schema_version, phase, plan[], cursor, build, device,
+│  store, keystore, environment, crashlytics, rejections,
+│  history[50] — gitignored, deterministic phase-router
+└─────────────────────────────────────────────────────────┘
 ```
 
-### Plugin manifest (Codex: `.codex-plugin/plugin.json`)
+### 4.1 Resumable loop contract
 
-```json
-{
-  "$schema": "https://json.schemastore.org/codex-plugin.json",
-  "name": "build-android-app-plugin",
-  "version": "0.1.0",
-  "description": "Agentic Android development: build, run, debug, profile via slash commands and MCP-driven adb/gradlew servers.",
-  "author": {
-    "name": "Mitun",
-    "email": "[email protected]",
-    "url": "https://github.com/mitunmanav"
-  },
-  "homepage": "https://github.com/mitunmanav/build-android-app-plugin",
-  "repository": "https://github.com/mitunmanav/build-android-app-plugin",
-  "license": "Apache-2.0",
-  "keywords": ["android", "kotlin", "jetpack-compose", "gradle", "adb"],
-  "interface": {
-    "displayName": "Build Android App",
-    "shortDescription": "Agentic Android development",
-    "longDescription": "Plugin for building, running, debugging, profiling, and shipping Android apps. Provides slash commands, subagents, MCP servers, and 9 domain skills.",
-    "developerName": "Mitun",
-    "category": "development",
-    "capabilities": ["Skills", "Interactive", "Read", "Write"],
-    "defaultPrompt": [
-      "Use $android-debugger-agent to debug my Android app",
-      "Use /build to assemble the debug variant",
-      "Run /device to pick an emulator"
-    ],
-    "websiteURL": "https://github.com/mitunmanav/build-android-app-plugin",
-    "brandColor": "#3DDC84"
-  },
-  "skills": "./skills/",
-  "mcpServers": "./.mcp.json"
-}
+Six rules that every subagent/skill MUST obey:
+
+```
+R1  Plan is single source of truth. User-approved = locked until edited.
+R2  Add/remove/reorder plan items = first-class ops (no restart).
+R3  Phase entry checks (phase, next_pending_id) → only runs next step.
+R4  Re-entering same phase = idempotent (skip done tasks).
+R5  STOP preserves partial state. Never delete partial files.
+R6  SessionStart loads state.json → "you're at phase X step Y".
 ```
 
-> **Note**: GitHub-specific values (`email`, `url`) above are placeholders. Fill in before tagging v0.1.0.
+### 4.2 phase-router algorithm
 
-### Multi-host manifests
+Deterministic, no LLM call:
 
-Three directories ship manifests for three hosts:
+```
+delta = new user request
+for task in plan where task.status != done and (deps met OR delta forces):
+    mark task.phases in [build_affected...] -> enqueue
+return ordered phases from deps graph (Kahn's algorithm)
+```
 
-| Directory | File | Format | Hosts |
-|---|---|---|---|
-| `.codex-plugin/` | `plugin.json` | Codex-rich with `interface.*` | Codex (CLI, desktop app, IDE, web) |
-| `.claude-plugin/` | `marketplace.json` | Claude minimal | Claude Code |
-| `.agents/plugins/` | `marketplace.json` | Open-standard | `.agents` standard hosts (VS Code, Cursor, Gemini CLI, etc.) |
+## 5. Skills (22)
 
-All three reference the same `./skills/`, `./agents/`, `./commands/`, `./hooks/`, `.mcp.json`. Host-level features (Codex interface block, Claude-Code-only frontmatter fields) live only in their respective manifests.
+All skills follow the [agentskills.io open-standard format](https://agentskills.io/specification).
+Per-skill UI metadata (Codex-only) lives in `agents/openai.yaml`; other hosts ignore it.
 
-## 5. Skills (9)
-
-All skills follow the [agentskills.io open-standard format](https://agentskills.io/specification). Per-skill UI metadata (Codex-only) lives in `agents/openai.yaml`; other hosts ignore it.
-
-### Frontmatter (open-standard, multi-host safe)
+### 5.1 Frontmatter (open-standard, multi-host safe)
 
 ```yaml
 ---
@@ -221,29 +154,30 @@ description: >
   <Multi-sentence trigger phrase. State when to use AND when not to use.
   Under 1024 chars (agentskills.io spec limit).>
 license: Apache-2.0
-compatibility: <Required MCP servers, env vars, system packages. Max 500 chars.>
-allowed-tools: <Space-separated pre-approved tool names. Experimental.>
 metadata:
   author: Mitun
-  last-updated: '2026-09-01'
+  last-updated: 'YYYY-MM-DD'
   keywords: [android, ...]
-  platform: android
-  version: 0.1.0
 ---
 ```
 
 **Hard constraints** (enforced by `skills-ref validate`):
+
 - `name`: 1-64 chars; `^[a-z0-9]+(-[a-z0-9]+)*$`; no leading/trailing hyphen; no `--`
 - `description`: 1-1024 chars
 - SKILL.md body: under 500 lines (move detail to `references/`)
 - Reference paths: relative, one level deep
 
-### Body template
+### 5.2 Body template
 
 ```markdown
 # <Skill Name>
 
+> [!NOTE]
+> One-line description of what this skill does.
+
 ## Prerequisites
+
 - Dep 1 (versions, packages)
 - Dep 2
 
@@ -255,8 +189,8 @@ metadata:
 
 ## Anti-patterns
 
-- ❌ Don't do X
-- ❌ Don't do Y
+- **DO NOT** do X
+- **DO NOT** do Y
 
 ## Pairing
 
@@ -267,9 +201,14 @@ metadata:
 
 - See [references/setup.md](references/setup.md)
 - External: https://developer.android.com/...
+
+## Final Checklist
+
+- [ ] Step 1 verified
+- [ ] Step 2 verified
 ```
 
-### Per-skill agents/openai.yaml (Codex-only)
+### 5.3 Per-skill agents/openai.yaml (Codex-only)
 
 ```yaml
 interface:
@@ -285,37 +224,54 @@ dependencies:
     - type: "mcp"
       value: "adb-mcp"
       transport: "stdio"
+    - type: "cli"
+      value: "adb"
+      description: "Android Debug Bridge"
 ```
 
-### 9 skills lineup
+### 5.4 22-skill lineup
 
 | # | Skill | Purpose | MCP deps |
 |---|---|---|---|
-| 1 | `android-debugger-agent` | Connect device, attach debugger, set breakpoints, step through code | `adb-mcp` |
-| 2 | `android-emulator-browser` | Launch AVD, screencap, UI inspect, drive emulator | `adb-mcp` |
-| 3 | `android-profiler` | Record Perfetto trace, analyze jank/memory/CPU | `adb-mcp`, `gradlew-mcp` |
-| 4 | `android-leak-analyzer` | LeakCanary + heap dump triage | `adb-mcp` |
-| 5 | `android-app-functions` | AppFunctions API + Shortcuts integration | (none) |
-| 6 | `material3-expressive` | Material 3 Expressive design + anti-patterns | (none) |
-| 7 | `compose-performance-audit` | Recomposition, stability, deferral, baseline profiles | (none) |
-| 8 | `compose-ui-patterns` | Pattern catalog (split to `references/` when >500 lines) | (none) |
-| 9 | `compose-view-refactor` | Refactor methodology, MV separation | (none) |
+| 1 | `app-intake` | Vague prompt → concrete plan; asks N clarifying questions in plain English | (state.json only) |
+| 2 | `android-scaffold` | Bootstrap Gradle/Compose/signing project from spec | `gradlew-mcp` |
+| 3 | `android-build` | assembleDebug/release, sane defaults, --no-daemon, lightweight verification | `gradlew-mcp` |
+| 4 | `android-run` | Install + launch + screenshot | `adb-mcp` |
+| 5 | `android-debug-fix` | Logcat + agent-driven fix loop | `adb-mcp` |
+| 6 | `android-ui-patterns` | Compose UI patterns: lists, navigation, forms, state hoisting, side effects, theming | (none) |
+| 7 | `android-performance` | Recomposition, stability, baseline profiles, startup | `gradlew-mcp` |
+| 8 | `android-test` | Screenshot test (400/610/900 × 400/500/1000 grid) + smoke tests + Robolectric | `gradlew-mcp` |
+| 9 | `android-importer` | Detect + audit + finish apps built by other AI tools (Lovable, Bolt, v0, etc.); snapshot-on-import | `gradlew-mcp` |
+| 10 | `android-backend` | Data layer (Room + DataStore) + Network (Retrofit/OkHttp); Supabase + Firebase templates | (none) |
+| 11 | `android-auth` | Credential Manager + sign-in flow; integration-point discovery via search strings | (none) |
+| 12 | `android-ops` | Push (FCM) + Analytics (Firebase) + Background (WorkManager) + Crashlytics auto-wire | (none) |
+| 13 | `android-media` | CameraX + Media3 (ExoPlayer) | (none) |
+| 14 | `android-restore-credentials` | Sign-in with restore keys (Credential Manager); SYSTEM DIRECTIVE pattern for backend fence | (none) |
+| 15 | `android-verified-email` | OTP-less email verification (Credential Manager + SD-JWT) | (none) |
+| 16 | `android-edge-to-edge` | SDK 35+ mandatory edge-to-edge; RIGHT/WRONG code pairs pattern | (none) |
+| 17 | `android-icons-assets` | Launcher icon + adaptive layers + feature graphic; two-tier checklist (agent + user) | `asset-mcp` |
+| 18 | `android-store-listing` | Play Store title/desc/short/long/screenshots/privacy URL; data safety form inference; content rating | (none) |
+| 19 | `android-play` | Play Store submission flow (porting Google's `play/engage-sdk-integration` + `play-billing-library-version-upgrade`) | `play-store-mcp` |
+| 20 | `android-publish-update` | Keystore + signed AAB + Play upload + version bump + changelog | `play-store-mcp`, `keystore-mcp` |
+| 21 | `android-r8-analyzer` | APK size optimization; strict-output-limit pattern; report sections with "omit if no findings" | `gradlew-mcp` |
+| 22 | `setup-wizard` | First-run setup: SDK install + Play Console signup + service account + ID verification + banking | `gradlew-mcp`, `play-store-mcp` |
 
-### Decision: prose-only, no scripts/
+### 5.5 references/ per skill
 
-Per [Anthropic's engineering blog](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills), skills can include code "for Claude to execute as tools at its discretion." However:
+Every skill has `references/<topic>.md` for content >500 lines. SKILL.md body ≤100 lines.
 
-1. The iOS plugin used scripts in 3/9 skills (~1,700 lines) for binary parsing and template generation
-2. **We have MCP servers** — parsing logic moves to Python servers with typed outputs
-3. Scripts in `scripts/` only work in Codex CLI's exec environment; **MCP tools work in all 3 hosts**
+Pattern (matching Google's `android/skills` and `ayush016/android-lead-agent-skills`):
+- `references/setup.md` — installation, prerequisites
+- `references/patterns.md` — code patterns with RIGHT/WRONG pairs
+- `references/troubleshooting.md` — common errors + fixes
+- `references/checklist.md` — agent self-check + user checklist
+- `references/references.md` (optional) — external links, deeper reads
 
-Decision: **All 9 skills are prose-only. Zero `scripts/` folders per skill.** Parsing/generation logic lives in MCP servers.
+## 6. Slash Commands (21)
 
-## 6. Slash Commands (9)
+Commands implemented as skill files. For Codex, invokable as `/cmd` or `$cmd`.
 
-Commands implemented as skill files (Claude Code pattern: `commands/` and `skills/` are merged). For Codex, these become invokable as `/cmd` or `$cmd`.
-
-### Frontmatter pattern
+### 6.1 Frontmatter pattern
 
 ```markdown
 ---
@@ -331,8 +287,13 @@ allowed-tools:
 ## Context
 
 - Working directory: !`pwd`
-- Project tasks: !`./gradlew tasks --all 2>/dev/null | head -30`
+- State: !`cat .build-android/state.json 2>/dev/null || echo "no state yet"`
 - Recent commits: !`git log --oneline -5`
+
+## Reporting Action
+
+> [!IMPORTANT]
+> Before proceeding, immediately tell the user: "I will [action description]."
 
 ## Your task
 
@@ -342,92 +303,126 @@ $ARGUMENTS
 ...
 
 ## Anti-patterns
-- ❌ Don't `gradlew clean` unless explicitly asked
-- ❌ Don't pipe Gradle to `grep` (use MCP's structured output)
+
+- **DO NOT** `gradlew clean` unless explicitly asked
+- **DO NOT** pipe Gradle to `grep` (use MCP's structured output)
+
+## Final Checklist
+
+- [ ] Step 1 verified
+- [ ] Step 2 verified
 ```
 
-### 9 commands
+### 6.2 21 commands
 
 | # | Command | MCP tools pre-allowed | Purpose |
 |---|---|---|---|
-| 1 | `/build` | `gradlew.run_task`, `gradlew.list_tasks`, `gradlew.parse_dependencies`, `adb.list_devices` | Run a Gradle build |
-| 2 | `/run` | `gradlew.run_task`, `gradlew.list_tasks`, `adb.list_devices`, `adb.select_device`, `adb.install_apk`, `adb.start_activity`, `adb.wait_for_device` | Build + install + launch |
-| 3 | `/debug` | `adb.list_devices`, `adb.select_device`, `adb.shell_command`, `adb.logcat_dump`, `adb.getprop`, `adb.start_activity` | Set up JDWP debug session |
-| 4 | `/crash` | `adb.logcat_dump`, `adb.shell_command`, `adb.pull_file`, `adb.push_file`, `adb.unzip` | Analyze crash report |
-| 5 | `/log` | `adb.list_devices`, `adb.select_device`, `adb.logcat_dump`, `adb.logcat_clear`, `adb.shell_command` | Filter/stream logcat |
-| 6 | `/device` | `adb.list_devices`, `adb.select_device`, `adb.shell_command`, `adb.getprop`, `adb.wait_for_device` | List/pick device, launch AVD |
-| 7 | `/lint` | `gradlew.run_lint`, `gradlew.run_task`, `gradlew.list_tasks` | Run lint, summarize |
-| 8 | `/test` | `gradlew.run_tests`, `gradlew.run_task`, `gradlew.list_tasks` | Run tests, report failures |
-| 9 | `/clean` | `gradlew.clean`, `gradlew.run_task` | `gradlew clean` (destructive, with elicitation) |
+| 1 | `/setup` | `gradlew.manage_sdk`, `play-store.auth` | First-run wizard: SDK + Play Console + service account |
+| 2 | `/make-app` | `gradlew.run_task`, `adb.list_devices` | Full intake → spec → scaffold |
+| 3 | `/add` | all | Add feature to plan without restart |
+| 4 | `/change` | all | Modify existing plan item |
+| 5 | `/remove` | all | Remove plan item + cleanup touched files |
+| 6 | `/continue` | all | Resume from current phase |
+| 7 | `/where` | (state.json only) | Show current phase + plan progress + blockers |
+| 8 | `/status` | `play-store.get_stats`, `gradlew.run_task` | Post-publish dashboard (downloads, ratings, crashes) |
+| 9 | `/publish` | `play-store.upload`, `keystore.use` | Store listing + submit to internal test track |
+| 10 | `/update` | `play-store.upload`, `gradlew.run_task` | New version + changelog + resubmit |
+| 11 | `/reset` | (destructive gate) | Reset project state (double-confirm) |
+| 12 | `/backup-keystore` | `keystore.copy` | Copy keystore to safe place (Google Drive / USB) |
+| 13 | `/why-rejected` | `play-store.get_review_status` | Parse Play rejection, auto-diagnose, fix-and-resubmit |
+| 14 | `/import` | `gradlew.describe_project` | Detect existing Android project (Kotlin/Compose/XML/Java) |
+| 15 | `/audit` | `gradlew.parse_dependencies`, `gradlew.find_duplicate_classes` | List gaps for Play Store ship |
+| 16 | `/finish` | `keystore.generate_keystore`, `gradlew.run_task` | Auto-fill gaps + publish-to-internal-test-track |
+| 17 | `/screenshots` | `adb.screencap`, `asset.generate` | Generate Play Store screenshots from running app |
+| 18 | `/privacy-policy` | `gradlew.parse_dependencies` | Generate privacy policy + data safety section |
+| 19 | `/help` | (none) | List of commands in plain English |
+| 20 | `/debug` (dev alias) | `adb.shell_command`, `adb.logcat_dump` | Set up JDWP debug session |
+| 21 | `/lint` (dev alias) | `gradlew.run_lint` | Run lint, summarize |
 
-**MCP tool name format**: `<server>.<tool>` where `<server>` is the key in `.mcp.json` (`adb` or `gradlew`). When exposed by Codex, the fully-qualified tool name in `allowed-tools:` follows the pattern `mcp__plugin_<plugin_name_underscored>_<server>__<tool>`. For this plugin: `mcp__plugin_build_android_app_plugin_<adb|gradlew>__<tool>`.
+**MCP tool name format**: `<server>.<tool>` where `<server>` is the key in `.mcp.json`. When exposed by Codex, the fully-qualified tool name follows `mcp__plugin_<plugin_name_underscored>_<server>__<tool>`. For this plugin: `mcp__plugin_build_android_app_plugin_<server>__<tool>`.
 
-## 7. Subagents (3)
+## 7. Subagents (6)
 
 Each is a `.md` file with frontmatter (name, description with `<example>` block, tools, model) and system-prompt body.
 
-### Pattern
+### 7.1 Sub-agent prompt template (from Google's `play-policy-insights`)
 
-```markdown
----
-name: build-validator
-description: |
-  Use when user asks to "validate the build", "pre-flight check", "is the build healthy?".
-  Runs lint + tests + dependency check + R8 in parallel.
+All subagents use this pattern for context efficiency:
 
-  <example>
-  Context: User just merged a PR and wants to verify nothing broke.
-  user: "Validate the build after my PR"
-  assistant: "I'll use the build-validator agent."
-  </example>
-
-tools: [mcp__plugin_android_gradlew__run_task, Read]
-model: sonnet
----
-
-You are a build validation specialist...
-
-1. Determine affected modules from recent git diff
-2. Run in parallel: lint, tests, deps, R8
-3. Aggregate results into status report
-4. Suggest fix if RED
+```
+"Read your instructions from `<temp_dir>/prompt_<goal>.md` and execute.
+ MANDATORY: You must use your file-writing capabilities to save your final
+ findings directly to the file system at `<temp_dir>/worker_<goal>.json`.
+ You are strictly forbidden from outputting the JSON in your chat response.
+ To minimize context usage, your final response must be exactly 'SUCCESS'
+ and nothing else."
 ```
 
-### 3 subagents
+**Containment Mandate**: All writes confined to `.scratch/<skill>-<uuid>/`.
 
-| Agent | Purpose | Parallelism |
+**Concurrency limit**: Max 3 subagents simultaneously. Spawn batch, wait, spawn next.
+
+### 7.2 6 subagents
+
+| Agent | Purpose | Concurrency |
 |---|---|---|
-| `build-validator` | Pre-flight: lint + tests + dep check + R8 | 4-way parallel |
-| `release-auditor` | Pre-release: keystore + version + changelog + R8 + lint | 5-way parallel |
-| `apk-inspector` | Deep APK analysis: manifest + dex + resources + signing | Sequential (deep) |
+| `intake-clarifier` | When prompt vague → returns N clarifying questions for user | 1 |
+| `build-validator` | Pre-flight: lint + tests + dep check + R8 in parallel | 3-way parallel |
+| `release-readiness` | Pre-publish: signing + listing + privacy + content rating + data safety | 5-way parallel |
+| `rejection-parser` | Post-rejection: parse Play Store rejection, diagnose, fix-suggest | 1 |
+| `phase-router` | Given user delta + current state, compute minimal phase sequence (Kahn's deps) | 1 (deterministic) |
+| `asset-generator` | Generate icons + adaptive layers + feature graphics + screenshots | 2-way parallel |
 
-## 8. Hooks (4 events)
+## 8. Hooks (6 events)
 
-Per [Claude Code Hooks docs](https://docs.claude.com/en/docs/claude-code/hooks), 28 events supported. We use 4.
+Per [Codex Hooks docs](https://developers.openai.com/codex/hooks) and [Claude Code Hooks docs](https://docs.claude.com/en/docs/claude-code/hooks). 6 events.
 
 | Event | Handler | Matcher | Purpose |
 |---|---|---|---|
-| `SessionStart` | `session-start.sh` | (all) | Detect `$ANDROID_HOME`, adb in PATH, connected devices; warn if missing |
-| `PreToolUse` | `block-destructive.sh` | `Bash` | Block `gradlew clean` and `rm -rf` unless explicitly confirmed |
-| `PostToolUse` | `lint-kotlin.sh` | `Edit|Write` | Run ktlint on edited `.kt` files |
-| `Stop` | `stop-review.sh` | (all) | Background LLM review of git diff (asyncRewake pattern from Claude Code) |
+| `SessionStart` | `session-start.sh` | (all) | Detect SDK/JDK/adb/devices; launch `/setup` wizard if first run |
+| `PreToolUse` | `block-destructive.sh` | `Bash` | Block `gradlew clean`, `rm -rf`, `git reset --hard` unless confirmed |
+| `PostToolUse` | `lint-kotlin.sh` | `Edit|Write|MultiEdit` | Run ktlint on edited `.kt` files |
+| `PreSubmit` | `release-check.sh` | `mcp__plugin_*_play_store__submit` | Run release-readiness subagent + policy check |
+| `Stop` | `stop-summary.sh` | (all) | Plain-English session summary for user |
+| `monitors/` | `logcat-watcher.json`, `gradle-watcher.json` | (background) | Push logcat/gradle output to agent on failure |
 
-### hooks.json
+### 8.1 monitors/ (Codex-only feature)
 
 ```json
 {
+  "monitors": [
+    {
+      "name": "logcat-watcher",
+      "command": "adb logcat --pid $(adb shell pidof -s <package>)",
+      "description": "Stream app logs to agent on crash/error lines"
+    },
+    {
+      "name": "gradle-watcher",
+      "command": "tail -F build/output.log",
+      "description": "Trigger agent on Gradle failure lines"
+    }
+  ]
+}
+```
+
+### 8.2 hooks.json
+
+```json
+{
+  "$schema": "https://json.schemastore.org/codex-hooks.json",
   "hooks": {
     "SessionStart": [...],
     "PreToolUse": [...],
     "PostToolUse": [...],
+    "PreSubmit": [...],
     "Stop": [...]
   }
 }
 ```
 
-## 9. MCP Servers (2)
+## 9. MCP Servers (5)
 
-### adb-mcp
+### 9.1 adb-mcp
 
 | Tool | Annotations | Purpose |
 |---|---|---|
@@ -448,18 +443,19 @@ Per [Claude Code Hooks docs](https://docs.claude.com/en/docs/claude-code/hooks),
 | `getprop` | readOnly | `adb shell getprop` |
 | `setprop` | destructive | `adb shell setprop` |
 | `wait_for_device` | (Task) | `adb wait-for-device` |
+| **`dump_layout`** | readOnly | **NEW** — JSON UI tree (matches Google's `android layout` shape: text/resourceId/contentDesc/interactions/state/bounds/center/off-screen) |
 
 Plus:
 - Resource: `adb://logcat/{device}/{buffer}` (subscribable)
 - Prompt: `diagnose-app-crash`
 - Elicitation: device picker, variant picker
 
-### gradlew-mcp
+### 9.2 gradlew-mcp
 
 | Tool | Annotations | Purpose |
 |---|---|---|
 | `list_tasks` | readOnly | `./gradlew tasks --all` |
-| `run_task` | (Task) | `./gradlew <task>` with progress |
+| `run_task` | (Task) | `./gradlew <task>` with progress; uses `--no-daemon` |
 | `parse_dependencies` | readOnly | `./gradlew :app:dependencies` |
 | `find_duplicate_classes` | readOnly | Find duplicate class deps |
 | `run_lint` | (Task) | `./gradlew lint` |
@@ -469,6 +465,10 @@ Plus:
 | `get_build_status` | readOnly | Task status |
 | `verify_keystore` | readOnly | Validate signing config |
 | `generate_keystore` | (elicitation) | Generate keystore with masked password input |
+| **`describe_project`** | readOnly | **NEW** — outputs JSON of build targets + APK paths (matches `android describe`) |
+| **`manage_sdk`** | destructive | **NEW** — wrapper for `sdkmanager` (install/upgrade packages) |
+| **`run_help`** | readOnly | **NEW** — lightweight verification gate (`./gradlew help`) |
+| **`run_build_dry`** | readOnly | **NEW** — lightweight verification gate (`./gradlew build --dry-run`) |
 
 Plus:
 - Resource: `gradle://project/info`
@@ -476,147 +476,328 @@ Plus:
 - Resource: `gradle://build/{id}/errors`
 - Prompt: `explain-error`
 
-### Transport: stdio only
+### 9.3 play-store-mcp (NEW)
 
-Both servers use stdio transport (per Codex + Claude Code docs). No HTTP, SSE, or WebSocket.
+| Tool | Purpose |
+|---|---|
+| `auth` | OAuth + service account JSON upload |
+| `upload_aab` | Upload AAB to internal test track |
+| `upload_listing` | Upload localized store listing (title/desc/short/long) |
+| `upload_screenshot` | Upload phone/tablet screenshots |
+| `get_review_status` | Query Play review status |
+| `list_rejections` | List past rejections with reasons |
+| `submit_for_review` | Submit current draft for review |
+| `rollout_staged` | Staged rollout (1% → 10% → 50% → 100%) |
+| `get_stats` | Downloads, ratings, reviews, crash count |
 
-### Python dependencies
+### 9.4 keystore-mcp (NEW)
+
+| Tool | Purpose |
+|---|---|
+| `generate_keystore` | Generate upload keystore with masked password elicitation |
+| `verify_keystore` | Validate keystore + alias + passwords match |
+| `rotate_keystore` | Rotate upload keystore (preserves app signing) |
+| `backup` | Copy keystore to safe location with warning |
+| `fingerprint` | SHA-256 fingerprint for verification |
+
+### 9.5 asset-mcp (NEW)
+
+| Tool | Purpose |
+|---|---|
+| `generate_icon` | Vector launcher icon + adaptive layers (foreground/background/monochrome) |
+| `generate_feature_graphic` | 1024×500 feature graphic for Play Store |
+| `generate_screenshot` | Compose running-app screenshot → 1080×1920 phone PNG |
+| `compose_marketing` | Composite screenshots + text for promo |
+
+### 9.6 Transport
+
+All 5 servers use stdio transport. No HTTP, SSE, or WebSocket.
+
+### 9.7 Python dependencies
 
 - `mcp` (official SDK, async support)
-- `pydantic` v2 (schema validation, matches TypeScript Zod)
-- No other deps; `adb` and `gradle` invoked via `subprocess.run`
+- `pydantic` v2 (schema validation)
+- `Pillow` (asset-mcp only)
+- `cryptography` (keystore-mcp only)
+- No other deps; `adb`, `gradle`, `sdkmanager` invoked via `subprocess.run`
 
 ## 10. Multi-host Packaging
 
-### Per-host rules
+### 10.1 Per-host rules
 
 | Host | Manifest path | Format | Special fields |
 |---|---|---|---|
-| Codex | `.codex-plugin/plugin.json` | Codex-rich with `interface.*` | `interface`, `capabilities`, `defaultPrompt`, `brandColor` |
-| Claude Code | `.claude-plugin/marketplace.json` | Claude minimal | `$schema`, `category` per plugin |
+| Codex CLI | `.codex-plugin/plugin.json` | Rich with `interface.*` | `interface`, `capabilities`, `defaultPrompt`, `brandColor` |
+| Claude Code CLI | `.claude-plugin/marketplace.json` | Minimal | `$schema`, `category` per plugin |
 | `.agents` standard | `.agents/plugins/marketplace.json` | Open-standard | Strict spec compliance |
 
-### Plugin-level naming
+### 10.2 plugin.lock.json (NEW — adopted from OpenAI `test-android-apps`)
 
-- Codex: `build-android-app-plugin` (no prefix needed)
-- Claude Code: skills auto-namespaced as `/build-android-app-plugin:<skill-name>`
-- `.agents`: depends on host (typically uses `name` from manifest)
+```json
+{
+  "lockVersion": 1,
+  "pluginId": "com.mitun.build-android-app-plugin",
+  "pluginVersion": "1.0.0",
+  "generatedAt": "2026-09-01T00:00:00Z",
+  "skills": [
+    {
+      "id": "app-intake",
+      "vendoredPath": "skills/app-intake",
+      "source": {
+        "type": "github",
+        "repo": "mitunmanav/build-android-app-plugin",
+        "path": "skills/app-intake",
+        "ref": "<commit-sha>"
+      },
+      "integrity": "sha256-<digest>"
+    }
+  ]
+}
+```
 
-## 11. Versioning
+Pin each of the 22 skills with sha256 for reproducible installs.
 
-- **Semver**: `0.1.0` → `0.2.0` → `1.0.0`
+## 11. state.json Schema
+
+Per-project file at `<project>/.build-android/state.json`. Gitignored.
+
+### 11.1 Schema
+
+```json
+{
+  "schema_version": 1,
+  "phase": "intake|plan|scaffold|build|test|publish|update",
+  "plan": [
+    {
+      "id": "<uuid>",
+      "title": "<human-readable>",
+      "status": "pending|in_progress|done|skipped",
+      "phase": "<which phase runs this task>",
+      "deps": ["<task-id>", "..."],
+      "files_touched": ["<path>", "..."],
+      "added_by": "user|agent",
+      "added_at": "<iso8601>"
+    }
+  ],
+  "cursor": {
+    "phase": "<current phase>",
+    "task_id": "<current task>"
+  },
+  "build": {
+    "last_assemble": "ok|fail",
+    "apk_path": "<path>",
+    "aab_path": "<path>",
+    "last_gradle_output_tail": "<last 50 lines>"
+  },
+  "device": {
+    "serial": "<adb-serial>",
+    "api": 34,
+    "abi": "arm64-v8a"
+  },
+  "store": {
+    "draft_id": "<play-store-draft-id>",
+    "listing_revision": 0,
+    "track": "internal|closed|production",
+    "rollout_percent": 0
+  },
+  "keystore": {
+    "fingerprint": "<sha256>",
+    "path": "<keystore-path>",
+    "alias": "<alias>",
+    "backed_up": false
+  },
+  "environment": {
+    "sdk_installed": false,
+    "jdk_installed": false,
+    "adb_in_path": false,
+    "play_console_email": "<email>",
+    "billing_setup": false
+  },
+  "crashlytics": {
+    "enabled": false,
+    "dsn": "<firebase-dsn>"
+  },
+  "rejections": [
+    {
+      "id": "<rejection-id>",
+      "reason": "<text>",
+      "fix_suggestion": "<agent-generated>"
+    }
+  ],
+  "history": [
+    {
+      "at": "<iso8601>",
+      "action": "<short-string>",
+      "summary": "<one-line>"
+    }
+  ]
+}
+```
+
+### 11.2 Field rules
+
+- `history` is a ring buffer; last 50 entries only
+- All mutations go through state-manager
+- Snapshot to `.build-android/snapshot-<ts>/` on every /import
+- Migration stub: `schema_version: 1 → 2` migration defined inline
+
+## 12. Cold Start Wizard (`/setup`)
+
+Non-tech user's first contact. 10 steps, ~30 min total.
+
+```
+Step 1:  Detect OS (Linux/macOS/Windows)
+Step 2:  Check JDK → install if missing (sdkmanager + brew/apt)
+Step 3:  Check Android SDK → install cmdline-tools + platform-tools
+Step 4:  Check adb in PATH → add to PATH if missing
+Step 5:  Detect connected device or emulator → install AVD if none
+Step 6:  Prompt for Google account → create Play Console account ($25)
+Step 7:  Walk through Google Cloud Console → create project + service account
+Step 8:  Download service account JSON → save to .build-android/
+Step 9:  Verify API access (test call to Play Developer API)
+Step 10: Generate upload keystore → masked password → confirm backup
+```
+
+Each step shows a progress bar and a single sentence explaining what it does.
+
+## 13. Versioning
+
+- **Semver**: `0.1.0` → `1.0.0` → `1.1.0` → `2.0.0`
 - `0.x` = pre-1.0; breaking changes allowed in minor
 - `1.0.0+` = stable; breaking changes bump major
 - Bump per release, commit message + CHANGELOG.md entry required
 
-## 12. License
+## 14. License
 
 Apache-2.0 for the entire plugin. MCP servers, skills, scripts, hooks, docs — all Apache-2.0.
 
-## 13. Distribution
+## 15. Distribution
 
-- **v0.1.0**: Public GitHub repo + README install. No marketplace gate.
-- **v0.2.0+**: Submit to Codex marketplace + Claude Code community marketplace (deferred).
+- **v1.0.0**: Public GitHub repo + README install. No marketplace gate.
+- **v1.1+**: Submit to:
+  - [Anthropic Claude community marketplace](https://clau.de/plugin-directory-submission) (via claude.ai form)
+  - Codex marketplace (when OpenAI opens public submissions)
 
-### Install instructions (README)
+### 15.1 Install instructions
 
 ```bash
 # Codex CLI
 codex plugin install github.com/mitunmanav/build-android-app-plugin
 
-# Or for development
-git clone https://github.com/mitunmanav/build-android-app-plugin
-codex --plugin-dir ./build-android-app-plugin
-
-# Claude Code
+# Claude Code CLI
 claude plugin marketplace add mitun/mitun
 claude plugin install build-android-app-plugin@mitun
 
-# .agents host
-git clone https://github.com/mitunmanav/build-android-app-plugin ~/.agents/plugins/build-android-app-plugin
+# .agents standard host
+git clone https://github.com/mitunmanav/build-android-app-plugin \
+  ~/.agents/plugins/build-android-app-plugin
+
+# Pair with Google's android/skills
+android skills add --all
 ```
 
-## 14. Out of Scope (v0.1)
+## 16. Compatibility (pinned versions)
 
-Explicit non-goals to keep v0.1 focused:
+| Component | Version |
+|---|---|
+| Android Gradle Plugin | 8.7+ |
+| Gradle | 8.9+ |
+| Kotlin | 2.0.21 |
+| Compose BOM | 2024.12.01 |
+| min SDK | 26 (Android 8.0, ~98% device coverage) |
+| target SDK | latest stable (default; ask during intake) |
+| Material 3 | 1.3.x |
+| Navigation Compose | 2.8.x |
+| Credential Manager | 1.7.x |
+| Hilt | 2.52 |
+| Room | 2.6.x |
+| DataStore | 1.1.x |
+| CameraX | 1.4.x |
+| Media3 | 1.4.x |
 
-- iOS port or iOS-comparison sections in docs (per user decision)
-- Skill `scripts/` folders (per user decision — moved to MCP)
-- Multiple MCP transports (stdio only)
-- Kotlin Multiplatform support
-- Compose-for-Web
-- Plugin marketplace submission (deferred to v0.2)
-- Per-skill UI screenshots
-- Per-skill test framework beyond `skills-ref validate`
-- GitHub Actions for MCP server tests (deferred to v0.2)
-- Custom plugin icons beyond the basic Android-themed asset
+## 17. Pairs With
 
-## 15. Verification
+- **openai/plugins/test-android-apps** — advanced profiling (Perfetto, Simpleperf, heap dumps). Install in addition.
+- **android/skills (Google)** — domain knowledge (Compose, camera, navigation, performance, security). Install via `android skills add --all`.
+- **ayush016/android-lead-agent-skills** — team standards reference. Copy patterns into your project's `AGENTS.md`.
 
-Per-skill acceptance criteria:
+## 18. Limitations (out of scope v1.0)
+
+- iOS, Wear, TV, Auto, XR — platform-specific sibling plugins (none exist yet)
+- Custom backend hosting — Firebase + Supabase templates only; raw backend v1.1+
+- Multi-user collaboration — single-user per project state.json
+- Advanced IAP — basic consumable IAP template only; subscriptions v1.1+
+- AGP 9.x — AGP 8.7 stable for v1.0; AGP 9 in v1.1
+- State schema v2+ migrations — only v1 schema supported
+
+## 19. Implementation Phases (14)
+
+| # | Phase | Files | Verifies by |
+|---|---|---|---|
+| 0 | SPEC.md v1.0 (this file) | 1 | User approval |
+| 1 | state.json schema v1 + migration stub + SessionStart loader | 3 | new project → `/where` works |
+| 2 | state-manager + plan-mutator + `/where /continue /add /remove /change /undo` | 6 | mutate plan → state diff correct |
+| 3 | phase-router (Kahn's deps, no LLM) | 1 | add screen at publish → re-runs build+test only |
+| 4 | app-intake + app-planner + intake-clarifier subagent | 4 | vague prompt → plan in 2 turns, persists |
+| 5 | android-scaffold + keystore-aware gradlew-mcp + Crashlytics silent-add | 4 | /make-app builds empty app with crash reporting |
+| 6 | android-run + android-debug-fix + /preview + first-run /setup wizard | 5 | /make-app installs + screenshotted; cold start works |
+| 7 | android-importer + /import /audit /finish + snapshot-on-import | 4 | /import on Lovable-built app detects + lists gaps + finishes |
+| 8 | domain skills ×5 (backend, auth, ops, media, edge-to-edge) | 10 | typed feature works |
+| 9 | restore-credentials + verified-email + r8-analyzer | 3 | sign-in + size optimization works |
+| 10 | Supabase + Firebase template integration | 2 | app with backend works |
+| 11 | android-icons-assets + asset-mcp | 2 | icon generated |
+| 12 | android-store-listing + privacy/data-safety/content-rating generator | 1 | listing JSON validated |
+| 13 | keystore-mcp + play-store-mcp + PreSubmit hook + /why-rejected + android-publish-update | 6 | /publish uploads draft; rejection loop works |
+| 14 | README + 3-host smoke + cold-start E2E + import E2E + tag v1.0.0 | 5 | all hosts load |
+| **TOTAL** | | **~57 files** | **~140h** |
+
+At 6h/day = ~24 working days (~5 weeks).
+
+## 20. Verification
+
+### 20.1 Per-skill acceptance criteria
 
 - [ ] `skills-ref validate skills/<name>` passes
 - [ ] Description ≤ 1024 chars
-- [ ] Frontmatter uses only open-standard spec fields
+- [ ] Frontmatter uses only open-standard spec fields (name, description, license, metadata)
 - [ ] Body ≤ 500 lines (split to `references/` otherwise)
 - [ ] `agents/openai.yaml` present for Codex UI
+- [ ] `references/` subfolder present for skills >100 lines
+- [ ] Final Checklist section present
 - [ ] Tested in Codex: `$<skill-name>` resolves
 
-Per-MCP-server acceptance criteria:
+### 20.2 Per-MCP-server acceptance criteria
 
 - [ ] `python -m <server>` starts cleanly via stdio
 - [ ] All tools listed via MCP `tools/list`
 - [ ] Happy-path + error-path tested for each tool
 - [ ] Elicitation triggers on multi-device scenarios
 - [ ] Resources subscribable where applicable
+- [ ] Containment Mandate: writes to `.scratch/` only
+- [ ] Strict-output-limit pattern for report-producing tools
 
-Per-hook acceptance criteria:
+### 20.3 Per-hook acceptance criteria
 
 - [ ] Fires on correct event
 - [ ] `matcher` regex matches intended tool calls
 - [ ] `if` field narrows further
 - [ ] Script exits cleanly (or returns JSON `permissionDecision: deny`)
 
-Plugin-level acceptance:
+### 20.4 Plugin-level acceptance
 
 - [ ] All 3 manifests valid JSON
-- [ ] `codex --plugin-dir ./build-android-app-plugin` loads all 9 skills + 9 commands + 3 agents + 4 hooks + 2 MCP servers
-- [ ] `claude --plugin-dir ./build-android-app-plugin` loads in Claude Code
+- [ ] `plugin.lock.json` valid; sha256 matches for all 22 skills
+- [ ] `state.json` schema validator passes; migration v1→v2 stub works
+- [ ] `codex --plugin-dir ./build-android-app-plugin` loads all 22 skills + 21 commands + 6 agents + 6 hooks + 5 MCP servers
+- [ ] `claude --plugin-dir ./build-android-app-plugin` loads in Claude Code CLI
 - [ ] `.agents` host loads the open-standard manifest
+- [ ] Cold-start E2E: empty machine → /setup → published app on internal test track
+- [ ] Import E2E: Lovable-built Compose app → /import → /audit → /finish → signed AAB on internal test track
+- [ ] Rejection E2E: /publish → Google rejects → /why-rejected → fix → /publish again
 - [ ] CI green: `skills-ref validate`, JSON schema, pytest
-- [ ] GitHub repo created, tag `v0.1.0`, release notes
+- [ ] GitHub repo created, tag `v1.0.0`, release notes
 
-## 16. Implementation Order
-
-| # | Phase | Files | Effort | Verification |
-|---|---|---|---|---|
-| 0 | SPEC.md (this file) | 1 | 1h | User approval |
-| 1 | Scaffold + 3 manifests + LICENSE + README | ~7 | 2h | JSON valid; hosts discover plugin |
-| 2a | `adb-mcp` skeleton + `list_devices` + `install_apk` | ~6 | 2h | MCP connects; tool callable |
-| 2b | `gradlew-mcp` skeleton + `list_tasks` + `run_task` | ~6 | 2h | MCP connects; tool callable |
-| 3 | 9 skills (one per slice) | 18 | 8h | `skills-ref validate` passes for all |
-| 4 | 9 slash commands | 9 | 5h | Each `/cmd` invokes correct MCP tool |
-| 5 | 3 subagents | 3 | 3h | Each runs its parallel work |
-| 6 | 4 hooks | 5 | 3h | Each fires on correct event |
-| 7 | Brand assets + docs | 7 | 2h | SVG validates; docs render |
-| 8 | CI workflows | 3 | 1h | All green on test commit |
-| 9 | Verify install in 3 hosts | 0 | 2h | All hosts load plugin |
-| 10 | GitHub repo + tag v0.1.0 + release notes | 0 | 1h | Public repo at github.com/mitunmanav/build-android-app-plugin |
-| **TOTAL** | | **~67 files** | **~32h** | |
-
-At 4h/day = ~8 working days.
-
-## 17. Open questions (deferred)
-
-These are flagged for later, not blocking v0.1:
-
-1. **Author email + URL**: placeholder `[email protected]` needs Mitun's real email + URL
-2. **Brand assets**: composer-icon.svg and logo.svg are placeholders; final designs in Phase 7
-3. **Skill-specific reference content**: Phase 3 will determine if `references/` is needed per skill
-4. **MCP server test framework**: pytest scaffolds in v0.1; full coverage in v0.2
-5. **Marketplace submission criteria**: Codex marketplace + Claude Code community marketplace in v0.2+
-
-## 18. Approval
+## 21. Approval
 
 This SPEC requires Mitun's approval before Phase 1 begins.
 
@@ -628,24 +809,45 @@ This SPEC requires Mitun's approval before Phase 1 begins.
 |---|---|---|
 | Codex Plugins | https://developers.openai.com/codex/plugins/ | Plugin model |
 | Codex Build Skills | https://developers.openai.com/codex/build-skills/ | SKILL.md format, agents/openai.yaml |
-| Codex Build Plugins | https://developers.openai.com/codex/build-plugins | Plugin packaging |
-| Codex Subagents | https://developers.openai.com/codex/agent-configuration/subagents | Subagent config |
 | Codex Hooks | https://developers.openai.com/codex/hooks | Hook events |
 | Codex MCP | https://developers.openai.com/codex/extend/mcp | MCP wiring |
 | Claude Code Plugins | https://docs.claude.com/en/docs/claude-code/plugins | 5-component structure |
 | Claude Code Skills | https://docs.claude.com/en/docs/claude-code/skills | Frontmatter reference |
 | Claude Code Hooks | https://docs.claude.com/en/docs/claude-code/hooks | Event reference |
 | Claude Code MCP | https://docs.claude.com/en/docs/claude-code/mcp | MCP integration |
-| Claude Code Sub-agents | https://docs.claude.com/en/docs/claude-code/sub-agents | Subagent definition |
 | Anthropic Skills blog | https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills | Scripts vs instructions |
-| agentskills.io spec | https://agentskills.io/specification | Open-standard format |
+| agentskills.io spec | https://agentskills.io/specification/ | Open-standard format |
 | MCP spec | https://modelcontextprotocol.io/specification/2025-06-18/ | Tools, Resources, Prompts, Sampling, Elicitation, Tasks |
-| OpenAI Tools | https://platform.openai.com/docs/guides/tools | Tool types |
+| Google android/skills | https://github.com/android/skills | Domain SKILLs (play, edge-to-edge, build-system, identity, testing, devtools, performance) |
+| OpenAI plugins | https://github.com/openai/plugins | test-android-apps pattern; sibling plugin ecosystem |
+| Anthropic community marketplace | https://github.com/anthropics/claude-plugins-community | Submission flow |
+| ayush016/android-lead-agent-skills | https://github.com/ayush016/android-lead-agent-skills | Team standards reference; single-skill pattern |
 
-## Appendix B: Prior research
+## Appendix B: Patterns adopted from Google android/skills
 
-This SPEC builds on three prior research outputs:
-
-- [`../build-ios-apps/`](../build-ios-apps/) — structural template for the 9-skill lineup (iOS plugin was a reference, not a platform comparison)
-- [`../android-skills/`](../android-skills/) — format reference (Google's open-standard adoption)
-- [`../advanced-improved/`](../advanced-improved/) — research on advanced plugin features (slash commands, subagents, hooks, full MCP surface) from Claude Code + MCP spec + agentskills.io deep dives
+| Pattern | Source skill | Adopted in our plugin |
+|---|---|---|
+| Sub-agent prompt template | `play-policy-insights` | `release-readiness`, `rejection-parser`, `asset-generator` subagents |
+| Containment Mandate (`.scratch/<skill>-<uuid>/`) | `play-policy-insights` | All subagents |
+| Strict-output-limit for reports | `r8-analyzer` | `apk-inspector` subagent (future), `/lint` command |
+| Two-tier checklist (agent self-check + user checklist) | `engage-sdk-integration` | `android-icons-assets`, `android-store-listing`, `android-publish-update` |
+| Reporting Action preamble | `play-billing-library-version-upgrade` | `/publish`, `/reset`, `/clean`, destructive commands |
+| SYSTEM DIRECTIVE FOR AI AGENT | `restore-credentials` | `android-restore-credentials`, `android-verified-email` |
+| Integration-point discovery via search strings | `verified-email` | `android-auth` |
+| Diagnose → report → prescribe | `testing-setup` | `/device` command |
+| Screenshot test grid (400/610/900 × 400/500/1000 dp) | `testing-setup` | `android-test` skill |
+| Right/Wrong code pairs | `system/edge-to-edge` | `android-edge-to-edge`, `android-ui-patterns` |
+| Numbered Steps headings | All | All skills |
+| Final Checklist per skill | All | All skills |
+| references/ at skill root, multi-level subdirs | All | All skills |
+| Frontmatter slim (drop compatibility/allowed-tools/platform/version) | All | All skills |
+| Fenced code blocks (kotlin/groovy/json/bash) | Most | All skills |
+| Markdown alerts ([!NOTE], [!IMPORTANT], [!CAUTION]) | Most | All skills |
+| "**DO NOT**" anti-pattern phrasing | Most | All skills |
+| Mandatory prerequisites with version gates | Most | `android-edge-to-edge`, `android-restore-credentials`, `android-verified-email` |
+| Lightweight verification gates (`./gradlew help`, `./gradlew build --dry-run`) | `build-system/agp/agp-9-upgrade` | `gradlew-mcp.run_help`, `gradlew-mcp.run_build_dry` |
+| Anti-pattern: never `gradlew clean` for verification | `build-system/agp/agp-9-upgrade` | All skills, `lint-kotlin.sh` hook |
+| Annotated screenshot pattern | `devtools/android-cli` | `/screenshots` command, `adb-mcp.screencap` |
+| dump_layout JSON shape | `devtools/android-cli` | `adb-mcp.dump_layout` tool |
+| describe_project JSON output | `devtools/android-cli` | `gradlew-mcp.describe_project` tool |
+| manage_sdk wrapper | `devtools/android-cli` | `gradlew-mcp.manage_sdk` tool |

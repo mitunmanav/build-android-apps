@@ -1,0 +1,4 @@
+interface:
+  display_name: "Store Listing"
+  short_description: "Generate Play Store metadata"
+  default_prompt: "Use $android-store-listing to draft my Play Store listing"

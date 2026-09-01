@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Backend"
+  short_description: "Add Room + DataStore + Supabase/Firebase"
+  default_prompt: "Use $android-backend to add a data + sync layer"

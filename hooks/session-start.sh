@@ -47,4 +47,24 @@ fi
 # 5. Plugin reminder
 emit "info" "build-android-app-plugin loaded. Try /build, /run, /debug, /device, or /lint. Skills: 9 (debugger, emulator, profiler, leak, app-functions, material3-expressive, compose-perf, compose-patterns, compose-refactor)"
 
+# 6. Per-project state.json (Phase 1: load + report)
+PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+STATE_DIR="$PROJECT_ROOT/.build-android"
+STATE_FILE="$STATE_DIR/state.json"
+
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+
+if [ -f "$PLUGIN_ROOT/state/__init__.py" ] && command -v python3 >/dev/null 2>&1; then
+    STATE_JSON="$(PYTHONPATH="$PLUGIN_ROOT" python3 -m state load "$STATE_FILE" 2>/dev/null || true)"
+    if [ -n "$STATE_JSON" ]; then
+        PHASE="$(printf '%s' "$STATE_JSON" | python3 -c 'import sys,json; print(json.load(sys.stdin).get("phase","idle"))' 2>/dev/null || echo idle)"
+        CURSOR_TID="$(printf '%s' "$STATE_JSON" | python3 -c 'import sys,json; print(json.load(sys.stdin).get("cursor",{}).get("task_id",""))' 2>/dev/null || echo "")"
+        emit "info" "state.json: phase=$PHASE cursor.task_id=$CURSOR_TID"
+    else
+        emit "info" "no per-project state.json yet. Run /make-app to bootstrap."
+    fi
+else
+    emit "info" "no per-project state.json yet. Run /make-app to bootstrap."
+fi
+
 exit 0

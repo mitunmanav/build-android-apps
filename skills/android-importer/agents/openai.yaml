@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Importer"
+  short_description: "Take ownership of an existing Android project"
+  default_prompt: "Use $android-importer to import and audit an existing app"

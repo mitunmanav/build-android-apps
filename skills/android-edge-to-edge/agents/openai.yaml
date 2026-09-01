@@ -1,0 +1,4 @@
+interface:
+  display_name: "Edge to Edge"
+  short_description: "Migrate to SDK 35+ edge-to-edge layout"
+  default_prompt: "Use $android-edge-to-edge to make my app draw under system bars"

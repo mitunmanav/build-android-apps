@@ -1,0 +1,8 @@
+[project]
+name = "play-store-mcp"
+version = "0.1.0"
+description = "MCP server for Google Play Developer API (upload, listing, review, rollout)"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+]

@@ -14,7 +14,7 @@ from typing import Any
 from mcp.server.mcpserver import MCPServer
 from mcp.types import ToolAnnotations
 
-from . import runner, tools as _tools
+from . import runner, tools as _tools, tools_phase5 as _tools_phase5
 
 log = logging.getLogger("gradlew_mcp")
 
@@ -100,6 +100,7 @@ async def run_task(
 
 def main() -> None:
     _tools.register(mcp)
+    _tools_phase5.register(mcp)
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",

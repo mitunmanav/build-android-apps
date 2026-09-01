@@ -1,7 +1,7 @@
 {
   "name": "build-android-app-plugin",
-  "version": "0.1.0",
-  "description": "Build Android apps with workflows for Jetpack Compose UI work, adb-driven emulator mirroring, Gradle build loop, performance profiling, leak investigation, AppFunctions integration, and on-device debugging.",
+  "version": "1.0.0",
+  "description": "Build and ship Android apps from your AI assistant: 22 skills, 21 plain-English slash commands, 6 subagents, 5 MCP servers, 6 hooks, per-project resumable build loop. Built for non-technical vibe coders, end-to-end: intake → scaffold → debug → publish to Play Store internal test track.",
   "author": {
     "name": "Mitun",
     "email": "[email protected]",
@@ -16,30 +16,27 @@
     "jetpack-compose",
     "gradle",
     "adb",
-    "app-actions",
-    "performance",
-    "debugging",
-    "leaks",
-    "profiling"
+    "play-store",
+    "publishing",
+    "keystore",
+    "shipping",
+    "non-technical",
+    "vibe-coder"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Build Android App",
-    "shortDescription": "Build, run, debug, and profile Android apps with Compose, adb, and Gradle",
-    "longDescription": "Use Build Android App to design Compose UI with Material 3 Expressive patterns, drive an Android emulator from Codex, audit Compose performance, capture Perfetto traces, investigate memory leaks with LeakCanary, integrate AppFunctions and App Shortcuts, and debug apps on devices via adb-mcp and gradlew-mcp MCP servers.",
+    "shortDescription": "Build, run, debug, and ship Android apps — from idea to Play Store in one plugin",
+    "longDescription": "Use Build Android App to turn a one-line idea into a working Android app and submit it to the Play Store. The plugin handles intake, scaffolding, signing, listing, and uploading. 22 skills cover the full lifecycle (intake → ship → update). 21 slash commands use plain English. 6 subagents run in parallel. 5 MCP servers drive adb, Gradle, the Play Developer API, keystore operations, and asset generation. Per-project state.json makes every loop resumable.",
     "developerName": "Mitun",
     "category": "Developer Tools",
-    "capabilities": [
-      "Interactive",
-      "Read",
-      "Write"
-    ],
+    "capabilities": ["Interactive", "Read", "Write"],
     "websiteURL": "https://github.com/mitunmanav/build-android-app-plugin",
     "privacyPolicyURL": "https://github.com/mitunmanav/build-android-app-plugin/blob/main/PRIVACY.md",
     "termsOfServiceURL": "https://github.com/mitunmanav/build-android-app-plugin/blob/main/TERMS.md",
     "defaultPrompt": [
-      "Build or debug an Android app with Jetpack Compose, adb, and Gradle."
+      "Build or ship an Android app: type /make-app for a new app, /import to take ownership of an existing one, or /publish to ship to the Play Store."
     ],
     "brandColor": "#3DDC84",
     "composerIcon": "./assets/build-android-app-small.svg",

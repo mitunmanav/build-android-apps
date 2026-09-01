@@ -1,0 +1,4 @@
+interface:
+  display_name: "Icons + Assets"
+  short_description: "Generate launcher icon, feature graphic, screenshots"
+  default_prompt: "Use $android-icons-assets to generate icons and screenshots"

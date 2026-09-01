@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-marketplace.json",
   "name": "build-android-app-plugin",
-  "version": "0.1.0",
-  "description": "Agentic Android development: build, run, debug, profile via slash commands, subagents, MCP-driven adb/gradlew servers, and 9 Compose-focused skills.",
+  "version": "1.0.0",
+  "description": "Build and ship Android apps from your AI assistant: 22 skills, 21 plain-English slash commands, 6 subagents, 5 MCP servers, 6 hooks, per-project resumable build loop. Built for non-technical vibe coders, end-to-end: intake → scaffold → debug → publish to Play Store internal test track.",
   "author": {
     "name": "Mitun",
     "email": "[email protected]",
@@ -17,15 +17,17 @@
     "jetpack-compose",
     "gradle",
     "adb",
-    "performance",
-    "debugging"
+    "play-store",
+    "publishing",
+    "shipping",
+    "non-technical"
   ],
   "category": "development",
   "plugins": [
     {
       "name": "build-android-app-plugin",
-      "version": "0.1.0",
-      "description": "Same plugin surface as the parent manifest. Loaded into Claude Code when this directory is added as a plugin source.",
+      "version": "1.0.0",
+      "description": "Full lifecycle: intake → scaffold → debug → publish to Play Store internal test track.",
       "skills": "./skills/",
       "commands": "./commands/",
       "agents": "./agents/",

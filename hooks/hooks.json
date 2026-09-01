@@ -37,6 +37,18 @@
         ]
       }
     ],
+    "PreSubmit": [
+      {
+        "matcher": "mcp__plugin_.*_play_store__submit_for_review|mcp__plugin_.*_play_store__upload_aab",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/release-check.sh",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": ".*",

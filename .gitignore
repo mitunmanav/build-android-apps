@@ -12,18 +12,18 @@ build/
 *.iml
 .vscode/
 .DS_Store
+.fleet/
 
 # Local config
 local.properties
 *.local
 
-# Python
+# Python (state/ + MCP servers)
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -54,7 +54,7 @@ htmlcov/
 .nox/
 coverage.xml
 *.cover
-.hypothesis/
+*.hypothesis/
 
 # MCP server logs
 *.log
@@ -70,6 +70,14 @@ logs/
 *.swo
 *#
 
+# Per-project plugin runtime (NOT this plugin's own files)
+# Lives in user projects, not the plugin source.
+.build-android/
+.scratch/
+
 # Research + inspiration (development scaffolding; not part of the plugin)
 inspiration/
 research/
+
+# Generated PNGs from asset-mcp tests
+test-output/

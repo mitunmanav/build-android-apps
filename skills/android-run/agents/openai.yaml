@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Run"
+  short_description: "Install, launch, and screenshot the app"
+  default_prompt: "Use $android-run to install and launch my app"

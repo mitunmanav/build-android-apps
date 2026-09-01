@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Scaffold"
+  short_description: "Bootstrap a fresh Android project from a spec"
+  default_prompt: "Use $android-scaffold to scaffold my new Android app"

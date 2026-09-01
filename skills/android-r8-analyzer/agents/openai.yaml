@@ -1,0 +1,4 @@
+interface:
+  display_name: "R8 Analyzer"
+  short_description: "Audit APK/AAB size + keep rules"
+  default_prompt: "Use $android-r8-analyzer to shrink my APK"

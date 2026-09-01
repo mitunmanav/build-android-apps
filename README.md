@@ -1,21 +1,23 @@
 # Build Android App Plugin
 
-Agentic Android development: build, run, debug, profile, and ship Android apps from your AI assistant.
+> **The only plugin needed to build and ship Android apps from your AI assistant.**
+> Built for non-technical vibe coders, in plain English, end to end.
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.0-orange.svg)](CHANGELOG.md)
 
 ## What it does
 
-This plugin teaches your AI assistant the Android build loop and gives it typed tools to run it:
+Turn your AI assistant into a full Android dev team. Type `/make-app "a habit tracker"` and you get a working app, signed AAB, and Play Store internal-test-track submission — without writing Kotlin yourself.
 
 | Component | Count | Purpose |
 |---|---|---|
-| **Skills** | 9 | Domain knowledge: Compose, Material 3, debugger, profiler, leaks, AppFunctions |
-| **Slash commands** | 9 | `/build`, `/run`, `/debug`, `/crash`, `/log`, `/device`, `/lint`, `/test`, `/clean` |
-| **Subagents** | 3 | Parallel validators: build-validator, release-auditor, apk-inspector |
-| **Hooks** | 4 | SessionStart, PreToolUse, PostToolUse, Stop |
-| **MCP servers** | 2 | Python: `adb-mcp` and `gradlew-mcp` |
+| **Skills** | 22 | Full lifecycle: intake → build → ship → update |
+| **Slash commands** | 21 | Plain English: `/make-app`, `/add`, `/change`, `/publish`, `/update`, `/status`, `/where`, `/why-rejected`, … |
+| **Subagents** | 6 | Parallel validators + intake clarifier + rejection parser + asset generator |
+| **Hooks** | 6 | SessionStart, PreToolUse, PostToolUse, PreSubmit, Stop, monitors/ |
+| **MCP servers** | 5 | Python: `adb-mcp`, `gradlew-mcp`, `play-store-mcp`, `keystore-mcp`, `asset-mcp` |
+| **State file** | per-project | `<project>/.build-android/state.json` for resumable loops |
 
 ## Install
 
@@ -25,27 +27,11 @@ This plugin teaches your AI assistant the Android build loop and gives it typed 
 codex plugin install github.com/mitunmanav/build-android-app-plugin
 ```
 
-Or for local development:
-
-```bash
-git clone https://github.com/mitunmanav/build-android-app-plugin
-cd build-android-app-plugin
-codex --plugin-dir .
-```
-
-### Claude Code
+### Claude Code CLI
 
 ```bash
 claude plugin marketplace add mitun/mitun
 claude plugin install build-android-app-plugin@mitun
-```
-
-Or load directly:
-
-```bash
-git clone https://github.com/mitunmanav/build-android-app-plugin
-cd build-android-app-plugin
-claude --plugin-dir .
 ```
 
 ### `.agents` open-standard hosts
@@ -55,139 +41,169 @@ git clone https://github.com/mitunmanav/build-android-app-plugin \
   ~/.agents/plugins/build-android-app-plugin
 ```
 
-Then restart your host (VS Code Copilot, Cursor, Gemini CLI, etc.).
+### Pair with Google's android/skills
 
-## Prerequisites
+```bash
+android skills add --all
+```
 
-- **Android SDK** with `ANDROID_HOME` set
+## Prerequisites (auto-detected by SessionStart)
+
 - **JDK 17+** with `JAVA_HOME` set
-- **`adb`** on `PATH` (usually `${ANDROID_HOME}/platform-tools/adb`)
+- **Android SDK** with `ANDROID_HOME` set
+- **`adb`** on `PATH`
 - **Python 3.10+** for MCP servers
 - An **Android device or emulator** for runtime verification
+- A **Play Console account** ($25, paid once)
+- A **service account JSON key** from Google Cloud (free)
 
-The plugin's `SessionStart` hook will detect missing prerequisites and warn.
+First-run only: type `/setup` and the agent walks you through all of it.
 
 ## Quick start
 
 ```text
-> /device
-# picks from your connected emulators/devices
+> /setup
+# 10-step first-run: SDK, Play Console, service account, keystore
 
-> /build
-# runs `./gradlew assembleDebug`
+> /make-app "a habit tracker with daily reminders"
+# intake (asks 1-5 questions) → spec → build plan → scaffold
 
-> /run
-# installs and launches the app
+> /preview
+# installs + launches + screenshots the app
 
-> /debug
-# attaches a debugger + opens logcat
+> /publish
+# signed AAB → Play Store internal test track
 ```
 
-Or use the skills directly:
+## The 22 skills (full lifecycle)
 
-```text
-> $android-debugger-agent
-> Use Perfetto to capture a 5s trace of the main activity cold start.
-```
-
-## The 9 skills
-
-| Skill | Purpose | MCP deps |
+| # | Skill | What it does |
 |---|---|---|
-| `android-debugger-agent` | Connect device, attach debugger, step through code | `adb-mcp` |
-| `android-emulator-browser` | Launch AVD, screencap, UI inspect | `adb-mcp` |
-| `android-profiler` | Perfetto traces + jank/memory/CPU analysis | `adb-mcp`, `gradlew-mcp` |
-| `android-leak-analyzer` | LeakCanary + heap dump triage | `adb-mcp` |
-| `android-appActions` | AppFunctions API + Shortcuts integration | (none) |
-| `material3-expressive` | Material 3 Expressive design + anti-patterns | (none) |
-| `compose-performance-audit` | Recomposition, stability, baseline profiles | (none) |
-| `compose-ui-patterns` | Pattern catalog | (none) |
-| `compose-view-refactor` | Refactor methodology | (none) |
+| 1 | `app-intake` | Vague prompt → spec via 1-5 plain-English questions |
+| 2 | `app-planner` | Spec → sequenced build plan in state.json |
+| 3 | `android-scaffold` | Bootstrap Gradle + Compose + signing + Crashlytics |
+| 4 | `android-build` | assembleDebug/release, lightweight verification gates |
+| 5 | `android-run` | Install + launch + screenshot |
+| 6 | `android-debug-fix` | Logcat + agent-driven fix loop (3-strike limit) |
+| 7 | `android-ui-patterns` | Compose patterns: lists, nav, forms, state hoisting |
+| 8 | `android-performance` | Recomposition, stability, baseline profiles |
+| 9 | `android-test` | Screenshot tests on 9 grid sizes + smoke tests |
+| 10 | `android-importer` | Take ownership of Lovable/Bolt/v0/Cursor-built projects |
+| 11 | `android-backend` | Room + DataStore + Supabase + Firebase templates |
+| 12 | `android-auth` | Credential Manager + Google + email + passkey |
+| 13 | `android-ops` | FCM + Analytics + WorkManager + Crashlytics verify |
+| 14 | `android-media` | CameraX + Media3 ExoPlayer |
+| 15 | `android-restore-credentials` | Sign in across devices via restore keys |
+| 16 | `android-verified-email` | OTP-less email verification |
+| 17 | `android-edge-to-edge` | SDK 35+ mandatory edge-to-edge |
+| 18 | `android-icons-assets` | Launcher icon + adaptive layers + feature graphic |
+| 19 | `android-store-listing` | Play Store title/desc/short/long/privacy/data safety |
+| 20 | `android-play` | Play Store submission flow |
+| 21 | `android-publish-update` | Bump version + changelog + signed AAB + re-upload |
+| 22 | `android-r8-analyzer` | APK size + keep-rule audit (strict 30-line output) |
+| + | `setup-wizard` | First-run 10-step onboarding |
 
-## Slash commands
+## Slash commands (21, plain English)
 
-| Command | Purpose | MCP tools |
-|---|---|---|
-| `/build` | Run Gradle task | `gradlew.run_task` |
-| `/run` | Install + launch app | `adb.install_apk`, `adb.start_activity` |
-| `/debug` | Attach debugger + logcat | `adb.attach_debugger`, `adb.logcat_dump` |
-| `/crash` | Analyze crash report | `adb.pull_file`, `adb.unzip` |
-| `/log` | Filter logcat | `adb.logcat_filter` |
-| `/device` | Pick device (with elicitation) | `adb.list_devices`, `adb.select_device` |
-| `/lint` | Run lint, summarize | `gradlew.run_lint` |
-| `/test` | Run tests, report failures | `gradlew.run_tests` |
-| `/clean` | `gradlew clean` (with confirmation) | `gradlew.run_task` |
+| Command | Purpose |
+|---|---|
+| `/setup` | First-run wizard |
+| `/make-app "<idea>"` | Start a new app from a one-liner |
+| `/add "<feature>"` | Add a feature without restarting |
+| `/change "<spec>"` | Modify an existing plan item |
+| `/remove` | Remove or skip a task |
+| `/continue` | Resume the build loop |
+| `/where` | Show current phase + plan progress |
+| `/status` | Post-publish dashboard |
+| `/publish` | Store listing + submit to internal test track |
+| `/update` | New version + changelog + resubmit |
+| `/reset` | Reset project state (double-confirm) |
+| `/backup-keystore` | Copy keystore to safe place |
+| `/why-rejected` | Diagnose a Play Store rejection |
+| `/import` | Detect existing Android project |
+| `/audit` | Deep audit for Play Store readiness |
+| `/finish` | Auto-fill gaps + publish to internal test |
+| `/screenshots` | Generate store screenshots |
+| `/privacy-policy` | Generate privacy policy template |
+| `/help` | List commands in plain English |
+| `/preview` | Install + launch + screenshot |
+| `/debug`, `/lint` | Dev aliases |
 
-## MCP servers
+## MCP servers (5, Python stdio)
 
-Both servers are Python (`mcp` SDK + Pydantic v2) and communicate over stdio:
+### `adb-mcp` — device interaction
+17 tools including `list_devices`, `install_apk`, `start_activity`, `screencap`, `logcat_filter` (subscribable resource), `dump_layout` (JSON UI tree).
 
-### `adb-mcp`
+### `gradlew-mcp` — Gradle + SDK + signing
+12 tools: `list_tasks`, `run_task`, `parse_dependencies`, `find_duplicate_classes`, `describe_project` (matches `android describe`), `manage_sdk` (sdkmanager wrapper), `run_help` + `run_build_dry` (lightweight gates), `generate_keystore` + `verify_keystore` (elicitation).
 
-`list_devices`, `select_device`, `install_apk`, `uninstall_app`, `clear_app_data`, `start_activity`, `stop_app`, `shell_command`, `logcat_dump`, `logcat_clear`, `logcat_filter` (subscribable resource), `screencap`, `pull_file`, `push_file`, `getprop`, `setprop`, `wait_for_device`.
+### `play-store-mcp` — Play Developer API
+9 tools: `auth`, `upload_aab`, `upload_listing`, `get_review_status`, `list_rejections`, `submit_for_review`, `rollout_staged`, `get_stats`.
 
-### `gradlew-mcp`
+### `keystore-mcp` — upload keystore (canonical home)
+5 tools: `generate`, `verify`, `rotate`, `backup`, `fingerprint`.
 
-`list_tasks`, `run_task` (Task), `parse_dependencies`, `find_duplicate_classes`, `run_lint` (Task), `run_tests` (Task), `clean` (elicitation), `stop_build`, `get_build_status`, `verify_keystore`, `generate_keystore` (elicitation).
+### `asset-mcp` — icon + screenshot generator
+4 tools: `generate_icon`, `generate_feature_graphic`, `generate_screenshot`, `compose_marketing`. Requires `pip install Pillow`.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                AI Host (Codex / Claude / .agents)        │
+│         AI Host (Codex CLI / Claude Code CLI /
+│         .agents standard)
 └─────────────────────┬───────────────────────────────────┘
                       │
                       ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Plugin manifest                                        │
-│  .codex-plugin/plugin.json  (Codex)                     │
-│  .claude-plugin/marketplace.json  (Claude Code)          │
-│  .agents/plugins/marketplace.json  (open-standard)       │
+│  Plugin manifests (.codex-plugin/, .claude-plugin/,
+│  .agents/plugins/) + plugin.lock.json (sha256)
 └──────────┬───────────────┬─────────────────┬─────────────┘
            │               │                 │
            ▼               ▼                 ▼
-       Skills          Commands         MCP servers
-       (9 prose)       (9 slash)        (2 Python)
-                              │
-                              ▼
-                          Hooks (4)
-                      SessionStart, Pre,
-                      PostToolUse, Stop
+       Skills (22)   Commands (21)   MCP servers (5)
+       references/   plain-English    adb, gradlew, play-store,
+       per skill                      keystore, asset
+              │                            │
+              ▼                            ▼
+          Subagents (6)              Hooks (6) + monitors/
+              │
+              ▼
+┌─────────────────────────────────────────────────────────┐
+│  Per-project state.json (<project>/.build-android/)
+│  schema_version, phase, plan[], cursor, build, device,
+│  store, keystore, environment, crashlytics, rejections,
+│  history[50] — gitignored, deterministic phase-router
+└─────────────────────────────────────────────────────────┘
 ```
 
-See [SPEC.md](SPEC.md) for the full design.
+## Compatibility (pinned)
 
-## Plugin layout
+| Component | Version |
+|---|---|
+| Android Gradle Plugin | 8.7+ |
+| Gradle | 8.9+ |
+| Kotlin | 2.0.21 |
+| Compose BOM | 2024.12.01 |
+| min SDK | 26 |
+| target SDK | latest-stable |
 
-```
-build-android-app-plugin/
-├── .codex-plugin/plugin.json        # Codex manifest
-├── .claude-plugin/marketplace.json  # Claude Code manifest
-├── .agents/plugins/marketplace.json # open-standard manifest
-├── .mcp.json                        # MCP server config (adb + gradlew)
-├── skills/                          # 9 skills (prose-only)
-├── commands/                        # 9 slash commands
-├── agents/                          # 3 subagents
-├── hooks/                           # 4 hooks + hooks.json
-├── mcp-servers/                     # Python sources
-├── assets/                          # icons + logos
-├── docs/                            # ARCHITECTURE, HOOKS, MCP, SKILLS-CATALOG
-├── .github/workflows/               # CI
-└── SPEC.md                          # design spec
-```
+## Pairs with
+
+- **[openai/plugins/test-android-apps](https://github.com/openai/plugins)** — advanced profiling (Perfetto, Simpleperf).
+- **[android/skills (Google)](https://github.com/android/skills)** — domain knowledge (Compose, camera, navigation, etc).
+- **[ayush016/android-lead-agent-skills](https://github.com/ayush016/android-lead-agent-skills)** — team standards reference.
+
+## Limitations (v1.0)
+
+- iOS, Wear, TV, Auto, XR — out of scope (sibling plugins TBD)
+- Custom backend hosting — Firebase + Supabase only
+- Multi-user collaboration — single-user per project
+- AGP 9.x — AGP 8.7 stable; AGP 9 in v1.1
 
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE).
-
-## Contributing
-
-PRs welcome. Each slice should:
-
-1. Pass `skills-ref validate skills/<name>` (for skill changes)
-2. Pass `pytest` (for MCP server changes)
-3. Pass `python -m <server>` smoke test (for MCP server changes)
-4. Update the per-component docs
 
 ## Author
 

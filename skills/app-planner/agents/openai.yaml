@@ -1,0 +1,4 @@
+interface:
+  display_name: "App Planner"
+  short_description: "Turn a spec into a sequenced build plan"
+  default_prompt: "Use $app-planner to break my spec into a build plan"

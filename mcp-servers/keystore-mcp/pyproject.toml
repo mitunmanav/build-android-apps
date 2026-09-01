@@ -1,0 +1,8 @@
+[project]
+name = "keystore-mcp"
+version = "0.1.0"
+description = "MCP server for upload keystore operations (generate, verify, rotate, backup, fingerprint)"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+]

@@ -1,8 +1,8 @@
 {
   "$schema": "https://agentskills.io/schemas/plugins-marketplace.json",
   "name": "build-android-app-plugin",
-  "version": "0.1.0",
-  "description": "Agentic Android development plugin for open-standard agentskills.io hosts. Provides 9 Compose-focused skills, 9 slash commands, 3 subagents, 4 hooks, and 2 Python MCP servers (adb + gradlew).",
+  "version": "1.0.0",
+  "description": "Build and ship Android apps from your AI assistant: 22 skills, 21 plain-English slash commands, 6 subagents, 5 MCP servers, 6 hooks, per-project resumable build loop. Built for non-technical vibe coders, end-to-end: intake → scaffold → debug → publish to Play Store internal test track.",
   "author": {
     "name": "Mitun",
     "email": "[email protected]",
@@ -16,22 +16,22 @@
     "kotlin",
     "jetpack-compose",
     "gradle",
-    "adb"
+    "adb",
+    "play-store",
+    "publishing",
+    "shipping",
+    "non-technical"
   ],
   "plugins": [
     {
       "name": "build-android-app-plugin",
-      "version": "0.1.0",
+      "version": "1.0.0",
       "description": "Self-hosted entry point. This plugin conforms to the open standard at https://agentskills.io/specification.",
       "source": {
         "source": "local",
         "path": "."
       },
       "category": "Developer Tools",
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "NONE"
-      },
       "skills": "./skills/",
       "commands": "./commands/",
       "agents": "./agents/",

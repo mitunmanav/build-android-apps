@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json.opencode.dev/schemas/plugin-lock.schema.json",
+  "lockVersion": 1,
+  "pluginId": "com.mitun.build-android-app-plugin",
+  "pluginVersion": "1.0.0",
+  "generatedAt": "2026-09-01T00:00:00Z",
+  "skills": [
+    { "id": "app-intake",             "vendoredPath": "skills/app-intake" },
+    { "id": "app-planner",            "vendoredPath": "skills/app-planner" },
+    { "id": "android-scaffold",       "vendoredPath": "skills/android-scaffold" },
+    { "id": "android-run",            "vendoredPath": "skills/android-run" },
+    { "id": "android-debug-fix",      "vendoredPath": "skills/android-debug-fix" },
+    { "id": "android-backend",        "vendoredPath": "skills/android-backend" },
+    { "id": "android-auth",           "vendoredPath": "skills/android-auth" },
+    { "id": "android-ops",            "vendoredPath": "skills/android-ops" },
+    { "id": "android-media",          "vendoredPath": "skills/android-media" },
+    { "id": "android-edge-to-edge",   "vendoredPath": "skills/android-edge-to-edge" },
+    { "id": "android-restore-credentials", "vendoredPath": "skills/android-restore-credentials" },
+    { "id": "android-verified-email", "vendoredPath": "skills/android-verified-email" },
+    { "id": "android-icons-assets",   "vendoredPath": "skills/android-icons-assets" },
+    { "id": "android-store-listing",  "vendoredPath": "skills/android-store-listing" },
+    { "id": "android-publish-update", "vendoredPath": "skills/android-publish-update" },
+    { "id": "android-r8-analyzer",    "vendoredPath": "skills/android-r8-analyzer" },
+    { "id": "setup-wizard",           "vendoredPath": "skills/setup-wizard" }
+  ],
+  "commands": [
+    { "id": "make-app",          "vendoredPath": "commands/make-app.md" },
+    { "id": "add",               "vendoredPath": "commands/add.md" },
+    { "id": "change",            "vendoredPath": "commands/change.md" },
+    { "id": "remove",            "vendoredPath": "commands/remove.md" },
+    { "id": "continue",          "vendoredPath": "commands/continue.md" },
+    { "id": "where",             "vendoredPath": "commands/where.md" },
+    { "id": "undo",              "vendoredPath": "commands/undo.md" },
+    { "id": "preview",           "vendoredPath": "commands/preview.md" },
+    { "id": "setup",             "vendoredPath": "commands/setup.md" },
+    { "id": "import",            "vendoredPath": "commands/import.md" },
+    { "id": "audit",             "vendoredPath": "commands/audit.md" },
+    { "id": "finish",            "vendoredPath": "commands/finish.md" },
+    { "id": "why-rejected",      "vendoredPath": "commands/why-rejected.md" }
+  ],
+  "agents": [
+    { "id": "intake-clarifier", "vendoredPath": "agents/intake-clarifier.md" },
+    { "id": "build-validator",  "vendoredPath": "agents/build-validator.md" },
+    { "id": "release-auditor",  "vendoredPath": "agents/release-auditor.md" },
+    { "id": "apk-inspector",    "vendoredPath": "agents/apk-inspector.md" }
+  ],
+  "mcpServers": [
+    { "id": "adb-mcp",       "command": "python -m adb_mcp" },
+    { "id": "gradlew-mcp",   "command": "python -m gradlew_mcp" },
+    { "id": "play-store-mcp","command": "python -m play_store_mcp" },
+    { "id": "keystore-mcp",  "command": "python -m keystore_mcp" },
+    { "id": "asset-mcp",     "command": "python -m asset_mcp" }
+  ],
+  "hooks": [
+    { "id": "session-start",  "events": ["SessionStart"] },
+    { "id": "block-destructive","events": ["PreToolUse"] },
+    { "id": "lint-kotlin",    "events": ["PostToolUse"] },
+    { "id": "release-check",  "events": ["PreSubmit"] },
+    { "id": "stop-review",    "events": ["Stop"] }
+  ]
+}

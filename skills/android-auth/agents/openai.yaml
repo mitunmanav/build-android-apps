@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Auth"
+  short_description: "Add Credential Manager sign-in"
+  default_prompt: "Use $android-auth to add login to my app"

@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "https://mitunmanav.dev/schemas/build-android-app-plugin/state.schema.json",
+  "title": "build-android-app-plugin state.json (per-project)",
+  "description": "Single source of truth for a project's build loop position. Lives at <project>/.build-android/state.json and is gitignored.",
+  "type": "object",
+  "required": ["schema_version", "phase", "plan", "cursor", "history"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["intake", "plan", "scaffold", "build", "test", "publish", "update", "idle"]
+    },
+    "plan": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/plan_item" }
+    },
+    "cursor": {
+      "type": "object",
+      "required": ["phase", "task_id"],
+      "additionalProperties": false,
+      "properties": {
+        "phase": { "type": "string" },
+        "task_id": { "type": "string" }
+      }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "last_assemble": { "type": "string", "enum": ["ok", "fail", "unknown"] },
+        "apk_path": { "type": "string" },
+        "aab_path": { "type": "string" },
+        "last_gradle_output_tail": { "type": "string" }
+      }
+    },
+    "device": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "serial": { "type": "string" },
+        "api": { "type": "integer", "minimum": 21 },
+        "abi": { "type": "string" }
+      }
+    },
+    "store": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "draft_id": { "type": "string" },
+        "listing_revision": { "type": "integer", "minimum": 0 },
+        "track": { "type": "string", "enum": ["internal", "closed", "production"] },
+        "rollout_percent": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "keystore": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "fingerprint": { "type": "string" },
+        "path": { "type": "string" },
+        "alias": { "type": "string" },
+        "backed_up": { "type": "boolean" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "sdk_installed": { "type": "boolean" },
+        "jdk_installed": { "type": "boolean" },
+        "adb_in_path": { "type": "boolean" },
+        "play_console_email": { "type": "string" },
+        "billing_setup": { "type": "boolean" }
+      }
+    },
+    "crashlytics": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "dsn": { "type": "string" }
+      }
+    },
+    "rejections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "reason"],
+        "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string" },
+          "reason": { "type": "string" },
+          "fix_suggestion": { "type": "string" }
+        }
+      }
+    },
+    "history": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": ["at", "action", "summary"],
+        "additionalProperties": true,
+        "properties": {
+          "at": { "type": "string", "format": "date-time" },
+          "action": { "type": "string" },
+          "summary": { "type": "string" },
+          "before": {
+            "type": "object",
+            "description": "Pre-mutation snapshot for undo. Dropped when history is rotated out (ring buffer).",
+            "additionalProperties": true
+          },
+          "undone": { "type": "boolean" },
+          "undone_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "plan_item": {
+      "type": "object",
+      "required": ["id", "title", "status", "phase"],
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["pending", "in_progress", "done", "skipped"] },
+        "phase": { "type": "string" },
+        "deps": { "type": "array", "items": { "type": "string" } },
+        "files_touched": { "type": "array", "items": { "type": "string" } },
+        "added_by": { "type": "string", "enum": ["user", "agent"] },
+        "added_at": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}
