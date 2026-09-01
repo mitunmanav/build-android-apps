@@ -22,13 +22,13 @@ This plugin teaches your AI assistant the Android build loop and gives it typed 
 ### Codex CLI
 
 ```bash
-codex plugin install github.com/mitun/build-android-app-plugin
+codex plugin install github.com/mitunmanav/build-android-app-plugin
 ```
 
 Or for local development:
 
 ```bash
-git clone https://github.com/mitun/build-android-app-plugin
+git clone https://github.com/mitunmanav/build-android-app-plugin
 cd build-android-app-plugin
 codex --plugin-dir .
 ```
@@ -43,7 +43,7 @@ claude plugin install build-android-app-plugin@mitun
 Or load directly:
 
 ```bash
-git clone https://github.com/mitun/build-android-app-plugin
+git clone https://github.com/mitunmanav/build-android-app-plugin
 cd build-android-app-plugin
 claude --plugin-dir .
 ```
@@ -51,7 +51,7 @@ claude --plugin-dir .
 ### `.agents` open-standard hosts
 
 ```bash
-git clone https://github.com/mitun/build-android-app-plugin \
+git clone https://github.com/mitunmanav/build-android-app-plugin \
   ~/.agents/plugins/build-android-app-plugin
 ```
 

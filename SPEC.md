@@ -168,10 +168,10 @@ build-android-app-plugin/
   "author": {
     "name": "Mitun",
     "email": "[email protected]",
-    "url": "https://github.com/mitun"
+    "url": "https://github.com/mitunmanav"
   },
-  "homepage": "https://github.com/mitun/build-android-app-plugin",
-  "repository": "https://github.com/mitun/build-android-app-plugin",
+  "homepage": "https://github.com/mitunmanav/build-android-app-plugin",
+  "repository": "https://github.com/mitunmanav/build-android-app-plugin",
   "license": "Apache-2.0",
   "keywords": ["android", "kotlin", "jetpack-compose", "gradle", "adb"],
   "interface": {
@@ -186,7 +186,7 @@ build-android-app-plugin/
       "Use /build to assemble the debug variant",
       "Run /device to pick an emulator"
     ],
-    "websiteURL": "https://github.com/mitun/build-android-app-plugin",
+    "websiteURL": "https://github.com/mitunmanav/build-android-app-plugin",
     "brandColor": "#3DDC84"
   },
   "skills": "./skills/",
@@ -522,10 +522,10 @@ Apache-2.0 for the entire plugin. MCP servers, skills, scripts, hooks, docs — 
 
 ```bash
 # Codex CLI
-codex plugin install github.com/mitun/build-android-app-plugin
+codex plugin install github.com/mitunmanav/build-android-app-plugin
 
 # Or for development
-git clone https://github.com/mitun/build-android-app-plugin
+git clone https://github.com/mitunmanav/build-android-app-plugin
 codex --plugin-dir ./build-android-app-plugin
 
 # Claude Code
@@ -533,7 +533,7 @@ claude plugin marketplace add mitun/mitun
 claude plugin install build-android-app-plugin@mitun
 
 # .agents host
-git clone https://github.com/mitun/build-android-app-plugin ~/.agents/plugins/build-android-app-plugin
+git clone https://github.com/mitunmanav/build-android-app-plugin ~/.agents/plugins/build-android-app-plugin
 ```
 
 ## 14. Out of Scope (v0.1)
@@ -601,7 +601,7 @@ Plugin-level acceptance:
 | 7 | Brand assets + docs | 7 | 2h | SVG validates; docs render |
 | 8 | CI workflows | 3 | 1h | All green on test commit |
 | 9 | Verify install in 3 hosts | 0 | 2h | All hosts load plugin |
-| 10 | GitHub repo + tag v0.1.0 + release notes | 0 | 1h | Public repo at github.com/mitun/build-android-app-plugin |
+| 10 | GitHub repo + tag v0.1.0 + release notes | 0 | 1h | Public repo at github.com/mitunmanav/build-android-app-plugin |
 | **TOTAL** | | **~67 files** | **~32h** | |
 
 At 4h/day = ~8 working days.

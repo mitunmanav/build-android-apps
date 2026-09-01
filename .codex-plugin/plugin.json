@@ -5,10 +5,10 @@
   "author": {
     "name": "Mitun",
     "email": "[email protected]",
-    "url": "https://github.com/mitun"
+    "url": "https://github.com/mitunmanav"
   },
-  "homepage": "https://github.com/mitun/build-android-app-plugin",
-  "repository": "https://github.com/mitun/build-android-app-plugin",
+  "homepage": "https://github.com/mitunmanav/build-android-app-plugin",
+  "repository": "https://github.com/mitunmanav/build-android-app-plugin",
   "license": "Apache-2.0",
   "keywords": [
     "android",
@@ -35,9 +35,9 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/mitun/build-android-app-plugin",
-    "privacyPolicyURL": "https://github.com/mitun/build-android-app-plugin/blob/main/PRIVACY.md",
-    "termsOfServiceURL": "https://github.com/mitun/build-android-app-plugin/blob/main/TERMS.md",
+    "websiteURL": "https://github.com/mitunmanav/build-android-app-plugin",
+    "privacyPolicyURL": "https://github.com/mitunmanav/build-android-app-plugin/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/mitunmanav/build-android-app-plugin/blob/main/TERMS.md",
     "defaultPrompt": [
       "Build or debug an Android app with Jetpack Compose, adb, and Gradle."
     ],

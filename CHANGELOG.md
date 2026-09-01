@@ -14,4 +14,4 @@ All notable changes to this plugin are documented here. The format is based on [
 - 2 Python MCP servers: `adb-mcp`, `gradlew-mcp`
 - Multi-host packaging: `.codex-plugin/`, `.claude-plugin/`, `.agents/plugins/`
 
-[0.1.0]: https://github.com/mitun/build-android-app-plugin/releases/tag/v0.1.0
+[0.1.0]: https://github.com/mitunmanav/build-android-app-plugin/releases/tag/v0.1.0
