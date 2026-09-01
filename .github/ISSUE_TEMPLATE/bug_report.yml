@@ -1,0 +1,61 @@
+name: Bug Report
+description: Something is broken or behaving unexpectedly
+title: "[Bug] "
+labels: ["bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before submitting
+
+        - [ ] Search existing issues — your bug may already be reported.
+        - [ ] Run `bash scripts/smoke.sh` and confirm all checks pass.
+        - [ ] Confirm this bug is **not** in the Limitations section of the README.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: A clear description of the unexpected behavior.
+      placeholder: |
+        Steps to reproduce:
+        1. Run `/make-app "a habit tracker"`
+        2. Run `/publish`
+        3. See error: "AAB signing failed: keystore not found"
+
+        Expected: upload succeeds and I get a draft URL.
+        Actual: build fails with exit code 1.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, plugin version, host (Codex/Claude/.agents).
+      placeholder: |
+        macOS 14.4, Python 3.12.1, build-android-app-plugin v1.0.0,
+        Claude Code CLI, Android SDK 35, JDK 17
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or screenshots
+      description: Paste the relevant output or attach a screenshot.
+      placeholder: |
+        [paste output of `bash scripts/smoke.sh` or relevant command]
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that might help diagnose the issue.
+      placeholder: |
+        I've modified skills/app-intake/SKILL.md but didn't change any code.
+    validations:
+      required: false

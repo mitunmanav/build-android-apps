@@ -1,0 +1,59 @@
+name: Feature Request
+description: Suggest a new skill, command, MCP tool, or workflow improvement
+title: "[Feature] "
+labels: ["enhancement"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before submitting
+
+        - [ ] Search existing issues and discussions — your idea may already exist.
+        - [ ] Check the [v1.1 backlog](https://github.com/mitunmanav/build-android-app-plugin/labels/v1.1) to see if it's already planned.
+        - [ ] This plugin targets **non-technical vibe coders**. Will your feature help that user?
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem it solves
+      description: What does the user want to do that they can't today?
+      placeholder: |
+        I want to generate Play Store screenshots automatically from the app's
+        actual screens, not have to mock them up in Figma.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How should it work? Be specific about the user experience.
+      placeholder: |
+        `/screenshots` command that uses `asset-mcp` to capture the actual
+        app UI at 1080×1920 and outputs to assets/screenshots/.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other ways to solve the same problem?
+      placeholder: |
+        Manually taking screenshots works but takes 30 minutes.
+        Using Play Console's built-in screenshot tool requires a published app.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Which part of the plugin does this touch?
+      options:
+        - label: "New skill (skills/*/)"
+        - label: "New command (commands/*)"
+        - label: "New MCP server (mcp-servers/*)"
+        - label: "Existing skill / command / MCP"
+        - label: "Hook or CI workflow"
+        - label: "Documentation only"

@@ -1,0 +1,50 @@
+name: Open a Pull Request
+description: Submit a fix, feature, or documentation change
+title: ""
+labels: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## PR checklist
+
+        - [ ] Branch is `feat/` or `fix/`, not `main`
+        - [ ] `bash scripts/smoke.sh` passes locally
+        - [ ] `smoke` CI passes on this PR branch
+        - [ ] CHANGELOG updated under `[Unreleased]`
+        - [ ] New skill has `SKILL.md` + `references/` complete
+        - [ ] No `Co-authored-by:` footer (project rule — single author)
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What does this PR change?
+      description: Summary of the change and why it's needed.
+      placeholder: |
+        Fixes the smoke script to detect src-layout MCP directories
+        (adb-mcp and gradlew-mcp use src/ subdirectory).
+    validations:
+      required: true
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: How did you test it?
+      description: What did you run to verify the change works?
+      placeholder: |
+        - Ran `bash scripts/smoke.sh` locally — all 6 checks pass.
+        - Pushed to a test branch and confirmed CI `smoke` passes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: breaking
+    attributes:
+      label: Any breaking changes?
+      description: Will this change how existing users interact with the plugin?
+      placeholder: |
+        None — smoke script output format unchanged, all existing skills
+        and commands unaffected.
+    validations:
+      required: false
