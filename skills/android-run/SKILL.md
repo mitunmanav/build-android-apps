@@ -1,12 +1,13 @@
 ---
 name: android-run
 description: >
-  Install a debug APK on a connected device, launch the main activity, and
-  capture an initial screenshot. Use this skill after android-build produces a
-  debug APK and the user wants to see the app on a device. Pairs with /preview
-  slash command. Do not use for release-signed APKs (use android-publish-update
-  for Play Store), for screenshot test fixtures (use android-test), or for
-  any device-side debugging (use android-debug-fix).
+  Install a debug APK on a connected device or emulator, launch the main
+  activity, and capture an initial screenshot. Use this skill after
+  android-build produces a debug APK and the user wants to run, preview, or
+  see the app on a device or emulator. Pairs with /preview slash command. Do
+  not use for release-signed APKs (use android-publish-update for Play
+  Store), for screenshot test fixtures (use android-test), or for any
+  device-side debugging (use android-debug-fix).
 license: Apache-2.0
 metadata:
   author: Mitun

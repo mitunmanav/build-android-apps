@@ -42,7 +42,7 @@ The app picks up your CLI config, so MCP servers and plugin state carry over.
 ## Using it
 
 - Invoke the frontdoor skill explicitly: `$build-android-apps` or `@build-android-apps`.
-- Or just describe the task ("make a habit tracker with streaks") — the frontdoor is implicitly invokable and routes to 1 of 27 specialists.
+- Or just describe the task ("make a habit tracker with streaks") — the frontdoor is implicitly invokable and routes to 1 of 28 specialists.
 - **Slash commands from `commands/` do not load on Codex.** There is no `commands` manifest key. Use the frontdoor skill instead — it routes to the same workflows.
 
 ## Hooks

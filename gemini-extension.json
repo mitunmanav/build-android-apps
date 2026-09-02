@@ -1,7 +1,7 @@
 {
   "name": "build-android-apps",
   "version": "2.0.0",
-  "description": "Build and ship Android apps from your AI assistant: 28 skills (1 frontdoor + 27 specialists), 30 plain-English slash commands, 4 subagents, 5 MCP servers, 5 hooks \u2014 progressive disclosure keeps...",
+  "description": "Build and ship Android apps from your AI assistant: 29 skills (1 frontdoor + 28 specialists), 32 plain-English slash commands, 8 subagents, 5 MCP servers, 6 hooks \u2014 progressive disclosure keeps...",
   "author": {
     "name": "Mitun",
     "url": "https://github.com/mitunmanav"

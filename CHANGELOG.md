@@ -2,6 +2,28 @@
 
 All notable changes to this plugin are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Bootstrap injection** (`hooks/bootstrap.md` + `session-start.sh`): compressed meta-skill injected as `additionalContext` on every SessionStart (startup/resume/clear/compact) — routes plain English to the frontdoor automatically, survives compaction. Frontdoor gains wake-up handling (resume / complaint / idea).
+- **`agent-orchestrator` skill — The Loop**: autonomous plan execution. Fresh implementer per task → device-evidence gate (build ladder + install + launch + screenshot) → two read-only reviewers in one turn (spec compliance + frozen quality rubric) → bounded fix loop (rounds 1–3 resume implementer, 4–5 fresh + stronger model, cap 5) → ledger. Controller budget rules (never reads diffs/reports, never fixes code), batching of small same-shape tasks, explicit model tiering, 4-branch BLOCKED tree with task parking, staleness cap (3 steps with no state advance → stop + resume.md).
+- **4 loop subagents**: `implementer`, `spec-reviewer`, `quality-reviewer`, `qa-user` (journey-based end-to-end verification per Google android-cli journey schema).
+- **Frozen quality rubric** (`agent-orchestrator/references/quality-rubric.md`): 18 named Android/Kotlin AI-slop patterns (C1–C6, I1–I7, M1–M5) with context exceptions; shared by quality-reviewer, `/slop`, and release-auditor.
+- **`/run-plan`** command — hands-free plan execution. **`/slop`** — residue gate with narrow repair contract. `/continue` resumes interrupted loop runs; `/undo` reverts a loop task's commit range.
+- **`slop-gate.sh` PostToolUse hook** — advisory deterministic scan (empty catch, TODO stubs, deferral/hedging language, narrative comments) on edited `.kt` files.
+- **Play policy pre-check** in `/publish` (permissions hygiene, data-safety coherence, privacy/rating/target-SDK) before any upload.
+- **Evals** (`evals/`): Tier 2 trigger-routing runner (zero-dep TF-IDF, collision check 50/75%, rank-1 floor 80%) + 10 routing case files; Tier 3 opt-in behavioral runner (`claude -p` → `codex exec` fallback) with two Android pressure fixtures (time-pressure, authority-pressure).
+- **Google-skill handoff**: implementer briefs instruct loading an installed `android/skills` skill when a task matches — its verification gates replace the default evidence ladder.
+- **Scaffold hardening**: version-matrix gate (AGP↔Gradle↔JDK↔Kotlin↔KSP) before scaffolding; `gradle.properties` speed defaults (parallel, caching, configuration-cache, ParallelGC); KSP-not-kapt; Crashlytics disabled in debug.
+
+### Changed
+- **state.json schema v2**: adds `constraints[]`, `orchestration{}` (mode/status/fix_round/staleness/metrics), `ledger[]` (ring 200), `agents[]` (ring 100). Transparent v1→v2 migration on load; CLI subcommands `mode`, `loop-status`, `constraints`, `ledger`, `agent-log`, `record-done`, `stale`, `park`. `/where` renders loop state + recent ledger in plain English.
+- **Plugin-lock regeneration** via documented scheme (`scripts/update-lock.py`); counts updated everywhere (29 skills, 32 commands, 8 subagents, 6 hook handlers).
+
+### Fixed
+- `load()` returned a shallow copy of `DEFAULT_STATE` — nested `orchestration` dicts were shared across StateManager instances (caught by new `tests/test_state_v2.py`, 16 tests).
+- CI `smoke.yml` asserted `SCHEMA_VERSION == 1`; now 2, plus a v2 loop-API smoke step.
+
 ## [2.0.0] - 2026-09-01
 
 ### Added

@@ -1,8 +1,7 @@
 """state/migrate.py — version-aware migration for state.json.
 
-Phase 1: only schema_version 1 exists. v0 (no schema_version field) is
-promoted to v1 by adding the field. v2+ is rejected (will be added
-when schema bumps).
+Supported upgrades: v0 (no schema_version) → v1 (field add) and
+v1 → v2 (adds constraints/orchestration/ledger/agents; existing data kept).
 
 CLI:
     python -m state.migrate validate <path>
@@ -15,7 +14,26 @@ import json
 import sys
 from pathlib import Path
 
-from .state import SCHEMA_VERSION
+from .state import SCHEMA_VERSION, DEFAULT_ORCHESTRATION
+
+
+def _v1_to_v2(state: dict) -> None:
+    """v1 → v2: add the orchestration-loop sections. Existing data is kept."""
+    state["constraints"] = list(state.get("constraints", []))
+    orch = dict(DEFAULT_ORCHESTRATION)
+    orch["metrics"] = dict(DEFAULT_ORCHESTRATION["metrics"])
+    # preserve any already-present v2 fields (idempotent migration)
+    for k, v in state.get("orchestration", {}).items():
+        if k == "metrics" and isinstance(v, dict):
+            merged = dict(orch["metrics"])
+            merged.update(v)
+            orch["metrics"] = merged
+        else:
+            orch[k] = v
+    state["orchestration"] = orch
+    state["ledger"] = list(state.get("ledger", []))
+    state["agents"] = list(state.get("agents", []))
+    state["schema_version"] = 2
 
 
 def migrate(state: dict) -> dict:
@@ -31,6 +49,10 @@ def migrate(state: dict) -> dict:
         # v0 → v1: just add the field
         state["schema_version"] = 1
         v = 1
+
+    if v == 1 and SCHEMA_VERSION >= 2:
+        _v1_to_v2(state)
+        v = 2
 
     if v == SCHEMA_VERSION:
         return state

@@ -45,6 +45,16 @@
             "timeout": 30
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/slop-gate.sh",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "Stop": [

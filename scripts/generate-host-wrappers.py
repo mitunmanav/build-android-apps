@@ -125,7 +125,7 @@ def build_gemini_extension(servers: dict) -> dict:
     plugin_json = ROOT / ".codex-plugin" / "plugin.json"
     name = "build-android-apps"
     version = "2.0.0"
-    description = "Build and ship Android apps — 28 skills + 5 MCP servers"
+    description = "Build and ship Android apps — 29 skills + 5 MCP servers"
     if plugin_json.exists():
         try:
             pj = json.loads(plugin_json.read_text())

@@ -1,16 +1,16 @@
 # Skills Catalog
 
-27 specialist skills + 1 frontdoor teach your AI assistant how to do Android jobs. Frontdoor `build-android-apps` routes plain English to the right specialist — progressive disclosure keeps startup cheap (only frontdoor description loaded, specialists lazy).
+28 specialist skills + 1 frontdoor teach your AI assistant how to do Android jobs. Frontdoor `build-android-apps` routes plain English to the right specialist — progressive disclosure keeps startup cheap (only frontdoor description loaded, specialists lazy).
 
 ## Frontdoor
 
 ### `build-android-apps` — **START HERE**
 
-One skill routes to 27 specialists via state-aware intent table. User says plain English, frontdoor delegates to one specialist at a time.
+One skill routes to 28 specialists via state-aware intent table. User says plain English, frontdoor delegates to one specialist at a time.
 
 **Use when**: any build/ship task — "make an app", "add auth", "debug crash", "publish". **Pairs with**: all specialists, `state/router.py` (Kahn, deterministic).
 
-## All 27 specialist skills
+## All 28 specialist skills
 
 ### 1. `android-debugger-agent`
 
@@ -131,9 +131,10 @@ Skills are designed to **compose**. Common combinations:
 | 22 | `android-icons-assets` | Icons (5 densities) + feature graphic (asset-mcp) |
 | 23 | `android-store-listing` | Title/desc/screenshots/privacy/data safety |
 | 24 | `android-publish-update` | Version bump + signed AAB + Play upload |
-| 25 | `android-r8-analyzer` | APK size + keep-rule audit |
-| 26 | `android-importer` | Import foreign project (snapshot + audit) |
-| 27 | `setup-wizard` | 10-step cold-start (SDK/Play/keystore) |
+| 25 | `agent-orchestrator` | Autonomous plan-execution loop (subagents, reviews, ledger) |
+| 26 | `android-r8-analyzer` | APK size + keep-rule audit |
+| 27 | `android-importer` | Import foreign project (snapshot + audit) |
+| 28 | `setup-wizard` | 10-step cold-start (SDK/Play/keystore) |
 
 ## Skill loading (progressive disclosure)
 

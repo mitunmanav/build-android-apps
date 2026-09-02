@@ -1,0 +1,18 @@
+{
+  "skill": "app-intake",
+  "positive": [
+    "make me a habit tracker app",
+    "I want to build an app for tracking workouts",
+    "make me a simple journaling app"
+  ],
+  "negative": [
+    {
+      "prompt": "add a dark mode toggle to the settings screen",
+      "owner": "build-android-apps"
+    },
+    {
+      "prompt": "the app crashes on startup",
+      "owner": "android-debug-fix"
+    }
+  ]
+}

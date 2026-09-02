@@ -109,14 +109,14 @@ def verify_manifests() -> None:
 # ---------- 2. Skills ----------
 
 def verify_skills() -> None:
-    section("2. Skills (28 expected: 27 specialists + 1 frontdoor)")
+    section("2. Skills (29 expected: 28 specialists + 1 frontdoor)")
     skills_dir = ROOT / "skills"
     if not skills_dir.is_dir():
         check("skills/ exists", False, "missing")
         return
     check("skills/ exists", True)
     skill_dirs = sorted([p for p in skills_dir.iterdir() if p.is_dir()])
-    check(f"28 skills (got {len(skill_dirs)})", len(skill_dirs) == 28, f"got {len(skill_dirs)} expected 28")
+    check(f"29 skills (got {len(skill_dirs)})", len(skill_dirs) == 29, f"got {len(skill_dirs)} expected 29")
 
     NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
     for sd in skill_dirs:
@@ -157,13 +157,13 @@ def verify_skills() -> None:
 # ---------- 3. Slash commands ----------
 
 def verify_commands() -> None:
-    section("3. Slash commands (30 expected)")
+    section("3. Slash commands (32 expected)")
     cmds_dir = ROOT / "commands"
     if not cmds_dir.is_dir():
         check("commands/ exists", False, "missing")
         return
     cmd_files = sorted(cmds_dir.glob("*.md"))
-    check("30 commands", len(cmd_files) == 30, f"got {len(cmd_files)}")
+    check("32 commands", len(cmd_files) == 32, f"got {len(cmd_files)}")
     for f in cmd_files:
         text = f.read_text()
         parts = text.split("---", 2)
@@ -188,13 +188,13 @@ def verify_commands() -> None:
 # ---------- 4. Subagents ----------
 
 def verify_agents() -> None:
-    section("4. Subagents (4 expected)")
+    section("4. Subagents (8 expected)")
     agents_dir = ROOT / "agents"
     if not agents_dir.is_dir():
         check("agents/ exists", False, "missing")
         return
     agent_files = sorted(agents_dir.glob("*.md"))
-    check("4 subagents", len(agent_files) == 4, f"got {len(agent_files)}")
+    check("8 subagents", len(agent_files) == 8, f"got {len(agent_files)}")
     for f in agent_files:
         text = f.read_text()
         parts = text.split("---", 2)
@@ -214,7 +214,7 @@ def verify_agents() -> None:
 # ---------- 5. Hooks ----------
 
 def verify_hooks() -> None:
-    section("5. Hooks (4 events, 5 handlers expected)")
+    section("5. Hooks (4 events, 6 handlers expected)")
     hjson = ROOT / "hooks" / "hooks.json"
     check("hooks/hooks.json", hjson.is_file())
     if not hjson.is_file():
@@ -228,10 +228,13 @@ def verify_hooks() -> None:
     expected = {"SessionStart", "PreToolUse", "PostToolUse", "Stop"}
     check("hooks.json has 4 expected events", set(events) == expected,
           f"got {events}, expected {expected}")
-    # also verify we have 2 PreToolUse handlers (block-destructive + release-check)
+    # also verify handler counts: PreToolUse 2 (block + release-check), PostToolUse 2 (lint + slop-gate)
     pre_handlers = h["hooks"].get("PreToolUse", [])
     check("PreToolUse has 2 handlers (block + release-check)", len(pre_handlers) == 2,
           f"got {len(pre_handlers)}")
+    post_handlers = h["hooks"].get("PostToolUse", [])
+    check("PostToolUse has 2 handlers (lint + slop-gate)", len(post_handlers) == 2,
+          f"got {len(post_handlers)}")
 
     # Check each script exists and is executable
     for ev, matchers in h["hooks"].items():

@@ -1,0 +1,18 @@
+{
+  "skill": "android-scaffold",
+  "positive": [
+    "scaffold the compose project from my spec",
+    "set up the gradle project with material 3",
+    "bootstrap a fresh android project from my spec"
+  ],
+  "negative": [
+    {
+      "prompt": "write the play store listing description",
+      "owner": "android-store-listing"
+    },
+    {
+      "prompt": "migrate my xml layouts to compose",
+      "owner": "compose-view-refactor"
+    }
+  ]
+}

@@ -69,8 +69,9 @@ Prerequisites auto-detected on `SessionStart` — missing anything, `/setup` fix
 ```bash
 /setup                                          # 10-step wizard: JDK/SDK/adb/device/Play/keystore (~30 min)
 /make-app "a habit tracker with daily reminders" # intake → spec → scaffold
-/preview                                        # install + launch + screenshot
-/publish                                        # gated → signed AAB → Play internal track
+/run-plan                                        # autonomous build: subagents + reviews + device evidence
+/preview                                         # install + launch + screenshot
+/publish                                         # gated → signed AAB → Play internal track
 ```
 
 Taking over a Lovable / Bolt / v0 / Cursor app? `/import` → `/audit` → `/finish`. Mid-build changes: `/add` · `/change` · `/remove` · `/where` · `/undo` · `/continue`.
@@ -83,7 +84,7 @@ Taking over a Lovable / Bolt / v0 / Cursor app? `/import` → `/audit` → `/fin
 flowchart TB
   Host[AI Host - Codex / Claude / .agents]
   Manifests[Plugin Manifests + plugin.lock.json]
-  Skills[28 Skills - 1 frontdoor + 27 specialists]
+  Skills[29 Skills - 1 frontdoor + 28 specialists]
   Commands[30 Commands - plain English]
   MCP[5 MCP Servers - adb / gradlew / play-store / keystore / asset]
   State[state.json - plan / cursor / build / device / store]
@@ -120,7 +121,7 @@ Use `$build-android-apps` for everything — it routes. You never need to name a
 
 ## Skills
 
-28 skills — 1 frontdoor `build-android-apps` + 27 specialists. Frontdoor intent-classifies plain English and delegates. Full catalog: [`docs/SKILLS-CATALOG.md`](docs/SKILLS-CATALOG.md)
+29 skills — 1 frontdoor `build-android-apps` + 28 specialists (incl. `agent-orchestrator`, the autonomous plan-execution loop). Frontdoor intent-classifies plain English and delegates. Full catalog: [`docs/SKILLS-CATALOG.md`](docs/SKILLS-CATALOG.md)
 
 - **Lifecycle:** `app-intake` · `app-planner` · `android-scaffold` · `android-run` · `android-debug-fix` · `setup-wizard`
 - **Quality:** `compose-ui-patterns` · `compose-performance-audit` · `compose-view-refactor` · `material3-expressive` · `android-edge-to-edge`
@@ -138,10 +139,12 @@ Plain English — all delegate to the frontdoor. Full list: [`commands/`](comman
 |---|---|
 | `/setup` | First-run wizard (SDK, Play Console, service account, keystore) |
 | `/make-app "<idea>"` | Intake → spec → scaffold |
+| `/run-plan` | **Hands-free build**: orchestrator runs the plan task-by-task with subagents, reviews, and device evidence |
 | `/preview` | Install + launch + screenshot |
 | `/publish` · `/update` | Submit to Play internal track · bump version + resubmit |
 | `/import` · `/audit` · `/finish` | Take over → check gaps → auto-fill & ship |
 | `/add` · `/change` · `/remove` · `/where` · `/undo` · `/continue` | Mutate & navigate plan |
+| `/slop` | Scan changed Kotlin for AI-slop residue + narrow repair prompt |
 | `/why-rejected` · `/screenshots` · `/backup-keystore` | Diagnose rejection · generate assets |
 | `/help` · `/status` · `/reset` | Help · post-publish dashboard · reset |
 

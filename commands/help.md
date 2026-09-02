@@ -6,7 +6,7 @@ allowed-tools:
 
 # /help
 
-List all 30 commands in plain English.
+List all 32 commands in plain English.
 
 ## Context
 

@@ -3,10 +3,12 @@ name: build-android-apps
 description: >
   Build, run, debug, and ship Android apps from plain English. Use this
   whenever the user wants to make an app, add a feature, fix a crash,
-  preview on device, or publish to Play Store. This frontdoor classifies
-  intent and delegates to the right specialist skill (intake, scaffold,
-  run, debug, backend, auth, store-listing, publish, etc.). Do not use
-  specialist skills directly — this frontdoor routes to them.
+  preview on device, or publish to Play Store — or when they ask for help,
+  don't know what to do next, or want to know what this plugin can do.
+  This frontdoor classifies intent and delegates to the right specialist
+  skill (intake, scaffold, run, debug, backend, auth, store-listing,
+  publish, etc.). Do not use specialist skills directly — this frontdoor
+  routes to them.
 license: Apache-2.0
 metadata:
   author: Mitun
@@ -25,6 +27,21 @@ metadata:
 - None — this skill checks project state itself (`python -m state where`).
 
 ## Workflow
+
+### Step 0: Wake-up check (bootstrap fired you)
+
+The SessionStart hook injects a bootstrap that routes plain English here. On any
+Android-related utterance, you are already in the right skill — do not ask
+permission to use it. Handle these three shapes before anything else:
+
+- **Resume** ("go", "continue", or any utterance with existing state.json): run
+  Step 1 first, then say in plain English: "You're at phase X, task Y" and
+  continue from there. Never re-ask what the state already knows.
+- **Complaint** ("it crashed", "not working", "stuck on X"): route to
+  `android-debug-fix` directly — a complaint is a debug intent even without the
+  word "debug".
+- **Idea** ("make me an app that…"): route to `app-intake` — spec first, ONE
+  approval, then the build loop runs hands-free.
 
 ### Step 1: Load state + server budget check
 
@@ -58,7 +75,7 @@ See [references/delegation.md](references/delegation.md) for the load protocol.
 
 ## Anti-patterns
 
-- **DO NOT** load all 27 specialists at once — one at a time only.
+- **DO NOT** load all 28 specialists at once — one at a time only.
 - **DO NOT** re-classify mid-task — finish delegate, then re-route.
 - **DO NOT** skip state check — resumability depends on it.
 - **DO NOT** invent tool results — wait for MCP output.
@@ -67,6 +84,7 @@ See [references/delegation.md](references/delegation.md) for the load protocol.
 
 - `app-intake` — first-run idea → spec
 - `app-planner` — spec → Kahn-routed plan
+- `agent-orchestrator` — executes the plan task-by-task via subagents (fresh implementer → device evidence → two reviews → fix loop), with a resumable ledger in state.json
 - `android-scaffold` — Gradle/Compose project
 - `android-run` — install + launch + screenshot
 - `android-debug-fix` — logcat → fix loop

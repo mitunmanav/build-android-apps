@@ -2,11 +2,12 @@
 name: android-debug-fix
 description: >
   Debug a failing Android app via logcat + structured fix-loop. Use this when
-  the app crashes, throws an exception, or produces unexpected behavior at
-  runtime. The skill captures logcat, localizes the failing call site, edits
-  the smallest possible change, rebuilds, reinstalls, and verifies. Do not
-  use for compile-time errors (use /build or /lint) or for design issues
-  without a crash (use /preview or compose-ui-patterns).
+  the app crashes, freezes, hangs, gets stuck, throws an exception, or
+  produces unexpected behavior at runtime. The skill captures logcat,
+  localizes the failing call site, edits the smallest possible change,
+  rebuilds, reinstalls, and verifies. Do not use for compile-time errors (use
+  /build or /lint) or for design issues without a crash (use /preview or
+  compose-ui-patterns).
 license: Apache-2.0
 metadata:
   author: Mitun
@@ -94,6 +95,15 @@ file: <path:line>
 reason: <why this fixes the symptom>
 verified: <one-line observation from the re-run>
 ```
+
+## Anti-rationalizations
+
+| If you catch yourself thinking… | The answer is |
+|---|---|
+| "The stack trace is clear, skip logcat" | Read the actual logcat — the trace you imagine and the trace on the device differ. |
+| "Reproduce is obvious, just fix it" | Prove-It: the repro must FAIL before your fix, or you cannot prove the fix worked. |
+| "User said crashes are random, no repro possible" | Random still has a trigger. Capture device state (logcat, layout) before theorizing. |
+| "It worked on the emulator, ship it" | Emulator ≠ device. Note the difference; verify on the target if one is connected. |
 
 ## Anti-patterns
 

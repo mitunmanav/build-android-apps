@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/codex-plugin.json",
   "name": "build-android-apps",
   "version": "2.0.0",
-  "description": "Build and ship Android apps from your AI assistant: 28 skills (1 frontdoor + 27 specialists), 30 plain-English slash commands, 4 subagents, 5 MCP servers, 5 hooks — progressive disclosure keeps startup under the 8k budget. Per-project resumable build loop with Kahn router.",
+  "description": "Build and ship Android apps from your AI assistant: 29 skills (1 frontdoor + 28 specialists), 32 plain-English slash commands, 8 subagents, 5 MCP servers, 6 hooks — progressive disclosure keeps startup under the 8k budget. Per-project resumable build loop with Kahn router + autonomous agent-orchestrator loop.",
   "author": {
     "name": "Mitun",
     "email": "[email protected]",
@@ -29,8 +29,8 @@
   "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "Build Android App",
-    "shortDescription": "Build, run, debug, and ship Android apps — one frontdoor skill routes to 27 specialists",
-    "longDescription": "Use Build Android Apps: $build-android-apps turns a one-line idea into a working app and Play Store submission. Frontdoor classifies intent and delegates to 27 specialists (intake → scaffold → debug → publish). 30 commands are aliases to frontdoor intents (Claude Code and other hosts; on Codex invoke $build-android-apps directly). 5 MCP servers drive adb, Gradle, Play, keystore, assets. Per-project state.json + Kahn router makes every loop resumable and deterministic (no LLM for planning).",
+    "shortDescription": "Build, run, debug, and ship Android apps — one frontdoor skill routes to 28 specialists",
+    "longDescription": "Use Build Android Apps: $build-android-apps turns a one-line idea into a working app and Play Store submission. Frontdoor classifies intent and delegates to 28 specialists (intake → scaffold → debug → publish → agent-orchestrator). 32 commands are aliases to frontdoor intents (Claude Code and other hosts; on Codex invoke $build-android-apps directly). 5 MCP servers drive adb, Gradle, Play, keystore, assets. Per-project state.json + Kahn router makes every loop resumable and deterministic (no LLM for planning).",
     "developerName": "Mitun",
     "category": "Developer Tools",
     "capabilities": [

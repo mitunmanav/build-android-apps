@@ -1,0 +1,6 @@
+interface:
+  display_name: Agent Orchestrator
+  short_description: Run the plan autonomously through subagents
+  default_prompt: Use $agent-orchestrator to execute my plan task by task
+policy:
+  allow_implicit_invocation: false

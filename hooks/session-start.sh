@@ -11,12 +11,33 @@ emit() {
     MSGS+=("[$1] $2")
 }
 
+# Bootstrap meta-skill (superpowers pattern): injected verbatim as the first
+# part of additionalContext on EVERY SessionStart (startup|resume|clear|compact
+# — the matcher in hooks.json gates this script). Re-injection on compact is
+# load-bearing: it is the only thing that survives context loss.
+BOOTSTRAP=""
+PLUGIN_ROOT="${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}}"
+if [ -f "$PLUGIN_ROOT/hooks/bootstrap.md" ]; then
+    BOOTSTRAP="$(cat "$PLUGIN_ROOT/hooks/bootstrap.md")"
+fi
+
 flush() {
-    if [ "${#MSGS[@]}" -gt 0 ]; then
-        COMBINED="$(printf '%s\n' ${MSGS[@]+"${MSGS[@]}"})"
-        ESC="$(python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' "$COMBINED" 2>/dev/null || printf '"%s"' "$(printf '%s' "$COMBINED" | sed 's/"/\\"/g')")"
-        printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":%s}}\n' "$ESC"
+    PARTS=()
+    if [ -n "$BOOTSTRAP" ]; then
+        PARTS+=("$BOOTSTRAP")
     fi
+    if [ "${#MSGS[@]}" -gt 0 ]; then
+        if [ -n "$BOOTSTRAP" ]; then
+            PARTS+=("---")
+        fi
+        PARTS+=("$(printf '%s\n' ${MSGS[@]+"${MSGS[@]}"})")
+    fi
+    if [ "${#PARTS[@]}" -eq 0 ]; then
+        return
+    fi
+    COMBINED="$(printf '%s\n' ${PARTS[@]+"${PARTS[@]}"})"
+    ESC="$(python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' <<<"$COMBINED" 2>/dev/null || printf '"%s"' "$(printf '%s' "$COMBINED" | sed 's/"/\\"/g')")"
+    printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":%s}}\n' "$ESC"
 }
 trap flush EXIT
 
@@ -77,8 +98,6 @@ fi
 PROJECT_ROOT="${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}"
 STATE_DIR="$PROJECT_ROOT/.build-android"
 STATE_FILE="$STATE_DIR/state.json"
-
-PLUGIN_ROOT="${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}}"
 
 if [ -f "$PLUGIN_ROOT/state/__init__.py" ] && command -v python3 >/dev/null 2>&1; then
     STATE_JSON="$(PYTHONPATH="$PLUGIN_ROOT" python3 -m state load "$STATE_FILE" 2>/dev/null || true)"

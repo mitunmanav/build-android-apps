@@ -1,0 +1,18 @@
+{
+  "skill": "android-run",
+  "positive": [
+    "install and launch the app on my phone",
+    "show me the app running on the emulator",
+    "preview the app and take a screenshot"
+  ],
+  "negative": [
+    {
+      "prompt": "the app crashes when I open it",
+      "owner": "android-debug-fix"
+    },
+    {
+      "prompt": "build a release aab for the store",
+      "owner": "android-publish-update"
+    }
+  ]
+}

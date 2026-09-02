@@ -1,0 +1,12 @@
+{
+  "skill": "android-debug-fix",
+  "positive": [
+    "my app crashes when I tap save",
+    "there is an exception in the log, fix it",
+    "the app freezes on the login screen, help"
+  ],
+  "negative": [
+    {"prompt": "why is my apk so big", "owner": "android-r8-analyzer"},
+    {"prompt": "the app is slow and janky when scrolling", "owner": "android-profiler"}
+  ]
+}

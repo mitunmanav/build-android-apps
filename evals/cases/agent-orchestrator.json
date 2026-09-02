@@ -1,0 +1,12 @@
+{
+  "skill": "agent-orchestrator",
+  "positive": [
+    "run the whole plan without stopping",
+    "go — finish all the remaining tasks",
+    "continue building, do everything that's left"
+  ],
+  "negative": [
+    {"prompt": "show me the app on my device", "owner": "android-run"},
+    {"prompt": "just build the debug apk", "owner": "android-run"}
+  ]
+}

@@ -2,7 +2,7 @@
 name: android-leak-analyzer
 description: 'Detect, triage, and fix memory leaks in Android apps using LeakCanary
   (debug builds), heap dumps, and reference-chain analysis. Use this skill when the
-  user reports "memory keeps growing", "OOM crash", "Activity destroyed but still
+  user reports "memory keeps growing", "OOM crash", "out of memory", "Activity destroyed but still
   held", or asks to "find the leak". Do not use for transient GC pauses (use android-profiler)
   or for build-time dependency conflicts (use gradlew parse_dependencies). Pairs with
   the `adb` MCP server.

@@ -15,7 +15,7 @@
   "properties": {
     "schema_version": {
       "type": "integer",
-      "const": 1
+      "const": 2
     },
     "phase": {
       "type": "string",
@@ -185,6 +185,155 @@
             "type": "string"
           },
           "fix_suggestion": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "description": "Spec's global constraints, verbatim, one line each. Injected into every task brief and review.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "orchestration": {
+      "type": "object",
+      "description": "State of the agent-orchestrator loop (Phase: The Loop).",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "status",
+        "fix_round",
+        "staleness",
+        "current_task_id",
+        "metrics"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "guided",
+            "autopilot"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "idle",
+            "running",
+            "stopped",
+            "awaiting_user"
+          ]
+        },
+        "fix_round": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "staleness": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Consecutive loop steps with no state advance. Cap 3 → stop."
+        },
+        "current_task_id": {
+          "type": "string"
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tasks_done",
+            "first_pass",
+            "fix_rounds_total",
+            "staleness_stops",
+            "ui_tasks_with_evidence",
+            "ui_tasks_total"
+          ],
+          "properties": {
+            "tasks_done": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "first_pass": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fix_rounds_total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "staleness_stops": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ui_tasks_with_evidence": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ui_tasks_total": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "ledger": {
+      "type": "array",
+      "description": "Append-only loop record. Line formats: 'Task N: complete (commits a..b, review clean)', 'Task N: fix round R/5 (...)', 'Task N: minor (deferred): ...', 'Ruling: what — why — cost if wrong', 'Task N: parked — finding — Ruling: ...'. Ring buffer, cap 200.",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "at",
+          "task_id",
+          "line"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "line": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "agents": {
+      "type": "array",
+      "description": "Subagent dispatch log. Ring buffer, cap 100.",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "required": [
+          "at",
+          "name",
+          "task_id",
+          "model",
+          "status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "status": {
             "type": "string"
           }
         }

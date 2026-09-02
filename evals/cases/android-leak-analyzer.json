@@ -1,0 +1,12 @@
+{
+  "skill": "android-leak-analyzer",
+  "positive": [
+    "the app leaks memory after rotating",
+    "there is an OOM when opening the gallery",
+    "analyze this heap dump for leaks"
+  ],
+  "negative": [
+    {"prompt": "the scroll is janky, profile recomposition", "owner": "android-profiler"},
+    {"prompt": "shrink the apk size", "owner": "android-r8-analyzer"}
+  ]
+}

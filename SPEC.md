@@ -15,12 +15,12 @@ verification, and banking setup.
 
 ### 1.1 What this plugin does
 
-- **28 skills** (1 frontdoor `build-android-apps` + 27 specialists) covering full lifecycle intake → ship → update; progressive disclosure keeps startup under 8k token budget ([see references/codex-docs-audit.md](references/codex-docs-audit.md))
-- **30 slash commands** in plain English (`/make-app`, `/add`, `/change`, `/publish`, `/update`, `/status`) — all delegate to frontdoor
-- **4 subagents** for parallel validation (clarifier, validator, release-auditor, apk-inspector)
+- **29 skills** (1 frontdoor `build-android-apps` + 28 specialists) covering full lifecycle intake → ship → update; progressive disclosure keeps startup under 8k token budget ([see references/codex-docs-audit.md](references/codex-docs-audit.md))
+- **32 slash commands** in plain English (`/make-app`, `/add`, `/change`, `/publish`, `/update`, `/status`, `/run-plan`, `/slop`) — all delegate to frontdoor
+- **8 subagents**: 4 loop agents (implementer, spec-reviewer, quality-reviewer, qa-user) + 4 validation agents (intake-clarifier, build-validator, release-auditor, apk-inspector)
 - **5 MCP servers** (Python, stdio): `adb-mcp`, `gradlew-mcp`, `play-store-mcp`, `keystore-mcp`, `asset-mcp`
-- **5 hook handlers** across 4 events (SessionStart, PreToolUse×2, PostToolUse, Stop) — no `PreSubmit` (invalid per `codex/hooks` docs; use `PreToolUse` with tool matcher)
-- **Per-project state.json** with deterministic resume from any phase (Kahn router, no LLM)
+- **6 hook handlers** across 4 events (SessionStart, PreToolUse×2, PostToolUse×2 incl. slop-gate, Stop) — no `PreSubmit` (invalid per `codex/hooks` docs; use `PreToolUse` with tool matcher)
+- **Per-project state.json (schema v2)** with deterministic resume from any phase (Kahn router, no LLM) plus orchestration-loop sections (`orchestration{}`, `ledger[]`, `agents[]`, `constraints[]`)
 - **Multi-host packaging**: Codex CLI, Claude Code CLI, `.agents` standard hosts
 - **Pairing** with Google's `android/skills` (via `android skills add --all`)
 
@@ -43,7 +43,7 @@ exist?
 | | `android/skills` (Google) | `test-android-apps` (OpenAI) | `ayush016` | **This plugin** |
 |---|---|---|---|---|
 | Coverage | 16 domain SKILLs (Compose, camera, media, security, system, etc.) | Testing only (QA, Perfetto, leaks) | Team standards (architecture, theming, performance) | **Full lifecycle: intake→ship→update** |
-| Tooling | Skills only (no MCP, no commands) | Raw adb shell + 2 skills + scripts/ | Single SKILL + 17 references | 28 skills (1 frontdoor + 27) + 30 commands + 5 MCP + 5 hooks |
+| Tooling | Skills only (no MCP, no commands) | Raw adb shell + 2 skills + scripts/ | Single SKILL + 17 references | 29 skills (1 frontdoor + 28) + 32 commands + 5 MCP + 6 hooks + agent-orchestrator loop |
 | Shipping | No (knowledge only) | No | No | **Yes** (`/publish` → Play Store upload) |
 | Resume | No | No | No | **Yes** (state.json + Kahn's phase-router) |
 | Resume-aware | No | No | No | **Yes** (`/add` `/remove` `/change` mid-loop) |
@@ -227,7 +227,7 @@ dependencies:
       description: "Android Debug Bridge"
 ```
 
-### 5.4 28-skill lineup (1 frontdoor + 27 specialists)
+### 5.4 29-skill lineup (1 frontdoor + 28 specialists)
 
 | # | Skill | Purpose | MCP deps |
 |---|---|---|---|
@@ -256,7 +256,7 @@ dependencies:
 | 22 | `android-edge-to-edge` | SDK 35+ mandatory edge-to-edge; RIGHT/WRONG code pairs pattern | (none) |
 | 23 | `android-icons-assets` | Launcher icon + adaptive layers + feature graphic; two-tier checklist (agent + user) | `asset-mcp` |
 | 24 | `android-store-listing` | Play Store title/desc/short/long/screenshots/privacy URL; data safety form inference; content rating | (none) |
-| 25 | `android-play` | Play Store submission flow (porting Google's `play/engage-sdk-integration` + `play-billing-library-version-upgrade`) | `play-store-mcp` |
+| 25 | `agent-orchestrator` | Autonomous plan-execution loop: fresh implementer per task → device evidence → two read-only reviews → bounded fix loop (≤5) → resumable ledger; modes guided/autopilot; staleness cap; see §7.2 | state |
 | 26 | `android-publish-update` | Keystore + signed AAB + Play upload + version bump + changelog | `play-store-mcp`, `keystore-mcp` |
 | 27 | `android-r8-analyzer` | APK size optimization; strict-output-limit pattern; report sections with "omit if no findings" | `gradlew-mcp` |
 | 28 | `setup-wizard` | First-run setup: SDK install + Play Console signup + service account + ID verification + banking | `gradlew-mcp`, `play-store-mcp` |
@@ -318,7 +318,7 @@ $ARGUMENTS
 - [ ] Step 2 verified
 ```
 
-### 6.2 30 commands (all delegate to frontdoor)
+### 6.2 32 commands (all delegate to frontdoor)
 
 | # | Command | MCP tools pre-allowed | Purpose |
 |---|---|---|---|
@@ -346,7 +346,7 @@ $ARGUMENTS
 
 **MCP tool name format**: `<server>.<tool>` where `<server>` is the key in `.mcp.json`. When exposed by Codex, the fully-qualified tool name follows `mcp__plugin_<plugin_name_underscored>_<server>__<tool>`. For this plugin: `mcp__plugin_build_android_apps_<server>__<tool>`.
 
-## 7. Subagents (6)
+## 7. Subagents (8)
 
 Each is a `.md` file with frontmatter (name, description with `<example>` block, tools, model) and system-prompt body.
 
@@ -367,27 +367,37 @@ All subagents use this pattern for context efficiency:
 
 **Concurrency limit**: Max 3 subagents simultaneously. Spawn batch, wait, spawn next.
 
-### 7.2 4 subagents
+### 7.2 8 subagents
 
 | Agent | Purpose | Concurrency |
 |---|---|---|
+| `implementer` | Loop agent: implements ONE plan task from a brief file; TDD + device evidence; replies DONE/DONE_WITH_CONCERNS/BLOCKED/NEEDS_CONTEXT ≤15 lines | 1 (serial — shared working tree) |
+| `spec-reviewer` | Loop agent: read-only spec-compliance review of the task diff vs brief; "Do Not Trust the Report" | 2-way with quality-reviewer |
+| `quality-reviewer` | Loop agent: read-only review against the FROZEN anti-slop rubric (`agent-orchestrator/references/quality-rubric.md`); may not invent criteria | (same turn) |
+| `qa-user` | Loop agent: end-of-plan — uses the app as a real user via journeys; per-action PASSED/FAILED evidence | 1 |
 | `intake-clarifier` | When prompt vague → returns N clarifying questions for user | 1 |
 | `build-validator` | Pre-flight: lint + tests + dep check + R8 in parallel | 3-way parallel |
-| `release-readiness` | Pre-publish: signing + listing + privacy + content rating + data safety | 5-way parallel |
-| `rejection-parser` | Post-rejection: parse Play Store rejection, diagnose, fix-suggest | 1 |
-| `phase-router` | Given user delta + current state, compute minimal phase sequence (Kahn's deps) | 1 (deterministic) |
-| `asset-generator` | Generate icons + adaptive layers + feature graphics + screenshots | 2-way parallel |
+| `release-auditor` | Pre-publish: signing + listing + privacy + content rating + data safety; consumes slop score | 5-way parallel |
+| `apk-inspector` | Deep APK inspection: manifest, DEX, resources, signing, per-component sizes | 1 |
 
-## 8. Hooks (4 events, 5 handlers)
+Loop mechanics (dispatch templates, ledger line formats, resume, staleness
+cap, model tiering, batching): see `skills/agent-orchestrator/` +
+`references/prompt-templates.md` and `references/loop-contract.md`. The
+`phase-router` remains deterministic Python (`state/router.py`), NOT an LLM
+subagent. `rejection-parser` and `asset-generator` folded into
+`release-auditor` + `asset-mcp` respectively (no separate agents).
 
-Per [Codex Hooks docs](https://developers.openai.com/codex/hooks) and [Claude Code Hooks docs](https://docs.claude.com/en/docs/claude-code/hooks). 4 events, 5 handlers (PreToolUse has 2).
+## 8. Hooks (4 events, 6 handlers)
+
+Per [Codex Hooks docs](https://developers.openai.com/codex/hooks) and [Claude Code Hooks docs](https://docs.claude.com/en/docs/claude-code/hooks). 4 events, 6 handlers (PreToolUse has 2, PostToolUse has 2).
 
 | Event | Handler | Matcher | Purpose |
 |---|---|---|---|
-| `SessionStart` | `session-start.sh` | `startup\|resume\|clear\|compact` | Detect SDK/JDK/adb/devices; emit frontdoor + state.json phase |
+| `SessionStart` | `session-start.sh` | `startup\|resume\|clear\|compact` | Detect SDK/JDK/adb/devices; inject `hooks/bootstrap.md` meta-skill (routes plain English to the frontdoor, survives compaction); emit state.json phase |
 | `PreToolUse` | `block-destructive.sh` | `Bash` | Block `gradlew clean`, `rm -rf`, `git reset --hard` unless confirmed |
 | `PreToolUse` | `release-check.sh` | `mcp__plugin_build_android_apps_play_store__submit_for_review\|upload_aab` | Gate Play submissions (keystore/listing/screenshots) — PreToolUse is the verified event (no PreSubmit in Codex docs) |
 | `PostToolUse` | `lint-kotlin.sh` | `Edit\|Write\|MultiEdit` | Run ktlint on edited `.kt` files |
+| `PostToolUse` | `slop-gate.sh` | `Edit\|Write\|MultiEdit` | Advisory AI-slop scan on edited `.kt` files (deterministic subset of the frozen rubric: C1/C2/I1/I2/M1) — never blocks; enforcement lives in quality-reviewer |
 | `Stop` | `stop-review.sh` | (all) | Plain-English session summary for user |
 
 ### 8.1 hooks.json (verified against `developers.openai.com/codex/hooks`)
@@ -543,91 +553,59 @@ All 5 servers use stdio transport. No HTTP, SSE, or WebSocket.
 }
 ```
 
-Pin each of the 28 skills (1 frontdoor + 27 specialists) with sha256 for reproducible installs.
+Pin each of the 29 skills (1 frontdoor + 28 specialists) with sha256 for reproducible installs.
 
 ## 11. state.json Schema
 
 Per-project file at `<project>/.build-android/state.json`. Gitignored.
 
-### 11.1 Schema
+### 11.1 Schema (v2)
+
+v2 adds four orchestration-loop sections on top of v1; existing v1 files are
+migrated transparently on first `StateManager` load (`state/migrate.py`).
 
 ```json
 {
-  "schema_version": 1,
-  "phase": "intake|plan|scaffold|build|test|publish|update",
-  "plan": [
-    {
-      "id": "<uuid>",
-      "title": "<human-readable>",
-      "status": "pending|in_progress|done|skipped",
-      "phase": "<which phase runs this task>",
-      "deps": ["<task-id>", "..."],
-      "files_touched": ["<path>", "..."],
-      "added_by": "user|agent",
-      "added_at": "<iso8601>"
-    }
+  "schema_version": 2,
+  "constraints": [
+    "<spec's global constraints, verbatim, one line each — injected into every task brief>"
   ],
-  "cursor": {
-    "phase": "<current phase>",
-    "task_id": "<current task>"
-  },
-  "build": {
-    "last_assemble": "ok|fail",
-    "apk_path": "<path>",
-    "aab_path": "<path>",
-    "last_gradle_output_tail": "<last 50 lines>"
-  },
-  "device": {
-    "serial": "<adb-serial>",
-    "api": 34,
-    "abi": "arm64-v8a"
-  },
-  "store": {
-    "draft_id": "<play-store-draft-id>",
-    "listing_revision": 0,
-    "track": "internal|closed|production",
-    "rollout_percent": 0
-  },
-  "keystore": {
-    "fingerprint": "<sha256>",
-    "path": "<keystore-path>",
-    "alias": "<alias>",
-    "backed_up": false
-  },
-  "environment": {
-    "sdk_installed": false,
-    "jdk_installed": false,
-    "adb_in_path": false,
-    "play_console_email": "<email>",
-    "billing_setup": false
-  },
-  "crashlytics": {
-    "enabled": false,
-    "dsn": "<firebase-dsn>"
-  },
-  "rejections": [
-    {
-      "id": "<rejection-id>",
-      "reason": "<text>",
-      "fix_suggestion": "<agent-generated>"
+  "orchestration": {
+    "mode": "guided|autopilot",
+    "status": "idle|running|stopped|awaiting_user",
+    "fix_round": 0,
+    "staleness": 0,
+    "current_task_id": "<id>",
+    "metrics": {
+      "tasks_done": 0,
+      "first_pass": 0,
+      "fix_rounds_total": 0,
+      "staleness_stops": 0,
+      "ui_tasks_with_evidence": 0,
+      "ui_tasks_total": 0
     }
+  },
+  "ledger": [
+    { "at": "<iso8601>", "task_id": "<id>", "line": "Task N: complete (commits a..b, review clean)" }
   ],
-  "history": [
-    {
-      "at": "<iso8601>",
-      "action": "<short-string>",
-      "summary": "<one-line>"
-    }
+  "agents": [
+    { "at": "<iso8601>", "name": "implementer", "task_id": "<id>", "model": "sonnet", "status": "DONE" }
   ]
 }
 ```
 
+Ledger line formats: `Task N: complete (…)`, `Task N: fix round R/5 (…)`,
+`Task N: minor (deferred): …`, `Task N: parked — … — Ruling: …`,
+`Ruling: <what> — <why> — <cost if wrong>`. Ledger + agents are ring
+buffers (200 / 100). Any ledger append resets `staleness`; 3 consecutive
+stale steps → orchestrator stops and writes `resume.md`.
+
 ### 11.2 Field rules
 
-- `history` is a ring buffer; last 50 entries only
+- `history` is a ring buffer; last 50 entries only (`ledger` 200, `agents` 100)
 - All mutations go through state-manager
 - Snapshot to `.build-android/snapshot-<ts>/` on every /import
-- Migration stub: `schema_version: 1 → 2` migration defined inline
+- Migration: `schema_version` 0→1→2 via `state/migrate.py`; StateManager upgrades transparently on load
 
 ## 12. Cold Start Wizard (`/setup`)
 
@@ -774,9 +752,9 @@ At 6h/day = ~24 working days (~5 weeks).
 ### 20.4 Plugin-level acceptance
 
 - [ ] All 3 manifests valid JSON
-- [ ] `plugin.lock.json` valid; sha256 matches for all 28 skills
+- [ ] `plugin.lock.json` valid; sha256 matches for all 29 skills (regenerate via `scripts/update-lock.py`)
 - [ ] `state.json` schema validator passes; migration v1→v2 stub works
-- [ ] `codex --plugin-dir ./build-android-apps` loads all 28 skills + 30 commands + 4 agents + 5 hooks + 5 MCP servers
+- [ ] `codex --plugin-dir ./build-android-apps` loads all 29 skills + 32 commands + 8 agents + 6 hooks + 5 MCP servers
 - [ ] `claude --plugin-dir ./build-android-apps` loads in Claude Code CLI
 - [ ] `.agents` host loads the open-standard manifest
 - [ ] Cold-start E2E: empty machine → /setup → published app on internal test track

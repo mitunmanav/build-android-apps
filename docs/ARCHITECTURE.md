@@ -5,10 +5,10 @@ graph TB
     Host["AI Host<br/>(Codex / Claude Code / .agents)"]
     Manifests["Manifests<br/>.codex-plugin/plugin.json<br/>.claude-plugin/marketplace.json<br/>.agents/plugins/marketplace.json"]
     MCP[".mcp.json<br/>5 MCP servers"]
-    Skills["skills/<br/>27 specialists + 1 frontdoor<br/>build-android-apps"]
-    Cmds["commands/<br/>30 slash commands"]
-    Agents["agents/<br/>4 subagents"]
-    Hooks["hooks/<br/>4 events, 5 handlers (SessionStart, PreToolUse×2, PostToolUse, Stop)"]
+    Skills["skills/<br/>28 specialists + 1 frontdoor<br/>build-android-apps"]
+    Cmds["commands/<br/>32 slash commands"]
+    Agents["agents/<br/>8 subagents (4 loop + 4 validation)"]
+    Hooks["hooks/<br/>4 events, 6 handlers (SessionStart, PreToolUse×2, PostToolUse×2, Stop)"]
     adb_mcp["adb-mcp<br/>Python stdio"]
     gradlew_mcp["gradlew-mcp<br/>Python stdio"]
     play_store_mcp["play-store-mcp<br/>Python stdio"]
@@ -36,10 +36,10 @@ graph TB
 | Component | Files | Purpose |
 |---|---|---|
 | **Manifests** | 3 JSON files | Tell each host what to load and how to display the plugin |
-| **Skills** | `skills/<name>/SKILL.md` + `agents/openai.yaml` | 27 specialists + frontdoor `build-android-apps`; progressive disclosure (frontdoor only at startup) |
-| **Slash commands** | `commands/<name>.md` | 30 plain-English aliases that delegate to frontdoor |
-| **Subagents** | `agents/<name>.md` | 4 parallel workers (clarifier, validator, release-auditor, apk-inspector) |
-| **Hooks** | `hooks/hooks.json` + 5 shell scripts | Lifecycle event handlers (SessionStart, PreToolUse×2, PostToolUse, Stop) |
+| **Skills** | `skills/<name>/SKILL.md` + `agents/openai.yaml` | 28 specialists + frontdoor `build-android-apps` + `agent-orchestrator` (autonomous plan-execution loop); progressive disclosure (frontdoor only at startup) |
+| **Slash commands** | `commands/<name>.md` | 32 plain-English aliases that delegate to frontdoor |
+| **Subagents** | `agents/<name>.md` | 4 loop agents (implementer, spec-reviewer, quality-reviewer, qa-user) + 4 validation agents (clarifier, validator, release-auditor, apk-inspector) |
+| **Hooks** | `hooks/hooks.json` + 6 shell scripts | Lifecycle event handlers (SessionStart, PreToolUse×2, PostToolUse×2, Stop) |
 | **MCP servers** | `mcp-servers/<name>/` (Python stdio) | 5 servers: adb, gradlew, play-store, keystore, asset |
 
 ## Request flow

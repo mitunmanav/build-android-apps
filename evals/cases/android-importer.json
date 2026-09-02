@@ -1,0 +1,12 @@
+{
+  "skill": "android-importer",
+  "positive": [
+    "I built this app with lovable, take it over",
+    "import my bolt project and get it ready for play",
+    "audit this existing android project and finish it"
+  ],
+  "negative": [
+    {"prompt": "migrate my xml layouts to compose", "owner": "compose-view-refactor"},
+    {"prompt": "scaffold a brand new app from scratch", "owner": "android-scaffold"}
+  ]
+}

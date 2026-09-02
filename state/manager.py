@@ -26,7 +26,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .state import load, save, validate, SCHEMA_VERSION
+from .state import load, save, validate, SCHEMA_VERSION, LEDGER_LIMIT, AGENT_LOG_LIMIT, DEFAULT_ORCHESTRATION
+from .migrate import migrate as migrate_state
 
 
 HISTORY_LIMIT = 50
@@ -43,7 +44,16 @@ class StateError(Exception):
 class StateManager:
     def __init__(self, path: Path):
         self.path = path
-        self._state = load(path)
+        try:
+            self._state = load(path)
+        except ValueError as e:
+            if "schema_version" not in str(e) or not path.exists():
+                raise
+            # transparent v1 → v2 upgrade on first touch
+            raw = json.loads(path.read_text(encoding="utf-8"))
+            migrate_state(raw)
+            save(path, raw)
+            self._state = load(path)
         if not self._state["history"]:
             self._state["history"] = []
 
@@ -221,6 +231,20 @@ class StateManager:
             lines.append(f"\nnext pending: [{next_p['id']}] {next_p['title']} @ {next_p['phase']}")
         else:
             lines.append("\nno pending tasks")
+        orch = self._state.get("orchestration", {})
+        if orch:
+            lines.append(
+                f"loop: mode={orch.get('mode', 'guided')} status={orch.get('status', 'idle')} "
+                f"fix_round={orch.get('fix_round', 0)} staleness={orch.get('staleness', 0)}"
+            )
+        ledger = self._state.get("ledger", [])
+        if ledger:
+            lines.append("recent loop activity:")
+            for entry in ledger[-5:]:
+                lines.append(f"  · {entry.get('line', '')}")
+        cons = self._state.get("constraints", [])
+        if cons:
+            lines.append(f"constraints: {len(cons)} locked from spec")
         return "\n".join(lines)
 
     def continue_loop(self) -> dict:
@@ -229,6 +253,111 @@ class StateManager:
             return {"action": "noop", "reason": "no pending tasks"}
         out = self.mark_in_progress(nxt["id"])
         return {"action": "in_progress", "task": out}
+
+    # ---- orchestration loop (v2) --------------------------------------
+
+    def _orch(self) -> dict:
+        orch = self._state.setdefault("orchestration", dict(DEFAULT_ORCHESTRATION))
+        orch.setdefault("metrics", dict(DEFAULT_ORCHESTRATION["metrics"]))
+        return orch
+
+    def set_mode(self, mode: str) -> dict:
+        if mode not in ("guided", "autopilot"):
+            raise StateError("mode must be 'guided' or 'autopilot'")
+        before = json.loads(json.dumps(self._state))
+        self._orch()["mode"] = mode
+        self._push_history("set_mode", f"mode → {mode}", before)
+        return self._orch()
+
+    def set_status(self, status: str) -> dict:
+        if status not in ("idle", "running", "stopped", "awaiting_user"):
+            raise StateError("status must be idle|running|stopped|awaiting_user")
+        before = json.loads(json.dumps(self._state))
+        self._orch()["status"] = status
+        self._push_history("loop_status", f"loop → {status}", before)
+        return self._orch()
+
+    def set_constraints(self, constraints: list[str]) -> list[str]:
+        if not all(isinstance(c, str) for c in constraints):
+            raise StateError("constraints must be strings")
+        before = json.loads(json.dumps(self._state))
+        self._state["constraints"] = list(constraints)
+        self._push_history("set_constraints", f"{len(constraints)} constraint(s)", before)
+        return self._state["constraints"]
+
+    def append_ledger(self, task_id: str, line: str) -> dict:
+        if not line:
+            raise StateError("ledger line must be non-empty")
+        before = json.loads(json.dumps(self._state))
+        entry = {"at": _now(), "task_id": task_id, "line": line}
+        ledger = self._state.setdefault("ledger", [])
+        ledger.append(entry)
+        if len(ledger) > LEDGER_LIMIT:
+            del ledger[0 : len(ledger) - LEDGER_LIMIT]
+        # any ledger append counts as forward progress
+        self._orch()["staleness"] = 0
+        return entry
+
+    def log_agent(self, name: str, task_id: str, model: str, status: str) -> dict:
+        before = json.loads(json.dumps(self._state))
+        entry = {"at": _now(), "name": name, "task_id": task_id, "model": model, "status": status}
+        agents = self._state.setdefault("agents", [])
+        agents.append(entry)
+        if len(agents) > AGENT_LOG_LIMIT:
+            del agents[0 : len(agents) - AGENT_LOG_LIMIT]
+        return entry
+
+    def bump_staleness(self) -> int:
+        """Call once per loop step that produced NO state advance.
+        Orchestrator stops (cap 3) when this returns >= 3."""
+        orch = self._orch()
+        orch["staleness"] = int(orch.get("staleness", 0)) + 1
+        return orch["staleness"]
+
+    def reset_staleness(self) -> int:
+        self._orch()["staleness"] = 0
+        return 0
+
+    def start_task(self, task_id: str) -> dict:
+        """Mark in_progress + record loop focus (idempotent per task)."""
+        out = self.mark_in_progress(task_id)
+        orch = self._orch()
+        if orch.get("current_task_id") != task_id:
+            orch["current_task_id"] = task_id
+            orch["fix_round"] = 0
+        return out
+
+    def record_fix_round(self, task_id: str) -> int:
+        """Increment fix_round for the current task; returns new round (1-based)."""
+        orch = self._orch()
+        if orch.get("current_task_id") != task_id:
+            orch["current_task_id"] = task_id
+            orch["fix_round"] = 0
+        orch["fix_round"] = int(orch.get("fix_round", 0)) + 1
+        orch["metrics"]["fix_rounds_total"] = int(orch["metrics"].get("fix_rounds_total", 0)) + 1
+        return orch["fix_round"]
+
+    def record_task_done(self, task_id: str, first_pass: bool = True, ui_evidence: bool | None = None) -> dict:
+        """Metrics + completion bookkeeping. Call AFTER mark_done."""
+        orch = self._orch()
+        m = orch["metrics"]
+        m["tasks_done"] = int(m.get("tasks_done", 0)) + 1
+        if first_pass:
+            m["first_pass"] = int(m.get("first_pass", 0)) + 1
+        if ui_evidence is not None:
+            m["ui_tasks_total"] = int(m.get("ui_tasks_total", 0)) + 1
+            if ui_evidence:
+                m["ui_tasks_with_evidence"] = int(m.get("ui_tasks_with_evidence", 0)) + 1
+        orch["fix_round"] = 0
+        orch["current_task_id"] = ""
+        orch["staleness"] = 0
+        self._state["cursor"] = {"phase": self._state["phase"], "task_id": ""}
+        return orch
+
+    def record_staleness_stop(self) -> None:
+        orch = self._orch()
+        orch["status"] = "stopped"
+        orch["metrics"]["staleness_stops"] = int(orch["metrics"].get("staleness_stops", 0)) + 1
 
     # ---- undo --------------------------------------------------------
 

@@ -18,6 +18,18 @@ Subcommands:
     continue <path>                    advance to next pending task
     summary <path>                     one-line summary
     route <path> [--affected id1,id2] show ordered phases to run
+    check-cycle <path>                 detect cycle in plan deps
+
+Orchestration loop (v2):
+    mode <path> guided|autopilot      set loop mode
+    loop-status <path> idle|running|stopped|awaiting_user
+    constraints <path> "c1" "c2" ...   replace spec constraints (verbatim)
+    ledger <path> --task ID "line"     append ledger line (resets staleness)
+    agent-log <path> --task ID --name N --model M --status S
+    record-done <path> --task ID [--no-first-pass] [--ui-evidence]
+                                        mark done + loop metrics bookkeeping
+    stale <path>                       bump staleness (prints count; STOP at 3)
+    park <path> --task ID --reason R   skip task + ledger 'parked' line
 """
 
 from __future__ import annotations
@@ -103,6 +115,45 @@ def _build_parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("check-cycle", help="detect cycle in plan deps")
     add_path_arg(s, "path to state.json")
+
+    # ---- orchestration loop (v2) ----
+    s = sub.add_parser("mode", help="set loop mode (guided|autopilot)")
+    add_path_arg(s, "path to state.json")
+    s.add_argument("value", choices=["guided", "autopilot"])
+
+    s = sub.add_parser("loop-status", help="set loop status")
+    add_path_arg(s, "path to state.json")
+    s.add_argument("value", choices=["idle", "running", "stopped", "awaiting_user"])
+
+    s = sub.add_parser("constraints", help="replace spec constraints (verbatim)")
+    add_path_arg(s, "path to state.json")
+    s.add_argument("items", nargs="+")
+
+    s = sub.add_parser("ledger", help="append ledger line")
+    add_path_arg(s, "path to state.json")
+    s.add_argument("--task", required=True)
+    s.add_argument("line")
+
+    s = sub.add_parser("agent-log", help="log a subagent dispatch")
+    add_path_arg(s, "path to state.json")
+    s.add_argument("--task", required=True)
+    s.add_argument("--name", required=True)
+    s.add_argument("--model", required=True)
+    s.add_argument("--status", required=True)
+
+    s = sub.add_parser("record-done", help="mark done + loop metrics")
+    add_path_arg(s, "path to state.json")
+    s.add_argument("--task", required=True)
+    s.add_argument("--no-first-pass", action="store_true")
+    s.add_argument("--ui-evidence", action="store_true", help="UI task with before/after screenshot evidence")
+
+    s = sub.add_parser("stale", help="bump staleness counter (STOP at 3)")
+    add_path_arg(s, "path to state.json")
+
+    s = sub.add_parser("park", help="skip task + ledger parked line")
+    add_path_arg(s, "path to state.json")
+    s.add_argument("--task", required=True)
+    s.add_argument("--reason", required=True)
 
     return p
 
@@ -235,6 +286,66 @@ def main(argv: list[str] | None = None) -> int:
                 print("CYCLE:", " -> ".join(cyc))
                 return 1
             print("OK no cycles")
+            return 0
+
+        # ---- orchestration loop (v2) ----
+        if args.cmd == "mode":
+            print(json.dumps(mgr.set_mode(args.value), indent=2))
+            mgr.flush()
+            return 0
+
+        if args.cmd == "loop-status":
+            print(json.dumps(mgr.set_status(args.value), indent=2))
+            mgr.flush()
+            return 0
+
+        if args.cmd == "constraints":
+            print(json.dumps(mgr.set_constraints(list(args.items)), indent=2))
+            mgr.flush()
+            return 0
+
+        if args.cmd == "ledger":
+            entry = mgr.append_ledger(args.task, args.line)
+            mgr.flush()
+            print(json.dumps(entry, indent=2))
+            return 0
+
+        if args.cmd == "agent-log":
+            entry = mgr.log_agent(args.name, args.task, args.model, args.status)
+            mgr.flush()
+            print(json.dumps(entry, indent=2))
+            return 0
+
+        if args.cmd == "record-done":
+            mgr.mark_done(args.task)
+            mgr.record_task_done(
+                args.task,
+                first_pass=not args.no_first_pass,
+                ui_evidence=True if args.ui_evidence else None,
+            )
+            mgr.flush()
+            print(json.dumps(mgr.state()["orchestration"]["metrics"], indent=2))
+            return 0
+
+        if args.cmd == "stale":
+            n = mgr.bump_staleness()
+            mgr.flush()
+            if n >= 3:
+                mgr.record_staleness_stop()
+                mgr.flush()
+                print(f"STOP: staleness={n} (cap reached). Loop stopped — write resume.md and report to the user.")
+                return 4
+            print(f"staleness={n}/3")
+            return 0
+
+        if args.cmd == "park":
+            item = mgr.mark_skipped(args.task)
+            mgr.append_ledger(
+                args.task,
+                f"Task parked — {args.reason} — Ruling: skipped as independent-blocked; revisit after loop",
+            )
+            mgr.flush()
+            print(json.dumps(item, indent=2))
             return 0
 
         parser.print_help()

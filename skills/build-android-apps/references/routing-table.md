@@ -9,7 +9,7 @@ State-aware. Match longest keyword first. If no match, ask user to clarify.
 | 3 | `change`, `modify`, `update this` | any | `python -m state change --task ...` | plan mutated |
 | 4 | `remove`, `delete`, `drop` | any | `python -m state remove --task ...` | plan mutated |
 | 5 | `where`, `where are we`, `status` | any | `python -m state where` (no specialist) | read-only |
-| 6 | `continue`, `go`, `next` | any with pending | `python -m state continue` → next specialist via router | advances cursor |
+| 6 | `continue`, `go`, `next`, `run the plan`, `do it all`, `finish it` | any with pending | `agent-orchestrator` (subagent loop; falls back to `python -m state continue` → next specialist on hosts without subagents) | advances loop |
 | 7 | `undo` | any | `python -m state undo` | history replay |
 | 8 | `build`, `assemble`, `compile` | scaffold/build | `gradlew-mcp run_task assembleDebug` (no specialist skill needed, or `android-run` if install) | build |
 | 9 | `run`, `preview`, `install`, `launch`, `see it` | build/test | `android-run` (adb-mcp) | device |

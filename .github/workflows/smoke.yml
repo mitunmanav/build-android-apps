@@ -43,7 +43,7 @@ jobs:
 
       - name: Verify Python modules load
         run: |
-          PYTHONPATH=. python3 -c "from state import SCHEMA_VERSION, StateManager, topological_order, route_full, route_after, detect_cycle, explain; assert SCHEMA_VERSION == 1; print('state OK')"
+          PYTHONPATH=. python3 -c "from state import SCHEMA_VERSION, StateManager, topological_order, route_full, route_after, detect_cycle, explain; assert SCHEMA_VERSION == 2; print('state OK')"
           for server in keystore-mcp play-store-mcp asset-mcp; do
             PYMODULE="${server//-/_}"
             if [ -d "mcp-servers/$server/src/$PYMODULE" ]; then
@@ -68,3 +68,20 @@ jobs:
           echo "$ROUTE" | grep -q "Scaffold"
           rm -rf "$TMP"
           echo "Plan algebra round-trip OK."
+
+      - name: Verify state v2 loop API (ledger, staleness, metrics)
+        run: |
+          TMP=$(mktemp -d)
+          PYTHONPATH=. python3 -m state mode "$TMP/state.json" autopilot
+          PYTHONPATH=. python3 -m state constraints "$TMP/state.json" "min SDK 26"
+          PYTHONPATH=. python3 -m state add "$TMP/state.json" --title T --phase build --id b1
+          PYTHONPATH=. python3 -m state start "$TMP/state.json" --task b1
+          PYTHONPATH=. python3 -m state ledger "$TMP/state.json" --task b1 "Task 1: complete (commits a..b, review clean)"
+          PYTHONPATH=. python3 -m state stale "$TMP/state.json"
+          PYTHONPATH=. python3 -m state record-done "$TMP/state.json" --task b1 --ui-evidence
+          PYTHONPATH=. python3 -m pytest tests -q
+          rm -rf "$TMP"
+          echo "state v2 loop API OK."
+
+      - name: Trigger-routing evals (Tier 2)
+        run: python3 evals/run_trigger_evals.py --min-rank1 80

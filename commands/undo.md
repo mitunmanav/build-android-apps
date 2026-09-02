@@ -6,12 +6,17 @@ allowed-tools:
 
 # /undo
 
-Revert the most recent change to the plan. Useful when:
+Two undo layers, checked in order:
 
-- `/add` added the wrong task
-- `/remove --hard` deleted too much
-- `/change` produced the wrong title or phase
-- A status flip (pending → in_progress) was premature
+1. **Loop task undo**: if the most recent ledger line is a completed loop
+   task (`Task N: complete (commits a..b, ...)`) and the working tree is
+   clean, revert that task's commit range (`git revert --no-commit a..b`
+   then commit) and ledger `Ruling: Task N reverted — user request —
+   state rolled back`. Use this when the loop just built something the user
+   doesn't want.
+2. **Plan mutation undo** (below): revert the most recent state.json
+   mutation. Useful when `/add` added the wrong task, `/remove --hard`
+   deleted too much, or a status flip was premature.
 
 ## Context
 

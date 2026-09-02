@@ -1,0 +1,18 @@
+{
+  "skill": "build-android-apps",
+  "positive": [
+    "what can this plugin do",
+    "help, I don't know what to do next",
+    "help me get started with this plugin"
+  ],
+  "negative": [
+    {
+      "prompt": "my app crashes when I tap save",
+      "owner": "android-debug-fix"
+    },
+    {
+      "prompt": "publish my app to the play store",
+      "owner": "android-publish-update"
+    }
+  ]
+}

@@ -60,6 +60,35 @@ app/src/main/res/values/themes.xml
 
 Use the pinned versions from SPEC.md §16.
 
+### Step 2.5: Version-matrix gate + build-speed defaults
+
+**Gate (before writing anything):** AGP ↔ Gradle ↔ JDK ↔ Kotlin ↔ KSP are a
+coupled system. Check the requested combination against the compatibility
+tables in the AGP release notes (or `android docs search "AGP compatibility"`
+if the Android CLI is installed). A mismatch is a HARD STOP — ask the user —
+never scaffold a combination the toolchain will reject mid-build.
+
+Write `gradle.properties` with speed defaults on (they are safe for AGP 8.7+
+and cut repeat-build time substantially):
+
+```properties
+org.gradle.parallel=true
+org.gradle.caching=true
+org.gradle.configuration-cache=true
+org.gradle.configuration-cache.problems=warn
+org.gradle.jvmargs=-Xmx4g -XX:+UseParallelGC -Dfile.encoding=UTF-8
+android.useAndroidX=true
+```
+
+Notes:
+- `configuration-cache.problems=warn` only while scaffolding; flip to `fail`
+  (the default) once the project builds twice in a row with `Reusing
+  configuration cache` in the output.
+- Use **KSP, never kapt**, for annotation processing (Hilt, Room) — kapt is
+  slower and less cacheable. Pin the KSP version matching the Kotlin version.
+- Disable Crashlytics in debug builds (`ext.enableCrashlytics = false` in the
+  debug build type) — per-version IDs there defeat incremental builds.
+
 ### Step 3: Wire signing config
 
 Reference keystore from `.build-android/upload-keystore.jks` if it exists:

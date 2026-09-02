@@ -80,6 +80,15 @@ args: { "package_name": "<from spec>", "aab_path": "app/build/outputs/bundle/rel
 
 > New build uploaded to internal test track. Open Play Console to test, or run `/publish --promote internal production` to release to all users.
 
+## Anti-rationalizations
+
+| If you catch yourself thinking… | The answer is |
+|---|---|
+| "Just this once, upload before the gate passes" | The gate exists because a rejected first upload costs days. Gate first, always. |
+| "The keystore password is in the report anyway" | Never print, store, or echo keystore secrets. Anywhere. |
+| "Version bump is mechanical, skip the changelog" | The changelog IS the user-facing record of this update. Write it. |
+| "Rollout can go to 100%, internal users won't mind" | Staged rollout stages are the point — 1 → 10 → 50 → 100, in order. |
+
 ## Anti-patterns
 
 - **DO NOT** bump `versionCode` without bumping `versionName` (or vice versa). Mismatched → Play Store rejects.

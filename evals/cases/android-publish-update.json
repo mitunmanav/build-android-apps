@@ -1,0 +1,12 @@
+{
+  "skill": "android-publish-update",
+  "positive": [
+    "publish my app to the play store",
+    "ship version 1.1 to the internal track",
+    "upload the signed aab to google play"
+  ],
+  "negative": [
+    {"prompt": "write the store listing description", "owner": "android-store-listing"},
+    {"prompt": "run the app on my device", "owner": "android-run"}
+  ]
+}

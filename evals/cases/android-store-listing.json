@@ -1,0 +1,12 @@
+{
+  "skill": "android-store-listing",
+  "positive": [
+    "write the play store listing and short description",
+    "prepare the data safety form answers",
+    "fill in the content rating for my app"
+  ],
+  "negative": [
+    {"prompt": "upload the aab to the internal track", "owner": "android-publish-update"},
+    {"prompt": "generate a feature graphic for the store", "owner": "android-icons-assets"}
+  ]
+}

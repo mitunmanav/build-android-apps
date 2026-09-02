@@ -7,19 +7,32 @@ allowed-tools:
 
 # /continue
 
-Resume the build loop. The agent picks the next pending task whose dependencies are all done, marks it in-progress, and tells you what it's about to do.
+Resume the loop. If a plan run was interrupted, the `agent-orchestrator`
+skill rebuilds its position from the ledger + resume.md and continues where
+it left off. If only the next single task is wanted, use the state CLI
+directly (below).
 
 ## Context
 
 - Working directory: !`pwd`
 - State file: !`ls -la .build-android/state.json 2>/dev/null || echo "no state.json yet"`
+- Loop state: !`python3 -c "import json;d=json.load(open('.build-android/state.json'));o=d.get('orchestration',{});print(o.get('status','idle'), o.get('mode','guided'))" 2>/dev/null || echo idle`
 
 ## Reporting Action
 
 > [!IMPORTANT]
-> Before invoking the tool, tell the user in one sentence what you are about to do: "I'll mark the next pending task as in-progress and tell you what it is."
+> Before invoking, tell the user in one sentence: "I'll pick up where things
+> left off — say the word if you'd rather just see the status."
 
 ## Your task
+
+### Step 0: Route by loop state
+
+- If state.json exists and `orchestration.status` is `running` or `stopped`
+  (a run was interrupted): invoke the `agent-orchestrator` skill — it resumes
+  from the ledger at the first task without a `complete` line (or the next
+  fix round). Do NOT re-plan or re-ask what state already knows.
+- Otherwise (plain phase loop): advance one task:
 
 ### Step 1: Run the continue command
 
