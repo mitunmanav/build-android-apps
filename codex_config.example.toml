@@ -1,0 +1,37 @@
+# Codex MCP registration — generated from .mcp.json by scripts/generate-host-wrappers.py.
+# Copy the tables below into ~/.codex/config.toml, then restart Codex.
+# Plugin route (recommended): `codex plugin marketplace add mitunmanav/build-android-apps`
+# then `codex plugin add build-android-apps@build-android-apps` — no config.toml edit needed.
+
+[mcp_servers.adb]
+command = "python"
+args = ["-m", "adb_mcp"]
+[mcp_servers.adb.env]
+ANDROID_HOME = "${env:ANDROID_HOME}"
+PATH = "${env:PATH}"
+
+[mcp_servers.gradlew]
+command = "python"
+args = ["-m", "gradlew_mcp"]
+[mcp_servers.gradlew.env]
+JAVA_HOME = "${env:JAVA_HOME}"
+PATH = "${env:PATH}"
+
+[mcp_servers.play-store]
+command = "python"
+args = ["-m", "play_store_mcp"]
+[mcp_servers.play-store.env]
+PATH = "${env:PATH}"
+PLAY_STORE_CACHE = "${env:HOME}/.cache/build-android-apps/play-cache"
+
+[mcp_servers.keystore]
+command = "python"
+args = ["-m", "keystore_mcp"]
+[mcp_servers.keystore.env]
+PATH = "${env:PATH}"
+
+[mcp_servers.asset]
+command = "python"
+args = ["-m", "asset_mcp"]
+[mcp_servers.asset.env]
+PATH = "${env:PATH}"

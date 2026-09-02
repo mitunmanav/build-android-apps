@@ -1,4 +1,4 @@
-# Codex Docs Audit — build-android-apps → build-android-apps
+# Codex Docs Audit — build-android-apps
 
 > Verified 2026-09-01 against official sources only. Every row cites the doc URL that proves the claim.
 
@@ -84,9 +84,9 @@ Per D6/D7:
 | F2 | `hooks/hooks.json` event `PreSubmit` invalid | D9: valid events list has no PreSubmit | P5 |
 | F3 | Hook env var `CLAUDE_PLUGIN_ROOT` only | D9: canonical is `PLUGIN_ROOT` + compat | P5 |
 | F4 | Count drift: SPEC says 22/21/6 but actual 27/22/4 | D2 budget reasoning shows why 27 needs frontdoor | P1 |
-| F5 | Plugin name `build-android-apps` → `build-android-apps` | D8: name is stable identifier, kebab-case | P2 |
+| F5 | Plugin name is stable kebab-case identifier `build-android-apps` | D8: name is stable identifier, kebab-case | P2 (no-op, already correct) |
 | F6 | Efficiency requires frontdoor due to 8k cap | D2: 2%/8k cap, shorten/omit warning | P3 |
 | F7 | `allowed-tools` legal experimental — keep | D12: allowed-tools exists | P4 (keep, just format) |
 | F8 | `.mcp.json` shape compatible | D8: both direct/wrapped accepted | Keep, just add missing servers to docs |
 
-*This file is the P0 deliverable. Next: P1 counts.*
+*P0–P5 applied as of 2026-09-02 (hooks env fallback, counts 30/28/4, frontdoor, manifests, keywords strings, stdio hook JSON). No version bump.*

@@ -16,7 +16,7 @@ verification, and banking setup.
 ### 1.1 What this plugin does
 
 - **28 skills** (1 frontdoor `build-android-apps` + 27 specialists) covering full lifecycle intake → ship → update; progressive disclosure keeps startup under 8k token budget ([see references/codex-docs-audit.md](references/codex-docs-audit.md))
-- **22 slash commands** in plain English (`/make-app`, `/add`, `/change`, `/publish`, `/update`, `/status`) — all delegate to frontdoor
+- **30 slash commands** in plain English (`/make-app`, `/add`, `/change`, `/publish`, `/update`, `/status`) — all delegate to frontdoor
 - **4 subagents** for parallel validation (clarifier, validator, release-auditor, apk-inspector)
 - **5 MCP servers** (Python, stdio): `adb-mcp`, `gradlew-mcp`, `play-store-mcp`, `keystore-mcp`, `asset-mcp`
 - **5 hook handlers** across 4 events (SessionStart, PreToolUse×2, PostToolUse, Stop) — no `PreSubmit` (invalid per `codex/hooks` docs; use `PreToolUse` with tool matcher)
@@ -43,7 +43,7 @@ exist?
 | | `android/skills` (Google) | `test-android-apps` (OpenAI) | `ayush016` | **This plugin** |
 |---|---|---|---|---|
 | Coverage | 16 domain SKILLs (Compose, camera, media, security, system, etc.) | Testing only (QA, Perfetto, leaks) | Team standards (architecture, theming, performance) | **Full lifecycle: intake→ship→update** |
-| Tooling | Skills only (no MCP, no commands) | Raw adb shell + 2 skills + scripts/ | Single SKILL + 17 references | 28 skills (1 frontdoor + 27) + 22 commands + 5 MCP + 5 hooks |
+| Tooling | Skills only (no MCP, no commands) | Raw adb shell + 2 skills + scripts/ | Single SKILL + 17 references | 28 skills (1 frontdoor + 27) + 30 commands + 5 MCP + 5 hooks |
 | Shipping | No (knowledge only) | No | No | **Yes** (`/publish` → Play Store upload) |
 | Resume | No | No | No | **Yes** (state.json + Kahn's phase-router) |
 | Resume-aware | No | No | No | **Yes** (`/add` `/remove` `/change` mid-loop) |
@@ -94,7 +94,7 @@ Mitun — single maintainer, single brand, no co-authors.
 └──────────┬───────────────┬─────────────────┬─────────────┘
            │               │                 │
            ▼               ▼                 ▼
-        Skills (28)   Commands (22)   MCP servers (5)
+        Skills (28)   Commands (30)   MCP servers (5)
    (1 frontdoor + 27)  plain-English    adb, gradlew, play-store,
         references/   per skill          keystore, asset
                │                            │
@@ -138,7 +138,7 @@ for task in plan where task.status != done and (deps met OR delta forces):
 return ordered phases from deps graph (Kahn's algorithm)
 ```
 
-## 5. Skills (22)
+## 5. Skills (28)
 
 All skills follow the [agentskills.io open-standard format](https://agentskills.io/specification).
 Per-skill UI metadata (Codex-only) lives in `agents/openai.yaml`; other hosts ignore it.
@@ -272,9 +272,9 @@ Pattern (matching Google's `android/skills` and `ayush016/android-lead-agent-ski
 - `references/checklist.md` — agent self-check + user checklist
 - `references/references.md` (optional) — external links, deeper reads
 
-## 6. Slash Commands (22)
+## 6. Slash Commands (30)
 
-Commands implemented as skill files. For Codex, invokable as `/cmd` or `$cmd`.
+Commands are Claude Code (and Antigravity/Gemini) slash-command aliases to the frontdoor skill. Codex does not load plugin slash commands — there, invoke the frontdoor skill directly (`$build-android-apps` or `@build-android-apps`).
 
 ### 6.1 Frontmatter pattern
 
@@ -282,9 +282,9 @@ Commands implemented as skill files. For Codex, invokable as `/cmd` or `$cmd`.
 ---
 description: Build the app with Gradle
 allowed-tools:
-  - mcp__plugin_android_gradlew__run_task
-  - mcp__plugin_android_gradlew__list_tasks
-  - mcp__plugin_android_adb__list_devices
+  - mcp__plugin_build_android_apps_gradlew__run_task
+  - mcp__plugin_build_android_apps_gradlew__list_tasks
+  - mcp__plugin_build_android_apps_adb__list_devices
   - Read
   - Grep
 ---
@@ -318,7 +318,7 @@ $ARGUMENTS
 - [ ] Step 2 verified
 ```
 
-### 6.2 22 commands (all delegate to frontdoor)
+### 6.2 30 commands (all delegate to frontdoor)
 
 | # | Command | MCP tools pre-allowed | Purpose |
 |---|---|---|---|
@@ -378,9 +378,9 @@ All subagents use this pattern for context efficiency:
 | `phase-router` | Given user delta + current state, compute minimal phase sequence (Kahn's deps) | 1 (deterministic) |
 | `asset-generator` | Generate icons + adaptive layers + feature graphics + screenshots | 2-way parallel |
 
-## 8. Hooks (6 events)
+## 8. Hooks (4 events, 5 handlers)
 
-Per [Codex Hooks docs](https://developers.openai.com/codex/hooks) and [Claude Code Hooks docs](https://docs.claude.com/en/docs/claude-code/hooks). 6 events.
+Per [Codex Hooks docs](https://developers.openai.com/codex/hooks) and [Claude Code Hooks docs](https://docs.claude.com/en/docs/claude-code/hooks). 4 events, 5 handlers (PreToolUse has 2).
 
 | Event | Handler | Matcher | Purpose |
 |---|---|---|---|
@@ -776,7 +776,7 @@ At 6h/day = ~24 working days (~5 weeks).
 - [ ] All 3 manifests valid JSON
 - [ ] `plugin.lock.json` valid; sha256 matches for all 28 skills
 - [ ] `state.json` schema validator passes; migration v1→v2 stub works
-- [ ] `codex --plugin-dir ./build-android-apps` loads all 28 skills + 22 commands + 4 agents + 5 hooks + 5 MCP servers
+- [ ] `codex --plugin-dir ./build-android-apps` loads all 28 skills + 30 commands + 4 agents + 5 hooks + 5 MCP servers
 - [ ] `claude --plugin-dir ./build-android-apps` loads in Claude Code CLI
 - [ ] `.agents` host loads the open-standard manifest
 - [ ] Cold-start E2E: empty machine → /setup → published app on internal test track

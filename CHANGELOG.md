@@ -13,7 +13,7 @@ All notable changes to this plugin are documented here. The format is based on [
 ### Changed
 - **Version 2.0.0** (breaking: `pluginId` and tool prefix change per semver; migrate: `codex plugin remove build-android-app-plugin && codex plugin install github.com/mitunmanav/build-android-apps`).
 - `.codex-plugin/plugin.json` version 2.0.0, `interface.defaultPrompt` now frontdoor.
-- `plugin.lock.json`: 28 skills / 22 commands / 4 subagents / 5 hooks (was 17/13/4/5).
+- `plugin.lock.json`: 28 skills / 30 commands / 4 subagents / 5 hooks (was 17/13/4/5).
 - `hooks/hooks.json`: `PreSubmit` → `PreToolUse` with tool matcher (Codex has no `PreSubmit` event); `CLAUDE_PLUGIN_ROOT` → `${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}` compat.
 - `hooks/release-check.sh`: now denies via `permissionDecision: deny` (was `additionalContext` + exit 2).
 - `hooks/session-start.sh`: 5s adb devices cache + frontdoor reminder.

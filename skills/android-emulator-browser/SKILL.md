@@ -20,14 +20,7 @@ allowed-tools: mcp__plugin_build_android_apps_adb__list_devices mcp__plugin_buil
 metadata:
   author: Mitun
   last-updated: '2026-09-01'
-  keywords:
-  - android
-  - emulator
-  - avd
-  - screencap
-  - uiautomator
-  - view-hierarchy
-  - adb
+  keywords: android, emulator, avd, screencap, uiautomator, view-hierarchy, adb
   platform: android
   version: 0.1.0
 ---

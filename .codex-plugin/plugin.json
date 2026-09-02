@@ -27,11 +27,10 @@
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "hooks": "./hooks/hooks.json",
-  "agents": "./agents/",
   "interface": {
     "displayName": "Build Android App",
     "shortDescription": "Build, run, debug, and ship Android apps — one frontdoor skill routes to 27 specialists",
-    "longDescription": "Use Build Android Apps: $build-android-apps turns a one-line idea into a working app and Play Store submission. Frontdoor classifies intent and delegates to 27 specialists (intake → scaffold → debug → publish). 22 commands are aliases to frontdoor intents. 5 MCP servers drive adb, Gradle, Play, keystore, assets. Per-project state.json + Kahn router makes every loop resumable and deterministic (no LLM for planning).",
+    "longDescription": "Use Build Android Apps: $build-android-apps turns a one-line idea into a working app and Play Store submission. Frontdoor classifies intent and delegates to 27 specialists (intake → scaffold → debug → publish). 30 commands are aliases to frontdoor intents (Claude Code and other hosts; on Codex invoke $build-android-apps directly). 5 MCP servers drive adb, Gradle, Play, keystore, assets. Per-project state.json + Kahn router makes every loop resumable and deterministic (no LLM for planning).",
     "developerName": "Mitun",
     "category": "Developer Tools",
     "capabilities": [

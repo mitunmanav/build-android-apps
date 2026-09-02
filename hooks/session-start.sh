@@ -4,13 +4,21 @@
 
 set -u
 
+# Collect messages; emit ONE JSON object on stdout at the end.
+# Codex/Claude Code read hook JSON from stdout; multiple JSON lines are unsafe.
+MSGS=()
 emit() {
-    local level="$1"; shift
-    local raw="$*"
-    local esc
-    esc=$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1])[1:-1])' "$raw" 2>/dev/null || printf '%s' "$raw" | sed 's/"/\\"/g')
-    printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[%s] %s"}}\n' "$level" "$esc" >&2
+    MSGS+=("[$1] $2")
 }
+
+flush() {
+    if [ "${#MSGS[@]}" -gt 0 ]; then
+        COMBINED="$(printf '%s\n' ${MSGS[@]+"${MSGS[@]}"})"
+        ESC="$(python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' "$COMBINED" 2>/dev/null || printf '"%s"' "$(printf '%s' "$COMBINED" | sed 's/"/\\"/g')")"
+        printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":%s}}\n' "$ESC"
+    fi
+}
+trap flush EXIT
 
 # 1. ANDROID_HOME
 if [ -z "${ANDROID_HOME:-}" ]; then

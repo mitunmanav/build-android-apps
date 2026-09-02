@@ -48,7 +48,7 @@ elif [ -x "./gradlew" ]; then
 fi
 
 if [ -z "$KTLINT" ]; then
-    printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[info] ktlint not installed; skipping lint check for %s. Install: brew install ktlint or add ktlint gradle plugin."}}\n' "$FILE" >&2
+    printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[info] ktlint not installed; skipping lint check for %s. Install: brew install ktlint or add ktlint gradle plugin."}}\n' "$FILE"
     exit 0
 fi
 
@@ -59,7 +59,7 @@ if [ "$KTLINT" = "./gradlew ktlintCheck" ]; then
         OUT=$(ktlint "$FILE" 2>&1 || true)
     else
         # Full project scan is expensive — skip and hint
-        printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[info] ktlint binary not found for single-file lint; skipping full ./gradlew ktlintCheck to save tokens for %s"}}\n' "$FILE" >&2
+        printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[info] ktlint binary not found for single-file lint; skipping full ./gradlew ktlintCheck to save tokens for %s"}}\n' "$FILE"
         exit 0
     fi
 else
@@ -69,7 +69,7 @@ fi
 if [ -n "$OUT" ] && echo "$OUT" | grep -qiE 'error|warning'; then
     ESC_OUT=$(printf '%s' "$OUT" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])' 2>/dev/null || printf '%s' "$OUT")
     ESC_FILE=$(printf '%s' "$FILE" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])' 2>/dev/null || printf '%s' "$FILE")
-    printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[warning] ktlint findings for %s:\n%s"}}\n' "$ESC_FILE" "$ESC_OUT" >&2
+    printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[warning] ktlint findings for %s:\n%s"}}\n' "$ESC_FILE" "$ESC_OUT"
 fi
 
 exit 0

@@ -19,14 +19,7 @@ allowed-tools: mcp__plugin_build_android_apps_adb__list_devices mcp__plugin_buil
 metadata:
   author: Mitun
   last-updated: '2026-09-01'
-  keywords:
-  - android
-  - leak
-  - leakcanary
-  - heap-dump
-  - hprof
-  - oom
-  - memory
+  keywords: android, leak, leakcanary, heap-dump, hprof, oom, memory
   platform: android
   version: 0.1.0
 ---

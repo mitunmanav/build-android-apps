@@ -5,25 +5,28 @@
 
 set -euo pipefail
 
+# Info messages collected and flushed once on stdout (hook JSON is read from stdout).
+MSGS=()
 emit() {
-    local level="$1"; shift
-    local raw="$*"
-    local esc
-    esc=$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1])[1:-1])' "$raw" 2>/dev/null || printf '%s' "$raw" | sed 's/"/\\"/g')
-    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"[%s] %s"}}\n' "$level" "$esc" >&2
+    MSGS+=("[$1] $2")
 }
+
+flush() {
+    if [ "${#MSGS[@]}" -gt 0 ]; then
+        COMBINED="$(printf '%s\n' ${MSGS[@]+"${MSGS[@]}"})"
+        ESC="$(python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' "$COMBINED" 2>/dev/null || printf '"%s"' "$(printf '%s' "$COMBINED" | sed 's/"/\\"/g')")"
+        printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":%s}}\n' "$ESC"
+    fi
+}
+trap flush EXIT
+
 deny() {
     local reason="$1"
-    local esc
-    esc=$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$reason" 2>/dev/null || printf '"%s"' "$reason" | sed 's/"/\\"/g')
-    # Use esc without outer quotes for permissionDecisionReason string (need quoted value)
-    # esc already includes quotes from json.dumps, strip and re-add via python
     local reason_json
     reason_json=$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$reason" 2>/dev/null || printf '"%s"' "$reason")
-    cat <<EOF
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":$reason_json}}
-EOF
-    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":%s}}\n' "$reason_json" >&2
+    # Emit exactly once, on stdout.
+    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":%s}}\n' "$reason_json"
+    trap - EXIT
     exit 0
 }
 

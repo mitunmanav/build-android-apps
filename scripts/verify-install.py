@@ -116,9 +116,7 @@ def verify_skills() -> None:
         return
     check("skills/ exists", True)
     skill_dirs = sorted([p for p in skills_dir.iterdir() if p.is_dir()])
-    # 27 before frontdoor, 28 after P3 — allow both during migration
-    expected = {27, 28}
-    check(f"27-28 skills (got {len(skill_dirs)})", len(skill_dirs) in expected, f"got {len(skill_dirs)} expected 27 or 28")
+    check(f"28 skills (got {len(skill_dirs)})", len(skill_dirs) == 28, f"got {len(skill_dirs)} expected 28")
 
     NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
     for sd in skill_dirs:
@@ -159,13 +157,13 @@ def verify_skills() -> None:
 # ---------- 3. Slash commands ----------
 
 def verify_commands() -> None:
-    section("3. Slash commands (22 expected)")
+    section("3. Slash commands (30 expected)")
     cmds_dir = ROOT / "commands"
     if not cmds_dir.is_dir():
         check("commands/ exists", False, "missing")
         return
     cmd_files = sorted(cmds_dir.glob("*.md"))
-    check("22 commands", len(cmd_files) == 22, f"got {len(cmd_files)}")
+    check("30 commands", len(cmd_files) == 30, f"got {len(cmd_files)}")
     for f in cmd_files:
         text = f.read_text()
         parts = text.split("---", 2)
@@ -254,13 +252,14 @@ def verify_hooks() -> None:
 def verify_mcp_servers() -> None:
     section("6. MCP servers (stdio smoke)")
 
-    async def smoke(name: str, module: str) -> tuple[bool, str]:
+    async def smoke(name: str, module: str, src: str) -> tuple[bool, str]:
         try:
             proc = await asyncio.create_subprocess_exec(
                 sys.executable, "-m", module,
                 stdin=asyncio.subprocess.PIPE,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
+                env={**os.environ, "PYTHONPATH": src},
             )
             init = {"jsonrpc": "2.0", "id": 1, "method": "initialize",
                     "params": {"protocolVersion": "2024-11-05", "capabilities": {},
@@ -290,8 +289,8 @@ def verify_mcp_servers() -> None:
             return False, str(e)
 
     async def run_all():
-        a = await smoke("adb-mcp", "adb_mcp")
-        g = await smoke("gradlew-mcp", "gradlew_mcp")
+        a = await smoke("adb-mcp", "adb_mcp", str(ROOT / "mcp-servers" / "adb-mcp" / "src"))
+        g = await smoke("gradlew-mcp", "gradlew_mcp", str(ROOT / "mcp-servers" / "gradlew-mcp" / "src"))
         return a, g
 
     a, g = asyncio.run(run_all())

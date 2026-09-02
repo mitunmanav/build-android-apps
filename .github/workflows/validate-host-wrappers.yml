@@ -10,6 +10,7 @@ on:
       - '.cursor/mcp.json'
       - 'claude_desktop_config.example.json'
       - 'gemini-extension.json'
+      - 'codex_config.example.toml'
       - '.github/workflows/validate-host-wrappers.yml'
   pull_request:
     paths:
@@ -19,6 +20,7 @@ on:
       - '.cursor/mcp.json'
       - 'claude_desktop_config.example.json'
       - 'gemini-extension.json'
+      - 'codex_config.example.toml'
 
 jobs:
   validate:

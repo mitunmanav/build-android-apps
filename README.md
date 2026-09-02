@@ -84,7 +84,7 @@ flowchart TB
   Host[AI Host - Codex / Claude / .agents]
   Manifests[Plugin Manifests + plugin.lock.json]
   Skills[28 Skills - 1 frontdoor + 27 specialists]
-  Commands[22 Commands - plain English]
+  Commands[30 Commands - plain English]
   MCP[5 MCP Servers - adb / gradlew / play-store / keystore / asset]
   State[state.json - plan / cursor / build / device / store]
   Router[Kahn Router - deterministic no LLM]
@@ -153,7 +153,7 @@ All Python, stdio. Config: [`.mcp.json`](.mcp.json) — details: [`docs/MCP.md`]
 
 | Server | Tools | Highlights |
 |---|---|---|
-| **adb-mcp** | 17 | `list_devices`, `install_apk`, `screencap`, `logcat_filter`, `dump_layout` |
+| **adb-mcp** | 18 | `list_devices`, `install_apk`, `screencap`, `logcat_filter`, `dump_layout` |
 | **gradlew-mcp** | 12 | `run_task`, `describe_project`, `manage_sdk`, `generate_keystore` |
 | **play-store-mcp** | 9 | `auth`, `upload_aab`, `get_review_status`, `rollout_staged` |
 | **keystore-mcp** | 5 | `generate`, `verify`, `rotate`, `backup`, `fingerprint` |
@@ -163,12 +163,15 @@ All Python, stdio. Config: [`.mcp.json`](.mcp.json) — details: [`docs/MCP.md`]
 
 ## Install
 
-**Codex CLI**
+**Codex CLI** (v0.122+)
 
 ```bash
-codex plugin install github.com/mitunmanav/build-android-apps
-# local dev: git clone https://github.com/mitunmanav/build-android-apps && codex --plugin-dir .
+codex plugin marketplace add mitunmanav/build-android-apps
+codex plugin add build-android-apps@build-android-apps
+# local dev: codex plugin marketplace add /path/to/clone && codex plugin add build-android-apps@build-android-apps
 ```
+
+**Codex desktop app** (macOS / Windows): Plugins sidebar → `build-android-apps` source → `+` install → restart. Details: [`docs/codex-setup.md`](docs/codex-setup.md) — includes the `/hooks` trust step and why the plugin shows as "Desktop only".
 
 **Claude Code CLI**
 

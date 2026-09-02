@@ -4,7 +4,7 @@ Five Python MCP servers ship with this plugin, all over **stdio** (per Codex + C
 
 ## adb-mcp
 
-17 tools for driving an Android device via the Android Debug Bridge.
+18 tools for driving an Android device via the Android Debug Bridge.
 
 ### Tool index
 
@@ -26,6 +26,7 @@ Five Python MCP servers ship with this plugin, all over **stdio** (per Codex + C
 | `getprop` | RO | Read a system property |
 | `setprop` | destructive | Set a system property |
 | `wait_for_device` | RO, idempotent | Block until boot complete |
+| `dump_layout` | RO, idempotent | `uiautomator dump` view hierarchy for UI debugging |
 | `unzip` | RO | Extract a zip on the host |
 
 ### Install

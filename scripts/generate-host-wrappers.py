@@ -9,6 +9,7 @@ Emits (Tier-1 simple):
   .cursor/mcp.json                  {mcpServers:{}} (global also ~/.cursor/mcp.json)
   claude_desktop_config.example.json {mcpServers:{}} — copy to ~/Library/.../Claude/...
   gemini-extension.json             {name,version,mcpServers,...} — Gemini CLI → Antigravity
+  codex_config.example.toml         [mcp_servers.*] TOML — copy into ~/.codex/config.toml
   .agents/skills/ is canonical; .github/skills/ is symlink instruction (not generated)
 
 No drift: run --check in CI to fail if generated files stale or keys wrong.
@@ -55,6 +56,13 @@ HOSTS = {
         "key": "mcpServers",  # gemini-extension.json spec: top-level mcpServers
         "wrap": None,  # custom
         "unwrap": lambda data: data.get("mcpServers", {}),
+    },
+    "codex": {
+        "path": ROOT / "codex_config.example.toml",
+        "key": "[mcp_servers.*] (TOML)",  # Codex config.toml shape
+        "wrap": None,  # custom (TOML, not JSON)
+        "unwrap": lambda data: data.get("mcpServers", {}),
+        "note": "Copy the [mcp_servers.*] tables into ~/.codex/config.toml (user-level). Plugin route: .codex-plugin/plugin.json already points at .mcp.json, so plugin installs need no config.toml edits.",
     },
 }
 
@@ -145,17 +153,47 @@ BUILDERS = {
     "cursor": build_cursor,
     "claude-desktop": build_claude_desktop,
     "gemini": build_gemini_extension,
+    "codex": build_codex_config,  # returns a TOML string, not a JSON-serializable dict
 }
+
+
+def _toml_str(value: str) -> str:
+    return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
+def build_codex_config(servers: dict) -> str:
+    # Codex reads MCP servers from config.toml as [mcp_servers.<name>] tables.
+    # Plugin installs already bundle .mcp.json — this example is for users who
+    # prefer user-level config.toml registration instead.
+    servers = _transform_env_for_host(servers, "codex")
+    lines = [
+        "# Codex MCP registration — generated from .mcp.json by scripts/generate-host-wrappers.py.",
+        "# Copy the tables below into ~/.codex/config.toml, then restart Codex.",
+        "# Plugin route (recommended): `codex plugin marketplace add mitunmanav/build-android-apps`",
+        "# then `codex plugin add build-android-apps@build-android-apps` — no config.toml edit needed.",
+        "",
+    ]
+    for name, cfg in servers.items():
+        lines.append(f"[mcp_servers.{name}]")
+        lines.append(f"command = {_toml_str(cfg['command'])}")
+        if cfg.get("args"):
+            lines.append("args = [" + ", ".join(_toml_str(a) for a in cfg["args"]) + "]")
+        env = cfg.get("env", {})
+        if env:
+            lines.append(f"[mcp_servers.{name}.env]")
+            for k, v in env.items():
+                lines.append(f"{k} = {_toml_str(v)}")
+        lines.append("")
+    return "\n".join(lines)
 
 
 def generate(dry_run: bool = False) -> dict[str, pathlib.Path]:
     servers = load_canonical()
     generated: dict[str, pathlib.Path] = {}
     for host_id, cfg in HOSTS.items():
-        builder = BUILDERS[host_id]
-        data = builder(servers)
+        data = BUILDERS[host_id](servers)
         path: pathlib.Path = cfg["path"]
-        content = json.dumps(data, indent=2) + "\n"
+        content = data if isinstance(data, str) else json.dumps(data, indent=2) + "\n"
         generated[host_id] = path
         if dry_run:
             if path.exists():
@@ -190,8 +228,11 @@ def check() -> int:
     ok = True
     for host_id, cfg in HOSTS.items():
         path: pathlib.Path = cfg["path"]
-        builder = BUILDERS[host_id]
-        expected = json.dumps(builder(servers), indent=2) + "\n"
+        if host_id == "codex":
+            expected = build_codex_config(servers)
+        else:
+            builder = BUILDERS[host_id]
+            expected = json.dumps(builder(servers), indent=2) + "\n"
         if not path.exists():
             print(f"✗ {host_id}: missing {path} — run python scripts/generate-host-wrappers.py")
             ok = False
@@ -206,17 +247,31 @@ def check() -> int:
                     print(f"  line {i} expected: {b!r}")
                     break
             ok = False
+            continue
+        if host_id == "codex":
+            import tomllib
+            try:
+                parsed = tomllib.loads(actual)
+                if "mcp_servers" not in parsed or not parsed["mcp_servers"]:
+                    print("✗ codex: no [mcp_servers.*] tables found — generator bug")
+                    ok = False
+                    continue
+            except tomllib.TOMLDecodeError as e:
+                print(f"✗ codex: generated TOML does not parse: {e}")
+                ok = False
+                continue
+            print(f"✓ {host_id}: {path} ok ({cfg['key']})")
+            continue
+        # Also validate key trap
+        data = json.loads(actual)
+        if host_id == "vscode" and "mcpServers" in data and "servers" not in data:
+            print(f"✗ {host_id}: uses mcpServers but VS Code requires 'servers' — generator bug")
+            ok = False
+        elif host_id in ("cursor", "claude-desktop") and "servers" in data and "mcpServers" not in data:
+            print(f"✗ {host_id}: uses servers but host requires 'mcpServers'")
+            ok = False
         else:
-            # Also validate key trap
-            data = json.loads(actual)
-            if host_id == "vscode" and "mcpServers" in data and "servers" not in data:
-                print(f"✗ {host_id}: uses mcpServers but VS Code requires 'servers' — generator bug")
-                ok = False
-            elif host_id in ("cursor", "claude-desktop") and "servers" in data and "mcpServers" not in data:
-                print(f"✗ {host_id}: uses servers but host requires 'mcpServers'")
-                ok = False
-            else:
-                print(f"✓ {host_id}: {path} ok ({cfg['key']})")
+            print(f"✓ {host_id}: {path} ok ({cfg['key']})")
     # Canonical itself must have mcpServers
     canon_data = json.loads(CANONICAL.read_text())
     if "mcpServers" not in canon_data:

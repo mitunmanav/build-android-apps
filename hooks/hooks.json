@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${PLUGIN_ROOT}/hooks/session-start.sh",
+            "command": "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/session-start.sh",
             "timeout": 15
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${PLUGIN_ROOT}/hooks/block-destructive.sh",
+            "command": "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/block-destructive.sh",
             "timeout": 5
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${PLUGIN_ROOT}/hooks/release-check.sh",
+            "command": "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/release-check.sh",
             "timeout": 60
           }
         ]
@@ -41,7 +41,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${PLUGIN_ROOT}/hooks/lint-kotlin.sh",
+            "command": "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/lint-kotlin.sh",
             "timeout": 30
           }
         ]
@@ -52,7 +52,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${PLUGIN_ROOT}/hooks/stop-review.sh",
+            "command": "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/stop-review.sh",
             "timeout": 60
           }
         ]
