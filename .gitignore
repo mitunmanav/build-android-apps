@@ -92,7 +92,11 @@ docs/superpowers/
 .worktrees/
 
 # Local host configs
-.opencode/
+.opencode/*
+!.opencode/plugins/
+.opencode/plugins/*
+!.opencode/plugins/build-android-apps.js
+!.opencode/INSTALL.md
 .opencode.json
 
 # Local secrets (examples stay tracked)

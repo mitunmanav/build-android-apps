@@ -1,0 +1,9 @@
+{
+  "name": "build-android-apps",
+  "version": "2.0.0",
+  "description": "Build and ship Android apps — 29 skills + 5 MCP servers",
+  "type": "module",
+  "main": ".opencode/plugins/build-android-apps.js",
+  "keywords": ["pi-package", "skills", "android"],
+  "pi": {"extensions": ["./.pi/extensions/build-android-apps.ts"], "skills": ["./skills"]}
+}
