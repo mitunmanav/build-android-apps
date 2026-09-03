@@ -3,7 +3,7 @@
 ```mermaid
 graph TB
     Host["AI Host<br/>(Codex / Claude Code / .agents)"]
-    Manifests["Manifests<br/>.codex-plugin/plugin.json<br/>.claude-plugin/marketplace.json<br/>.agents/plugins/marketplace.json"]
+    Manifests["Manifests<br/>.codex-plugin/plugin.json (hooks:{})<br/>.claude-plugin/plugin.json+marketplace.json<br/>.agents/plugins/marketplace.json<br/>.cursor-plugin/plugin.json<br/>gemini-extension.json (contextFileName)"]
     MCP[".mcp.json<br/>5 MCP servers"]
     Skills["skills/<br/>28 specialists + 1 frontdoor<br/>build-android-apps"]
     Cmds["commands/<br/>32 slash commands"]
@@ -65,7 +65,7 @@ User sees BUILD SUCCESSFUL in 4.2s
 ```
 SessionStart
   ↓
-session-start.sh: detect ANDROID_HOME, adb, devices
+session-start (extensionless) + run-hook.cmd: detect ANDROID_HOME, adb, devices
   ↓
 inject context into the agent's session
 

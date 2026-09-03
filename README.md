@@ -123,6 +123,8 @@ git clone https://github.com/mitunmanav/build-android-apps ~/.agents/plugins/bui
 # restart host
 ```
 
+**Gemini CLI** — gemini extensions install https://github.com/mitunmanav/build-android-apps (loads GEMINI.md + skills/)
+
 Verify: `bash scripts/smoke.sh`. All hosts: [`docs/INSTALL_MATRIX.md`](docs/INSTALL_MATRIX.md).
 No telemetry — local `adb`/Gradle/Play API only.
 
