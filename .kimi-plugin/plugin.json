@@ -1,0 +1,8 @@
+{
+  "name": "build-android-apps",
+  "version": "2.0.0",
+  "description": "Build and ship Android apps from plain English.",
+  "skills": "./skills/",
+  "sessionStart": {"skill": "build-android-apps"},
+  "skillInstructions": "When build-android-apps applies, read skills/build-android-apps/SKILL.md. Map actions via skills/build-android-apps/references/gemini-tools.md."
+}

@@ -1,0 +1,7 @@
+{
+  "name": "build-android-apps",
+  "version": "2.0.0",
+  "description": "Build and ship Android apps from plain English.",
+  "skills": "./skills/",
+  "contextFileName": "ANTIGRAVITY.md"
+}
