@@ -125,6 +125,12 @@ git clone https://github.com/mitunmanav/build-android-apps ~/.agents/plugins/bui
 
 **Gemini CLI** — gemini extensions install https://github.com/mitunmanav/build-android-apps (loads GEMINI.md + skills/)
 
+**Hermes** — `hermes plugins install mitunmanav/build-android-apps --enable`
+
+**Devin** — `devin plugins install mitunmanav/build-android-apps`
+
+**VS Code Copilot** — loads `.github/copilot-instructions.md` automatically (maps via `skills/build-android-apps/references/copilot-tools.md`)
+
 Verify: `bash scripts/smoke.sh`. All hosts: [`docs/INSTALL_MATRIX.md`](docs/INSTALL_MATRIX.md).
 No telemetry — local `adb`/Gradle/Play API only.
 
