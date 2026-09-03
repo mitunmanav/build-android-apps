@@ -3,7 +3,7 @@
 ```mermaid
 graph TB
     Host["AI Host<br/>(Codex / Claude Code / .agents)"]
-    Manifests["Manifests<br/>.codex-plugin/plugin.json (hooks:{})<br/>.claude-plugin/plugin.json+marketplace.json<br/>.agents/plugins/marketplace.json<br/>.cursor-plugin/plugin.json<br/>gemini-extension.json (contextFileName)"]
+    Manifests["Manifests<br/>.codex-plugin/plugin.json (hooks:{})<br/>.claude-plugin/plugin.json+marketplace.json<br/>.agents/plugins/marketplace.json<br/>.cursor-plugin/plugin.json<br/>.kimi-plugin/plugin.json<br/>gemini-extension.json (contextFileName)<br/>package.json (v2.0.0, synced via scripts/bump-version.sh + .version-bump.json)"]
     MCP[".mcp.json<br/>5 MCP servers"]
     Skills["skills/<br/>28 specialists + 1 frontdoor<br/>build-android-apps"]
     Cmds["commands/<br/>32 slash commands"]
