@@ -36,8 +36,14 @@ flush() {
         return
     fi
     COMBINED="$(printf '%s\n' ${PARTS[@]+"${PARTS[@]}"})"
-    ESC="$(python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' <<<"$COMBINED" 2>/dev/null || printf '"%s"' "$(printf '%s' "$COMBINED" | sed 's/"/\\"/g')")"
-    printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":%s}}\n' "$ESC"
+    ESC="$(printf '%s' "$COMBINED" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')"
+    if [ -n "${CURSOR_PLUGIN_ROOT:-}" ]; then
+        printf '{"additional_context":%s}\n' "$ESC"
+    elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -z "${COPILOT_CLI:-}" ]; then
+        printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":%s}}\n' "$ESC"
+    else
+        printf '{"additionalContext":%s}\n' "$ESC"
+    fi
 }
 trap flush EXIT
 

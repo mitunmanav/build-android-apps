@@ -64,7 +64,7 @@ def main() -> int:
         {"id": f.stem, "integrity": file_integrity(f),
          "source": {"type": "github", "repo": "mitunmanav/build-android-apps",
                     "path": f"hooks/{f.name}", "ref": "main"}}
-        for f in sorted((ROOT / "hooks").glob("*.sh"))
+        for f in sorted(p for p in (ROOT / "hooks").iterdir() if p.is_file() and (p.suffix == ".sh" or p.name == "session-start"))
     ]
     lock["generatedAt"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     (ROOT / "plugin.lock.json").write_text(

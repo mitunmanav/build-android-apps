@@ -3,7 +3,7 @@
   "lockVersion": 1,
   "pluginId": "com.mitun.build-android-apps",
   "pluginVersion": "2.0.0",
-  "generatedAt": "2026-09-03T18:31:57Z",
+  "generatedAt": "2026-09-03T19:13:36Z",
   "skills": [
     {
       "id": "agent-orchestrator",
@@ -773,7 +773,7 @@
     {
       "id": "adb-mcp",
       "vendoredPath": "mcp-servers/adb-mcp",
-      "integrity": "sha256-a9534c94410c85e568644a4653e62b5ead26a3cfe45981c70340ae6cd506b366",
+      "integrity": "sha256-1c78aad482cca34c37e4ae0dad90e40c6864b5ee28fba213491d308c0d8695fe",
       "source": {
         "type": "github",
         "repo": "mitunmanav/build-android-apps",
@@ -784,7 +784,7 @@
     {
       "id": "asset-mcp",
       "vendoredPath": "mcp-servers/asset-mcp",
-      "integrity": "sha256-1a490ac01f7b3643d520a1a3ec48be875f96fdc8adaa9889f2462e1e3441961d",
+      "integrity": "sha256-948df9ca344ef9d934cb83cb54924e186a0f39856070e1eabf53ff21be1f44ef",
       "source": {
         "type": "github",
         "repo": "mitunmanav/build-android-apps",
@@ -795,7 +795,7 @@
     {
       "id": "gradlew-mcp",
       "vendoredPath": "mcp-servers/gradlew-mcp",
-      "integrity": "sha256-537f37f7361a9d0208bddfd1174eb5843be8eee31dfc5a29af58c5b2f03b60ba",
+      "integrity": "sha256-bb2093a3d7927e7fb7f1928b071aa4462c8249f9b99de079e9e5e20c2492c8bd",
       "source": {
         "type": "github",
         "repo": "mitunmanav/build-android-apps",
@@ -806,7 +806,7 @@
     {
       "id": "keystore-mcp",
       "vendoredPath": "mcp-servers/keystore-mcp",
-      "integrity": "sha256-5c4fcec99ba22b67f920850e21995d3535eb36c0895be46c9934ce61cc13d858",
+      "integrity": "sha256-946f98ced13c6a204670647388c184ab885c988ea6c59b796e06d0123a943bb3",
       "source": {
         "type": "github",
         "repo": "mitunmanav/build-android-apps",
@@ -817,7 +817,7 @@
     {
       "id": "play-store-mcp",
       "vendoredPath": "mcp-servers/play-store-mcp",
-      "integrity": "sha256-5ed41ab5821690d22b2833c74f7132c5dc0555678ea555b62f52c1b89d0c5776",
+      "integrity": "sha256-7d83d02f20fe7796821da2b928e7ce1621ab2957eb36efedaedb093ecf46d628",
       "source": {
         "type": "github",
         "repo": "mitunmanav/build-android-apps",
@@ -859,11 +859,11 @@
     },
     {
       "id": "session-start",
-      "integrity": "sha256-0cc47e1c86a817f80126a7da43be4a91b98b221ef73068171460e6f765cd6adc",
+      "integrity": "sha256-887c363009f63868c301a6ef6b9cbda952c7211aa5a5b51d590851919d495038",
       "source": {
         "type": "github",
         "repo": "mitunmanav/build-android-apps",
-        "path": "hooks/session-start.sh",
+        "path": "hooks/session-start",
         "ref": "main"
       }
     },
