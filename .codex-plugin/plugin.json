@@ -26,7 +26,7 @@
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
-  "hooks": "./hooks/hooks.json",
+  "hooks": {},
   "interface": {
     "displayName": "Build Android App",
     "shortDescription": "Build, run, debug, and ship Android apps — one frontdoor skill routes to 28 specialists",

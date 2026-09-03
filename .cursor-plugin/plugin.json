@@ -1,0 +1,12 @@
+{
+  "name": "build-android-apps",
+  "version": "2.0.0",
+  "description": "Build and ship Android apps from plain English: 29 skills + 32 commands + 5 MCP servers.",
+  "author": {"name": "Mitun"},
+  "homepage": "https://github.com/mitunmanav/build-android-apps",
+  "repository": "https://github.com/mitunmanav/build-android-apps",
+  "license": "Apache-2.0",
+  "keywords": ["android", "kotlin", "jetpack-compose", "gradle", "adb"],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks-cursor.json"
+}
