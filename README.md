@@ -116,6 +116,36 @@ claude plugin marketplace add mitunmanav/build-android-apps
 claude plugin install build-android-apps@build-android-apps
 ```
 
+**Claude Desktop**
+
+```bash
+cp claude_desktop_config.example.json ~/Library/Application\ Support/Claude/claude_desktop_config.json
+# restart Desktop
+```
+
+**Cursor** — `.cursor/mcp.json` (project) or Team Marketplace `Add Marketplace → https://github.com/mitunmanav/build-android-apps` — hot reload, no restart
+
+**OpenCode**
+
+```bash
+# add to opencode.json plugins, restart, then ask: "Tell me about your build-android-apps"
+"plugin": ["build-android-apps@git+https://github.com/mitunmanav/build-android-apps.git"]
+```
+
+**Pi**
+
+```bash
+pi install git:github.com/mitunmanav/build-android-apps
+```
+
+**Kimi Code** — `/plugins install https://github.com/mitunmanav/build-android-apps`
+
+**Antigravity**
+
+```bash
+agy plugin install https://github.com/mitunmanav/build-android-apps
+```
+
 **.agents hosts** (VS Code Copilot / Cursor / Gemini CLI)
 
 ```bash
