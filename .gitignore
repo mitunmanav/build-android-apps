@@ -89,6 +89,7 @@ evals/results/
 docs/superpowers/
 .superpowers/
 .sdd/
+.worktrees/
 
 # Local host configs
 .opencode/
