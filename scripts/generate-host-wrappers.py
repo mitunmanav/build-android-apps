@@ -116,12 +116,7 @@ def build_claude_desktop(servers: dict) -> dict:
 
 
 def build_gemini_extension(servers: dict) -> dict:
-    # gemini-extension.json is the Go successor (Antigravity) extension manifest.
-    # Gemini CLI: gemini extensions install https://github.com/mitunmanav/build-android-apps
-    # Antigravity CLI: same, shares harness. Keep minimal required fields.
-    # Read version/name from .codex-plugin/plugin.json or fallback
     import textwrap
-
     plugin_json = ROOT / ".codex-plugin" / "plugin.json"
     name = "build-android-apps"
     version = "2.0.0"
@@ -132,7 +127,6 @@ def build_gemini_extension(servers: dict) -> dict:
             name = pj.get("name", name)
             version = pj.get("version", version)
             raw_desc = pj.get("description", description)
-            # Word-boundary truncate to 200, no mid-word cut
             description = textwrap.shorten(raw_desc, width=197, placeholder="...")
         except Exception:
             pass
@@ -140,11 +134,7 @@ def build_gemini_extension(servers: dict) -> dict:
         "name": name,
         "version": version,
         "description": description,
-        "author": {"name": "Mitun", "url": "https://github.com/mitunmanav"},
-        "homepage": "https://github.com/mitunmanav/build-android-apps",
-        "mcpServers": _transform_env_for_host(servers, "gemini"),
-        "skills": "./skills/",
-        "hooks": "./hooks/hooks.json",
+        "contextFileName": "GEMINI.md",
     }
 
 
