@@ -7,6 +7,10 @@
     {"path": ".agents/plugins/marketplace.json", "field": "version"},
     {"path": "gemini-extension.json", "field": "version"},
     {"path": ".kimi-plugin/plugin.json", "field": "version"},
-    {"path": "package.json", "field": "version"}
+    {"path": "package.json", "field": "version"},
+    {"path": ".cursor-plugin/plugin.json", "field": "version"},
+    {"path": ".antigravity-plugin/plugin.json", "field": "version"},
+    {"path": ".hermes-plugin/plugin.json", "field": "version"},
+    {"path": ".devin-plugin/plugin.json", "field": "version"}
   ]
 }

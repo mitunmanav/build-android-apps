@@ -11,10 +11,10 @@ One plugin, all hosts. Canonical source: `.mcp.json` (`mcpServers` object). Host
 | **Cursor Desktop** | Desktop IDE | `.cursor/mcp.json` (project) / `~/.cursor/mcp.json` (global) | `mcpServers` | `git clone ... ~/.agents/plugins/build-android-apps` or Team Marketplace `Add Marketplace → https://github.com/mitunmanav/build-android-apps` — hot reload, no restart |
 | **Cursor Plugin** | Plugin | `.cursor-plugin/plugin.json` + `hooks/hooks-cursor.json` | `additional_context` | Copy plugin dir or Team Marketplace, hot reload |
 | **VS Code + Copilot** | Desktop IDE | `.vscode/mcp.json` | `servers` ⚠️ not `mcpServers` | Copy `.vscode/mcp.json`; enable `chat.mcp.enabled: true` in `.vscode/settings.json` (see `.vscode/settings.json.example`) |
-| **Gemini CLI → Antigravity** | CLI → Desktop | `gemini-extension.json` at repo root | `mcpServers` | `gemini extensions install https://github.com/mitunmanav/build-android-apps` (Antigravity shares harness) |
+| **Gemini CLI → Antigravity** | CLI → Desktop | `gemini-extension.json` at repo root | `contextFileName (MCP via .mcp.json)` | `gemini extensions install https://github.com/mitunmanav/build-android-apps` (Antigravity shares harness) |
 | **.agents (any)** | Generic | `~/.agents/plugins/build-android-apps` + `AGENTS.md` | `mcpServers` + `AGENTS.md` | `git clone https://github.com/mitunmanav/build-android-apps ~/.agents/plugins/build-android-apps` — works for Copilot, Cursor, Gemini, OpenCode, Cline/Roo compat |
-| **OpenCode** | CLI | `~/.config/opencode/opencode.json` `mcpServers` | `mcpServers` | `opencode` auto-loads `AGENTS.md` + `.mcp.json` directly (no generator entry; canonical `.mcp.json` is used as-is) |
-| **OpenCode** | CLI | `opencode.json` plugin git URL | `mcpServers` | plugin git URL, restart, ask superpowers |
+| **OpenCode (native)** | CLI | `~/.config/opencode/opencode.json` `mcpServers` | `mcpServers` | `opencode` auto-loads `AGENTS.md` + `.mcp.json` directly (no generator entry; canonical `.mcp.json` is used as-is) |
+| **OpenCode (plugin)** | CLI | `opencode.json` plugin git URL | `mcpServers` | plugin git URL, restart, ask superpowers |
 | **Pi** | CLI | `package.json` pi fields | native | `pi install git:github.com/mitunmanav/build-android-apps` |
 | **Kimi** | IDE | `.kimi-plugin/plugin.json` | manifest | `/plugins install https://github.com/mitunmanav/build-android-apps` |
 | **Hermes** | CLI | `.hermes-plugin/` | plugin | `hermes plugins install mitunmanav/build-android-apps --enable` |

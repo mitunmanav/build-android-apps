@@ -1,0 +1,1 @@
+../../commands/privacy-policy.md
