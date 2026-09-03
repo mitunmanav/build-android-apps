@@ -1,0 +1,18 @@
+{
+  "skill": "android-auth",
+  "positive": [
+    "add Google sign-in",
+    "login with passkey",
+    "sign in with Credential Manager"
+  ],
+  "negative": [
+    {
+      "prompt": "restore sign-in on new phone",
+      "owner": "android-restore-credentials"
+    },
+    {
+      "prompt": "verify email without OTP",
+      "owner": "android-verified-email"
+    }
+  ]
+}

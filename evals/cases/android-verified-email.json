@@ -1,0 +1,18 @@
+{
+  "skill": "android-verified-email",
+  "positive": [
+    "verify email without OTP",
+    "passwordless magic link email",
+    "verify email with SD-JWT"
+  ],
+  "negative": [
+    {
+      "prompt": "restore sign-in on new phone",
+      "owner": "android-restore-credentials"
+    },
+    {
+      "prompt": "add Google sign-in",
+      "owner": "android-auth"
+    }
+  ]
+}

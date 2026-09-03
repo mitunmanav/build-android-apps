@@ -294,18 +294,24 @@ def verify_mcp_servers() -> None:
     async def run_all():
         a = await smoke("adb-mcp", "adb_mcp", str(ROOT / "mcp-servers" / "adb-mcp" / "src"))
         g = await smoke("gradlew-mcp", "gradlew_mcp", str(ROOT / "mcp-servers" / "gradlew-mcp" / "src"))
-        return a, g
+        k = await smoke("keystore-mcp", "keystore_mcp", str(ROOT / "mcp-servers" / "keystore-mcp"))
+        p = await smoke("play-store-mcp", "play_store_mcp", str(ROOT / "mcp-servers" / "play-store-mcp"))
+        s = await smoke("asset-mcp", "asset_mcp", str(ROOT / "mcp-servers" / "asset-mcp"))
+        return a, g, k, p, s
 
-    a, g = asyncio.run(run_all())
+    a, g, k, p, s = asyncio.run(run_all())
     check("adb-mcp stdio OK", a[0], a[1])
     check("gradlew-mcp stdio OK", g[0], g[1])
+    check("keystore-mcp stdio OK", k[0], k[1])
+    check("play-store-mcp stdio OK", p[0], p[1])
+    check("asset-mcp stdio OK", s[0], s[1])
 
 
 # ---------- 7. MCP server pytest ----------
 
 def verify_mcp_tests() -> None:
     section("7. MCP server tests (pytest)")
-    for srv in ["adb-mcp", "gradlew-mcp"]:
+    for srv in ["adb-mcp", "gradlew-mcp", "keystore-mcp", "play-store-mcp", "asset-mcp"]:
         srvdir = ROOT / "mcp-servers" / srv
         result = subprocess.run(
             ["pytest", "-q", "--tb=line"],

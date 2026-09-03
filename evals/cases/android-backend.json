@@ -1,0 +1,18 @@
+{
+  "skill": "android-backend",
+  "positive": [
+    "add Room database",
+    "sync with Supabase",
+    "add Retrofit network layer"
+  ],
+  "negative": [
+    {
+      "prompt": "add Google sign-in",
+      "owner": "android-auth"
+    },
+    {
+      "prompt": "send push notification",
+      "owner": "android-ops"
+    }
+  ]
+}

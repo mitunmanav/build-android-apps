@@ -1,0 +1,18 @@
+{
+  "skill": "compose-performance-audit",
+  "positive": [
+    "fix recomposition storm",
+    "check stability and baseline profile",
+    "audit recomposition"
+  ],
+  "negative": [
+    {
+      "prompt": "profile slow scroll",
+      "owner": "android-profiler"
+    },
+    {
+      "prompt": "split large composable",
+      "owner": "compose-view-refactor"
+    }
+  ]
+}

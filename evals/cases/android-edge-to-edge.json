@@ -1,0 +1,18 @@
+{
+  "skill": "android-edge-to-edge",
+  "positive": [
+    "migrate to edge-to-edge SDK 35",
+    "fix status bar insets",
+    "handle notch with insets"
+  ],
+  "negative": [
+    {
+      "prompt": "theme with expressive motion",
+      "owner": "material3-expressive"
+    },
+    {
+      "prompt": "fix recomposition",
+      "owner": "compose-performance-audit"
+    }
+  ]
+}

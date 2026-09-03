@@ -33,15 +33,18 @@ python -m adb_mcp
 
 The server speaks MCP over stdio. Pair it with any MCP host (Codex, Claude Code, .agents).
 
-## Tools provided (this slice)
+## Tools provided (18 total)
 
 | Tool | Annotations | Purpose |
 |---|---|---|
 | `list_devices` | read-only, idempotent | `adb devices -l` |
 | `select_device` | read-only, idempotent | Pick from multi-device (returns selection) |
 | `install_apk` | destructive | `adb install -r <apk>` |
+| `shell_command`, `start_activity`, `stop_app`, `uninstall_app`, `clear_app_data` | mixed | Drive app + shell |
+| `logcat_dump`, `logcat_clear`, `screencap`, `pull_file`, `push_file` | mixed | Logs, screenshots, files |
+| `getprop`, `setprop`, `wait_for_device`, `dump_layout`, `unzip` | mixed | Props, boot, UI tree, zips |
 
-More tools arrive in later slices. See `../../SPEC.md §9` for the full tool list.
+See `../../SPEC.md §9` for the full tool list.
 
 ## Configuration
 

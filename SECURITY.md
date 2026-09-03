@@ -4,18 +4,14 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+| 2.0.x   | :white_check_mark: |
+| < 2.0   | :x:                |
 
 ## Reporting a vulnerability
 
 Found a security issue? Please **do not open a public GitHub Issue**.
 
-Email the report directly to the maintainer:
-
-```
-mitunmanav933@gmail.com
-```
+Report it privately via the repo's **Security tab → Report a vulnerability** (GitHub private vulnerability reporting).
 
 Include as much context as possible:
 - Description of the vulnerability

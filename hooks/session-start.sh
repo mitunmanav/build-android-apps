@@ -88,10 +88,10 @@ if [ -n "$ADB" ]; then
     fi
 fi
 
-# 5. Plugin reminder — frontdoor is $build-android-apps; 27 specialists lazy-loaded (gate to startup to save tokens)
+# 5. Plugin reminder — frontdoor is $build-android-apps; 28 specialists lazy-loaded (gate to startup to save tokens)
 HOOK_EVENT="${HOOK_EVENT_NAME:-${hook_event_name:-startup}}"
 if echo "$HOOK_EVENT" | grep -qiE "startup"; then
-    emit "info" "build-android-apps loaded. Frontdoor: \$build-android-apps (one skill routes to 27 specialists). Try /build, /run, /debug, /device, /lint. Progressive disclosure: only frontdoor description at startup, specialists load on demand."
+    emit "info" "build-android-apps loaded. Frontdoor: \$build-android-apps (one skill routes to 28 specialists). Try /build, /run, /debug, /device, /lint. Progressive disclosure: only frontdoor description at startup, specialists load on demand."
 fi
 
 # 6. Per-project state.json (Phase 1: load + report)

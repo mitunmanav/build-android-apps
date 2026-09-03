@@ -84,3 +84,23 @@ research/
 # Generated PNGs from asset-mcp tests
 test-output/
 evals/results/
+
+# Local planning scratch (never ships to origin)
+docs/superpowers/
+.superpowers/
+.sdd/
+
+# Local host configs
+.opencode/
+.opencode.json
+
+# Local secrets (examples stay tracked)
+.env
+*.jks
+*.keystore
+service-account.json
+google-services.json
+*.mobileprovision
+*.p12
+*.pfx
+*.pem

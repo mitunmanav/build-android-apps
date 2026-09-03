@@ -32,8 +32,34 @@ State-aware. Match longest keyword first. If no match, ask user to clarify.
 | 26 | `import`, `take over`, `Lovable`, `Bolt`, `v0` | idle with existing project | `android-importer` | snapshot + audit |
 | 27 | `setup`, `first run`, `cold start`, `SDK missing` | idle no SDK | `setup-wizard` | env ready |
 | 28 | Composition: `leak` → `android-debugger-agent` → `android-leak-analyzer` → `compose-view-refactor` → `test` | any | chain (one at a time) | — |
+| 29 | `assistant`, `shortcut`, `expose`, `agent-trigger`, `AppFunctions` | build | `android-app-functions` | surfaces wired |
+| 30 | `drive`, `tap`, `swipe`, `hierarchy`, `see screen`, `uiautomator` | build/test | `android-emulator-browser` (drive/tap/swipe/hierarchy; `android-run` owns install/launch/screenshot only) | device driven |
+| 31 | `right way`, `lists`, `nav`, `forms`, `hoisting`, `effects`, `a11y` | build | `compose-ui-patterns` | pattern applied |
+| 32 | `expressive`, `motion`, `shape-morph`, `color`, `theming`, `dark mode` | build | `material3-expressive` | theme wired |
+| 33 | `recompose`, `stable`, `baseline-profile`, `stability` | build | `compose-performance-audit` (standalone; via profiler if trace needed) | perf report |
+| 34 | `refactor`, `split`, `800 lines`, `testable`, `hoist` | build | `compose-view-refactor` | refactored |
+| 35 | `breakpoint`, `step`, `attach`, `JDWP` | any with device | `android-debugger-agent` (JDWP session; logcat loop stays `android-debug-fix`) | debug session |
+| 36 | `re-plan`, `sequence`, `Kahn`, `plan from spec` | plan | `app-planner` (spec → sequenced plan) | plan sequenced |
+| 37 | `scaffold from approved spec` | plan | `android-scaffold` (standalone) | scaffolded |
+| 38 | `clean` | build | `gradlew-mcp clean` (confirm-first, via /clean) | cleaned |
+| 39 | `lint` | build | `gradlew-mcp run_lint` (via /lint) | lint report |
+| 40 | `test`, `unit test`, `flake` | build/test | `gradlew-mcp run_tests` (via /test; e2e via qa-user) | tests green |
+| 41 | `audit`, `gaps`, `deps`, `signing gaps` | any | `/audit` (deps/lint/signing/Play gaps) | gaps listed |
+| 42 | `slop`, `AI residue`, `placeholder`, `verbose comment` | any | `/slop` + slop-gate (via quality rubric) | slop clean |
+| 43 | `log`, `tag`, `level`, `regex`, `stream logcat` | any with device | `adb-mcp logcat_dump` (via /log; fix loop stays debug-fix) | logs shown |
+| 44 | `device`, `list devices`, `select device`, `AVD` | any | `adb-mcp list_devices` (via /device) | device selected |
+| 45 | `crash buffer`, `tombstone`, `ANR` | any with device | `android-debug-fix` (via /crash; JDWP via debugger-agent) | crash triaged |
+| 46 | `screenshots for Play`, `feature graphic` via running app | publish | `android-icons-assets` (via /screenshots; listing copy stays store-listing) | screenshots |
+| 47 | `privacy-policy`, `data safety form` | publish | `android-store-listing` privacy section (via /privacy-policy) | policy drafted |
+| 48 | `backup keystore`, `copy keystore` | publish | `keystore-mcp backup` (via /backup-keystore) | keystore safe |
+| 49 | `post-publish`, `downloads`, `ratings`, `crashes dashboard` | update | `/status` (via play-store get_stats; loop status stays /where) | dashboard |
+| 50 | `finish`, `autofill gaps`, `submit internal` | publish | `/finish` (audit-gaps + publish) | Play draft |
 
 **Notes:**
 - `continue` uses `StateManager.continue_loop()` + `router.route_full` to pick next pending whose deps are done.
 - `add`/`change`/`remove` are **first-class** and never restart the loop (SPEC §4.1 R2).
 - `publish` is gated by `release-check.sh` via `PreToolUse` on `play_store` tools — must pass before upload.
+- `run` = install/launch/screenshot (`android-run`); `drive` = tap/swipe/hierarchy (`android-emulator-browser`). Never guess — longest keyword wins.
+- `magic-link`/`passwordless` always routes to `android-verified-email`; `restore`/`across devices` always routes to `android-restore-credentials`.
+- `/where` = loop status; `/status` = post-publish dashboard. Different domains.
+- `/run-plan` = whole-plan orchestrator; `/continue` = resume one step or loop. `/finish` = audit-gaps + publish.

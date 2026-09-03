@@ -1,0 +1,18 @@
+{
+  "skill": "android-emulator-browser",
+  "positive": [
+    "tap through onboarding",
+    "dump view hierarchy",
+    "swipe and screenshot emulator"
+  ],
+  "negative": [
+    {
+      "prompt": "install and launch app",
+      "owner": "android-run"
+    },
+    {
+      "prompt": "fix crash from logcat",
+      "owner": "android-debug-fix"
+    }
+  ]
+}

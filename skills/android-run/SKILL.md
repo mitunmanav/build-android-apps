@@ -3,10 +3,10 @@ name: android-run
 description: >
   Install a debug APK on a connected device or emulator, launch the main
   activity, and capture an initial screenshot. Use this skill after
-  android-build produces a debug APK and the user wants to run, preview, or
+  gradlew-mcp run_task assembleDebug produces a debug APK and the user wants to run, preview, or
   see the app on a device or emulator. Pairs with /preview slash command. Do
   not use for release-signed APKs (use android-publish-update for Play
-  Store), for screenshot test fixtures (use android-test), or for any
+  Store), for screenshot test fixtures (use /test + qa-user), or for any
   device-side debugging (use android-debug-fix).
 license: Apache-2.0
 metadata:
@@ -89,9 +89,9 @@ Then ask: "Looks right? Want me to fix anything I see, or run `/preview` to capt
 
 ## Pairing
 
-- `android-build` — produces the APK
+- `gradlew-mcp run_task assembleDebug` — produces the APK (no android-build skill; /build delegates to gradlew-mcp)
 - `android-debug-fix` — handles crashes / unexpected behavior after launch
-- `adb-mcp.screencap` — the screenshot tool
+- `mcp__plugin_build_android_apps_adb__screencap` — the screenshot tool
 - `/preview` slash command — pre-approved entry point
 
 ## References

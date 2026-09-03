@@ -9,7 +9,7 @@
   "homepage": "https://github.com/mitunmanav/build-android-apps",
   "mcpServers": {
     "adb": {
-      "command": "python",
+      "command": "python3",
       "args": [
         "-m",
         "adb_mcp"
@@ -20,7 +20,7 @@
       }
     },
     "gradlew": {
-      "command": "python",
+      "command": "python3",
       "args": [
         "-m",
         "gradlew_mcp"
@@ -31,7 +31,7 @@
       }
     },
     "play-store": {
-      "command": "python",
+      "command": "python3",
       "args": [
         "-m",
         "play_store_mcp"
@@ -42,7 +42,7 @@
       }
     },
     "keystore": {
-      "command": "python",
+      "command": "python3",
       "args": [
         "-m",
         "keystore_mcp"
@@ -52,7 +52,7 @@
       }
     },
     "asset": {
-      "command": "python",
+      "command": "python3",
       "args": [
         "-m",
         "asset_mcp"

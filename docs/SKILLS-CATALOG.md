@@ -112,7 +112,7 @@ Skills are designed to **compose**. Common combinations:
 [/test] confirms regression-free
 ```
 
-## Remaining 18 specialists (lifecycle + domain)
+## Remaining 19 specialists (lifecycle + domain)
 
 | # | Skill | Purpose |
 |---|-------|---------|

@@ -7,8 +7,8 @@
 <h1 align="center">Build Android Apps</h1>
 
 <p align="center">
-  <strong>The only plugin you need to build & ship Android apps from your AI assistant.</strong><br/>
-  One prompt → working app → signed AAB on Play Store. No Kotlin. No Gradle. No Console maze.
+  <strong>Describe the app in one sentence. Get a working app on Google Play.</strong><br/>
+  No Kotlin. No Gradle. No Console maze.
 </p>
 
 <p align="center">
@@ -24,57 +24,40 @@
   <a href="#quick-start">Quick start</a> •
   <a href="#how-it-works">How it works</a> •
   <a href="#install">Install</a> •
-  <a href="#skills">Skills</a> •
-  <a href="#commands">Commands</a> •
+  <a href="docs/SKILLS-CATALOG.md">Skills</a> •
+  <a href="commands/">Commands</a> •
   <a href="docs/INSTALL_MATRIX.md">All hosts</a> •
   <a href="CONTRIBUTING.md">Contributing</a> •
   <a href="SPEC.md">Spec</a>
 </p>
 
-<p align="center">
-  <sub>If this saves you a weekend, please <a href="https://github.com/mitunmanav/build-android-apps">⭐ star the repo</a> — report issues <a href="https://github.com/mitunmanav/build-android-apps/issues">here</a>.</sub>
-</p>
-
 ---
 
-> **Built for vibe coders, indie founders, and facilitators** — not Android engineers.
-> If you can describe the app in one sentence, this plugin can build it.
+> **Built for non-technical builders** — indie founders, vibe coders, facilitators.
+> If you can describe the app, the plugin can build it.
 
 ```text
 /make-app "a habit tracker with daily reminders and streaks"
-# → asks 3 questions → writes spec → plans → scaffolds → builds → previews → ships
+# → asks a few questions → writes spec → plans → scaffolds → builds → previews → ships
 ```
-
----
-
-## Why this plugin?
-
-**You type the idea. The plugin handles the rest** — scaffold, state, signing, store listing, upload — and remembers where you left off.
-
-| You say | Plugin does |
-|---|---|
-| `a habit tracker` | Intake → spec → plan (Kahn's algorithm, no LLM) → Compose scaffold with signing + Crashlytics |
-| `/preview` | `adb` install → launch → screenshot → annotated layout dump |
-| `/publish` | Pre-submit gate → signed AAB → Play Store internal track → draft URL |
-| `add dark mode` | Mutates `state.json` → re-runs only affected phases |
-
-Every project gets `<project>/.build-android/state.json` (gitignored) — `SessionStart` re-hydrates `phase X step Y`, so `/where` works after you close the laptop. Pairs with Google's [`android/skills`](https://github.com/android/skills): `android skills add --all` for deeper domain coverage.
 
 ---
 
 ## Quick start
 
-Prerequisites auto-detected on `SessionStart` — missing anything, `/setup` fixes it. You need: JDK 17+ · Android SDK 35 · `adb` · Python 3.10+ · Play Console ($25) + service-account JSON.
+You handle the Google paperwork: **Play Console account ($25) + ID verification + banking**.
+The plugin handles everything else: SDK, Gradle, signing, store listing, upload.
 
 ```bash
-/setup                                          # 10-step wizard: JDK/SDK/adb/device/Play/keystore (~30 min)
-/make-app "a habit tracker with daily reminders" # intake → spec → scaffold
-/run-plan                                        # autonomous build: subagents + reviews + device evidence
-/preview                                         # install + launch + screenshot
-/publish                                         # gated → signed AAB → Play internal track
+/setup                                           # first-run wizard: JDK/SDK/adb/device/Play/keystore (~30 min)
+/make-app "a habit tracker with daily reminders"  # intake → spec → scaffold
+/run-plan                                         # hands-free build with reviews + device checks
+/preview                                          # install + launch + screenshot
+/publish                                          # gated → signed AAB → Play internal track
 ```
 
-Taking over a Lovable / Bolt / v0 / Cursor app? `/import` → `/audit` → `/finish`. Mid-build changes: `/add` · `/change` · `/remove` · `/where` · `/undo` · `/continue`.
+Taking over a Lovable / Bolt / v0 / Cursor app? `/import` → `/audit` → `/finish`.
+Mid-build changes: `/add` · `/change` · `/remove` · `/where` · `/undo` · `/continue`.
 
 ---
 
@@ -85,7 +68,7 @@ flowchart TB
   Host[AI Host - Codex / Claude / .agents]
   Manifests[Plugin Manifests + plugin.lock.json]
   Skills[29 Skills - 1 frontdoor + 28 specialists]
-  Commands[30 Commands - plain English]
+  Commands[32 Commands - plain English]
   MCP[5 MCP Servers - adb / gradlew / play-store / keystore / asset]
   State[state.json - plan / cursor / build / device / store]
   Router[Kahn Router - deterministic no LLM]
@@ -100,67 +83,20 @@ flowchart TB
   State --> Router
 ```
 
-Every `/add` / `/change` / `/undo` mutates `state.json`; the router computes the minimal phase order via Kahn's algorithm. Frontdoor `build-android-apps` is the only skill loaded at startup (under 8k budget), specialists lazy-load. Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`SPEC.md`](SPEC.md) · [`state/README.md`](state/README.md)
+One frontdoor skill (`$build-android-apps`) routes plain English to the right specialist.
+Every project gets `<project>/.build-android/state.json`, so `/where` works after you close the laptop.
+Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`SPEC.md`](SPEC.md)
 
 ---
 
-## Features
+## What you get
 
-| | Capability | What you get |
-|---|---|---|
-| 💬 | One-liner to app | `/make-app` → 1–5 questions → spec → plan → scaffold |
-| 🔀 | Mid-flight edits | Patch plan without restart; only affected phases re-run |
-| 📱 | Real device loop | `adb` install / logcat / JDWP / layout dump + 3-strike auto-fix |
-| ✅ | Ship with confidence | `/publish` gated on keystore/listing/screenshots; `/why-rejected` diagnoses rejections |
-| 🎨 | Store assets from code | Icons (5 densities + adaptive), feature graphic, screenshots via `asset-mcp` |
-| 🔁 | Take ownership | Snapshot + audit foreign projects, then `/finish` to publish |
-
-Use `$build-android-apps` for everything — it routes. You never need to name a specialist.
-
----
-
-## Skills
-
-29 skills — 1 frontdoor `build-android-apps` + 28 specialists (incl. `agent-orchestrator`, the autonomous plan-execution loop). Frontdoor intent-classifies plain English and delegates. Full catalog: [`docs/SKILLS-CATALOG.md`](docs/SKILLS-CATALOG.md)
-
-- **Lifecycle:** `app-intake` · `app-planner` · `android-scaffold` · `android-run` · `android-debug-fix` · `setup-wizard`
-- **Quality:** `compose-ui-patterns` · `compose-performance-audit` · `compose-view-refactor` · `material3-expressive` · `android-edge-to-edge`
-- **Data & auth:** `android-backend` · `android-auth` · `android-ops` · `android-media` · `android-app-functions` · `android-restore-credentials` · `android-verified-email`
-- **Shipping:** `android-icons-assets` · `android-store-listing` · `android-publish-update` · `android-r8-analyzer` · `android-importer`
-- **Diagnostics:** `android-profiler` · `android-leak-analyzer` · `android-debugger-agent` · `android-emulator-browser`
-
----
-
-## Commands
-
-Plain English — all delegate to the frontdoor. Full list: [`commands/`](commands/)
-
-| Command | Does |
+| You say | Plugin does |
 |---|---|
-| `/setup` | First-run wizard (SDK, Play Console, service account, keystore) |
-| `/make-app "<idea>"` | Intake → spec → scaffold |
-| `/run-plan` | **Hands-free build**: orchestrator runs the plan task-by-task with subagents, reviews, and device evidence |
-| `/preview` | Install + launch + screenshot |
-| `/publish` · `/update` | Submit to Play internal track · bump version + resubmit |
-| `/import` · `/audit` · `/finish` | Take over → check gaps → auto-fill & ship |
-| `/add` · `/change` · `/remove` · `/where` · `/undo` · `/continue` | Mutate & navigate plan |
-| `/slop` | Scan changed Kotlin for AI-slop residue + narrow repair prompt |
-| `/why-rejected` · `/screenshots` · `/backup-keystore` | Diagnose rejection · generate assets |
-| `/help` · `/status` · `/reset` | Help · post-publish dashboard · reset |
-
----
-
-## MCP servers
-
-All Python, stdio. Config: [`.mcp.json`](.mcp.json) — details: [`docs/MCP.md`](docs/MCP.md)
-
-| Server | Tools | Highlights |
-|---|---|---|
-| **adb-mcp** | 18 | `list_devices`, `install_apk`, `screencap`, `logcat_filter`, `dump_layout` |
-| **gradlew-mcp** | 12 | `run_task`, `describe_project`, `manage_sdk`, `generate_keystore` |
-| **play-store-mcp** | 9 | `auth`, `upload_aab`, `get_review_status`, `rollout_staged` |
-| **keystore-mcp** | 5 | `generate`, `verify`, `rotate`, `backup`, `fingerprint` |
-| **asset-mcp** | 4 | `generate_icon` (5 densities + adaptive), `generate_feature_graphic` |
+| `a habit tracker` | Intake → spec → plan → Compose scaffold with signing + Crashlytics |
+| `/preview` | Install → launch → screenshot on your device |
+| `/publish` | Safety gate → signed AAB → Play internal track |
+| `add dark mode` | Updates the plan, re-runs only affected steps |
 
 ---
 
@@ -171,17 +107,13 @@ All Python, stdio. Config: [`.mcp.json`](.mcp.json) — details: [`docs/MCP.md`]
 ```bash
 codex plugin marketplace add mitunmanav/build-android-apps
 codex plugin add build-android-apps@build-android-apps
-# local dev: codex plugin marketplace add /path/to/clone && codex plugin add build-android-apps@build-android-apps
 ```
-
-**Codex desktop app** (macOS / Windows): Plugins sidebar → `build-android-apps` source → `+` install → restart. Details: [`docs/codex-setup.md`](docs/codex-setup.md) — includes the `/hooks` trust step and why the plugin shows as "Desktop only".
 
 **Claude Code CLI**
 
 ```bash
-claude plugin marketplace add mitun/mitun
-claude plugin install build-android-apps@mitun
-# local dev: git clone ... && claude --plugin-dir .
+claude plugin marketplace add mitunmanav/build-android-apps
+claude plugin install build-android-apps@build-android-apps
 ```
 
 **.agents hosts** (VS Code Copilot / Cursor / Gemini CLI)
@@ -191,7 +123,8 @@ git clone https://github.com/mitunmanav/build-android-apps ~/.agents/plugins/bui
 # restart host
 ```
 
-Verify: `bash scripts/smoke.sh` (6 checks must pass). Optional: `android skills add --all` (https://github.com/android/skills). No telemetry — local `adb`/Gradle/Play API only. All hosts: see [`docs/INSTALL_MATRIX.md`](docs/INSTALL_MATRIX.md) (Claude Desktop, Cursor, VS Code, Gemini/Antigravity via `scripts/generate-host-wrappers.py`).
+Verify: `bash scripts/smoke.sh`. All hosts: [`docs/INSTALL_MATRIX.md`](docs/INSTALL_MATRIX.md).
+No telemetry — local `adb`/Gradle/Play API only.
 
 ---
 
@@ -199,32 +132,29 @@ Verify: `bash scripts/smoke.sh` (6 checks must pass). Optional: `android skills 
 
 Pinned: [`android-scaffold/references/versions-pinned.md`](skills/android-scaffold/references/versions-pinned.md)
 
-| AGP | Gradle | Kotlin | Compose BOM | M3 | min SDK | target SDK | JVM |
-|---|---|---|---|---|---|---|---|
-| 8.7+ | 8.9+ | 2.0.21 | 2024.12.01 | 1.3.1 | 26 (Android 8) | latest-stable | 17 |
-
-Also: Navigation 2.8.4 · Hilt 2.52 · Room 2.6.1 · DataStore 1.1.1 · CameraX 1.4.1 · Media3 1.4.1 · Python 3.10+
+| AGP | Gradle | Kotlin | Compose BOM | M3 | min SDK | JVM |
+|---|---|---|---|---|---|---|
+| 8.7+ | 8.9+ | 2.0.21 | 2024.12.01 | 1.3.1 | 26 (Android 8) | 17 |
 
 ---
 
 ## Limitations
 
-| Out of scope (v1–v2) | Planned |
+| Out of scope | Today |
 |---|---|
-| iOS, Wear, TV, Auto, XR | Sibling plugins |
-| Raw custom backend | Firebase + Supabase only today |
-| Multi-user `state.json` | Single-user only today |
-| AGP 9.x, schema v2 | v2.1+ |
-
-Pairs with: [`openai/plugins/test-android-apps`](https://github.com/openai/plugins) (profiling) · [`android/skills`](https://github.com/android/skills) (domain) · [`ayush016/android-lead-agent-skills`](https://github.com/ayush016/android-lead-agent-skills) (team standards copy into `AGENTS.md`).
+| iOS, Wear, TV, Auto, XR | Sibling plugins planned |
+| Custom backend hosting | Firebase + Supabase templates |
+| Multi-user projects | Single-user `state.json` |
+| AGP 9.x | 8.7 stable (state schema v2 shipped) |
 
 ---
 
 ## Contributing
 
-PRs welcome. 1) `bash scripts/smoke.sh` must pass 2) `smoke` CI must pass 3) update `CHANGELOG.md` + `SPEC.md` if behavior changed 4) Apache-2.0, author **Mitun only** — no `Co-authored-by`.
+PRs welcome. `bash scripts/smoke.sh` must pass. Update `CHANGELOG.md` + `SPEC.md` if behavior changed.
+Apache-2.0, author **Mitun only** — no `Co-authored-by`.
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`SECURITY.md`](SECURITY.md) — report vulns to `mitunmanav933@gmail.com` (72h ack).
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`SECURITY.md`](SECURITY.md) for vulnerability reporting.
 
 ---
 
@@ -232,6 +162,6 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`SECURITY.md`](SECURITY.md) — rep
 
 [Apache-2.0](LICENSE) · [PRIVACY.md](PRIVACY.md) · [TERMS.md](TERMS.md)
 
-**Mitun** — [github.com/mitunmanav](https://github.com/mitunmanav) · [mitunmanav933@gmail.com](mailto:mitunmanav933@gmail.com)
+**Mitun** — [github.com/mitunmanav](https://github.com/mitunmanav)
 
-<p align="center"><sub>Shipped 2026-09-01 from Bangalore. · <a href="https://github.com/mitunmanav/build-android-apps/issues">Issues</a> · <a href="https://github.com/mitunmanav/build-android-apps/discussions">Discussions</a> · <a href="CHANGELOG.md">Changelog</a> · <a href="SPEC.md">Spec</a></sub></p>
+<p align="center"><sub><a href="https://github.com/mitunmanav/build-android-apps/issues">Issues</a> · <a href="https://github.com/mitunmanav/build-android-apps/discussions">Discussions</a> · <a href="CHANGELOG.md">Changelog</a> · <a href="SPEC.md">Spec</a></sub></p>

@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "adb": {
-      "command": "python",
+      "command": "python3",
       "args": ["-m", "adb_mcp"],
       "env": {
         "ANDROID_HOME": "${env:ANDROID_HOME}",
@@ -9,7 +9,7 @@
       }
     },
     "gradlew": {
-      "command": "python",
+      "command": "python3",
       "args": ["-m", "gradlew_mcp"],
       "env": {
         "JAVA_HOME": "${env:JAVA_HOME}",
@@ -17,7 +17,7 @@
       }
     },
     "play-store": {
-      "command": "python",
+      "command": "python3",
       "args": ["-m", "play_store_mcp"],
       "env": {
         "PATH": "${env:PATH}",
@@ -25,14 +25,14 @@
       }
     },
     "keystore": {
-      "command": "python",
+      "command": "python3",
       "args": ["-m", "keystore_mcp"],
       "env": {
         "PATH": "${env:PATH}"
       }
     },
     "asset": {
-      "command": "python",
+      "command": "python3",
       "args": ["-m", "asset_mcp"],
       "env": {
         "PATH": "${env:PATH}"

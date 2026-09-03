@@ -1,0 +1,18 @@
+{
+  "skill": "setup-wizard",
+  "positive": [
+    "first run setup SDK missing",
+    "cold start install Android SDK",
+    "setup Play Console service account"
+  ],
+  "negative": [
+    {
+      "prompt": "make a new app idea",
+      "owner": "app-intake"
+    },
+    {
+      "prompt": "build the app",
+      "owner": "android-scaffold"
+    }
+  ]
+}

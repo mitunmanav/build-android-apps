@@ -1,0 +1,18 @@
+{
+  "skill": "compose-ui-patterns",
+  "positive": [
+    "right way to do lists",
+    "compose nav with hoisting",
+    "forms with state hoisting"
+  ],
+  "negative": [
+    {
+      "prompt": "split large composable",
+      "owner": "compose-view-refactor"
+    },
+    {
+      "prompt": "theme with expressive motion",
+      "owner": "material3-expressive"
+    }
+  ]
+}

@@ -47,7 +47,7 @@ The app picks up your CLI config, so MCP servers and plugin state carry over.
 
 ## Hooks
 
-The plugin bundles 5 lifecycle hooks (`hooks/hooks.json`). Codex skips plugin hooks until you review and trust them: run `/hooks` in the CLI, review the 5 handlers, and trust them. Codex records trust against the hook's hash — after a plugin update, re-review. Skills need no trust.
+The plugin bundles 6 lifecycle hooks (`hooks/hooks.json`). Codex skips plugin hooks until you review and trust them: run `/hooks` in the CLI, review the 6 handlers, and trust them. Codex records trust against the hook's hash — after a plugin update, re-review. Skills need no trust.
 
 ## MCP servers
 

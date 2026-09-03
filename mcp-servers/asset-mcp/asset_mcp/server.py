@@ -24,7 +24,7 @@ def _resample():
     try:
         return Image.Resampling.LANCZOS  # Pillow 10+
     except AttributeError:
-        return _RESAMPLE
+        return Image.LANCZOS  # Pillow 9 fallback
 
 _RESAMPLE = _resample()
 

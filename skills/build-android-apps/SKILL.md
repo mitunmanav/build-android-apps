@@ -59,6 +59,8 @@ Use the routing table in [references/routing-table.md](references/routing-table.
 
 Common intents: `make-app` → `app-intake`, `add/change/remove` → `state add/change/remove`, `where` → `state where`, `build/run/preview` → `android-run`, `debug/crash/log` → `android-debug-fix`, `publish/ship` → `android-store-listing` → `android-publish-update`.
 
+Triage (size the response): vague idea → full intake (architectural); single small change (`/change`, dark mode) → in-chat design, no new plan doc (bounded); feasibility question (`can we…`) → answer first, no code kept (spike). Never over-spec a small task.
+
 ### Step 3: Delegate — load ONE specialist
 
 1. Read **one** `skills/<specialist>/SKILL.md` into context.
@@ -90,7 +92,7 @@ See [references/delegation.md](references/delegation.md) for the load protocol.
 - `android-debug-fix` — logcat → fix loop
 - `android-backend` / `android-auth` / `android-ops` / `android-media` — domain slices
 - `android-icons-assets` / `android-store-listing` / `android-publish-update` — ship
-- See [references/routing-table.md](references/routing-table.md) for full 27.
+- See [references/routing-table.md](references/routing-table.md) for full 28.
 
 ## References
 

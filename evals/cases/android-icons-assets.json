@@ -1,0 +1,18 @@
+{
+  "skill": "android-icons-assets",
+  "positive": [
+    "generate launcher icon",
+    "make adaptive icon layers",
+    "create feature graphic"
+  ],
+  "negative": [
+    {
+      "prompt": "write store listing",
+      "owner": "android-store-listing"
+    },
+    {
+      "prompt": "capture Play screenshots",
+      "owner": "android-icons-assets"
+    }
+  ]
+}

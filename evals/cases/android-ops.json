@@ -1,0 +1,18 @@
+{
+  "skill": "android-ops",
+  "positive": [
+    "send FCM push",
+    "add Firebase analytics",
+    "schedule WorkManager job"
+  ],
+  "negative": [
+    {
+      "prompt": "add Google sign-in",
+      "owner": "android-auth"
+    },
+    {
+      "prompt": "add Room database",
+      "owner": "android-backend"
+    }
+  ]
+}

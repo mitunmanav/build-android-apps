@@ -1,0 +1,18 @@
+{
+  "skill": "compose-view-refactor",
+  "positive": [
+    "split 800-line composable",
+    "refactor to testable hoisted pieces",
+    "hoist state for testing"
+  ],
+  "negative": [
+    {
+      "prompt": "fix recomposition",
+      "owner": "compose-performance-audit"
+    },
+    {
+      "prompt": "right way to do lists",
+      "owner": "compose-ui-patterns"
+    }
+  ]
+}

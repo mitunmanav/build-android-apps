@@ -1,0 +1,18 @@
+{
+  "skill": "android-debugger-agent",
+  "positive": [
+    "attach debugger at breakpoint",
+    "step through crashing line with JDWP",
+    "inspect variables on device"
+  ],
+  "negative": [
+    {
+      "prompt": "fix crash from logcat",
+      "owner": "android-debug-fix"
+    },
+    {
+      "prompt": "profile slow scroll",
+      "owner": "android-profiler"
+    }
+  ]
+}

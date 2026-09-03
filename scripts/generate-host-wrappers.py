@@ -148,15 +148,6 @@ def build_gemini_extension(servers: dict) -> dict:
     }
 
 
-BUILDERS = {
-    "vscode": build_vscode,
-    "cursor": build_cursor,
-    "claude-desktop": build_claude_desktop,
-    "gemini": build_gemini_extension,
-    "codex": build_codex_config,  # returns a TOML string, not a JSON-serializable dict
-}
-
-
 def _toml_str(value: str) -> str:
     return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
@@ -185,6 +176,15 @@ def build_codex_config(servers: dict) -> str:
                 lines.append(f"{k} = {_toml_str(v)}")
         lines.append("")
     return "\n".join(lines)
+
+
+BUILDERS = {
+    "vscode": build_vscode,
+    "cursor": build_cursor,
+    "claude-desktop": build_claude_desktop,
+    "gemini": build_gemini_extension,
+    "codex": build_codex_config,  # returns a TOML string, not a JSON-serializable dict
+}
 
 
 def generate(dry_run: bool = False) -> dict[str, pathlib.Path]:

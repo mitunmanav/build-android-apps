@@ -1,0 +1,18 @@
+{
+  "skill": "material3-expressive",
+  "positive": [
+    "theme with expressive motion",
+    "add shape-morph animation",
+    "dark mode with M3 expressive"
+  ],
+  "negative": [
+    {
+      "prompt": "right way to do lists",
+      "owner": "compose-ui-patterns"
+    },
+    {
+      "prompt": "migrate to edge-to-edge",
+      "owner": "android-edge-to-edge"
+    }
+  ]
+}

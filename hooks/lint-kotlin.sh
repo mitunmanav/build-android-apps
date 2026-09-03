@@ -40,31 +40,24 @@ fi
 
 # Find ktlint
 KTLINT=""
+HAS_GRADLEW=""
 if command -v ktlint >/dev/null 2>&1; then
     KTLINT="$(command -v ktlint)"
 elif [ -x "./gradlew" ]; then
-    # Use gradle wrapper if available
-    KTLINT="./gradlew ktlintCheck"
+    HAS_GRADLEW="1"
 fi
 
 if [ -z "$KTLINT" ]; then
-    printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[info] ktlint not installed; skipping lint check for %s. Install: brew install ktlint or add ktlint gradle plugin."}}\n' "$FILE"
+    if [ -n "$HAS_GRADLEW" ]; then
+        printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[info] ktlint binary not found for single-file lint; skipping full ./gradlew ktlintCheck to save tokens for %s"}}\n' "$FILE"
+    else
+        printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[info] ktlint not installed; skipping lint check for %s. Install: brew install ktlint or add ktlint gradle plugin."}}\n' "$FILE"
+    fi
     exit 0
 fi
 
 # Run ktlint on the single file (token-cheap: never full project scan)
-if [ "$KTLINT" = "./gradlew ktlintCheck" ]; then
-    # Prefer single-file ktlint if installed, else fallback to quiet single-file check via ktlint binary search
-    if command -v ktlint >/dev/null 2>&1; then
-        OUT=$(ktlint "$FILE" 2>&1 || true)
-    else
-        # Full project scan is expensive — skip and hint
-        printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"[info] ktlint binary not found for single-file lint; skipping full ./gradlew ktlintCheck to save tokens for %s"}}\n' "$FILE"
-        exit 0
-    fi
-else
-    OUT=$("$KTLINT" "$FILE" 2>&1 || true)
-fi
+OUT=$("$KTLINT" "$FILE" 2>&1 || true)
 
 if [ -n "$OUT" ] && echo "$OUT" | grep -qiE 'error|warning'; then
     ESC_OUT=$(printf '%s' "$OUT" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read())[1:-1])' 2>/dev/null || printf '%s' "$OUT")

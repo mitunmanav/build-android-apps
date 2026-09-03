@@ -5,7 +5,7 @@ description: >
   (80 char), full description (4000 char), 8+ screenshots, feature graphic,
   content rating, data safety form. Use this when the user asks to "publish"
   or "list my app", or as a step before /publish. Do not use for the actual
-  Play Store upload (use android-play + play-store-mcp).
+  Play Store upload (use android-publish-update + play-store-mcp).
 license: Apache-2.0
 metadata:
   author: Mitun
@@ -163,7 +163,7 @@ Submit via Play Console. Standard rating for most utility apps is **Everyone**.
 ## Pairing
 
 - `android-icons-assets` — generates the icon + screenshots
-- `android-play` — submits to Play Store
+- `android-publish-update` — submits to Play Store via play-store MCP
 - `/privacy-policy` slash command — generates this template on demand
 
 ## References

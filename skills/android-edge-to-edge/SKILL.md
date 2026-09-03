@@ -123,7 +123,7 @@ LazyColumn(modifier = Modifier.padding(WindowInsets.ime.asPaddingValues())) { /*
 
 ### Step 5: Test on multiple devices
 
-Use the `compose-ui-patterns` skill + `adb-mcp.screencap` to verify on:
+Use the `compose-ui-patterns` skill + `mcp__plugin_build_android_apps_adb__screencap` to verify on:
 - Pixel 6 (standard)
 - Pixel 8 Pro (with notch)
 - Samsung S24 (with curved edges)

@@ -1,5 +1,5 @@
 ---
-description: Diagnose a Play Store rejection and propose a fix. Reads state.json rejections, dispatches the rejection-parser subagent.
+description: Diagnose a Play Store rejection and propose a fix. Reads state.json rejections, dispatches the release-auditor subagent.
 allowed-tools:
   - Bash
   - Read
@@ -18,7 +18,7 @@ Tell me why Play Store rejected my submission and how to fix it.
 ## Reporting Action
 
 > [!IMPORTANT]
-> Before invoking, say: "I'll fetch the rejection reasons from state.json and dispatch the rejection-parser subagent to diagnose each one."
+> Before invoking, say: "I'll fetch the rejection reasons from state.json and dispatch the release-auditor subagent to diagnose each one."
 
 ## Your task
 
@@ -31,9 +31,9 @@ args: { "package_name": "<from spec.md>" }
 
 If the response is empty, ask the user to paste the rejection email or read Play Console manually. The Play Console doesn't expose a public "list rejections" endpoint.
 
-### Step 2: Dispatch rejection-parser
+### Step 2: Dispatch release-auditor
 
-For each rejection in the list, dispatch `rejection-parser` (subagent) with the rejection id + reason.
+For each rejection in the list, dispatch `release-auditor` (subagent) with the rejection id + reason.
 
 ### Step 3: Synthesize
 

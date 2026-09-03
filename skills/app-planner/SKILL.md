@@ -57,6 +57,8 @@ Adjust: drop items for fields where the answer is "No" / "None" / "Free".
 
 ### Step 3: Persist via state-manager
 
+Interfaces — Consumes: `.build-android/spec.md` (9 fields); Produces: `state.json plan[]` items with `{id, title, phase, deps[], status: pending}` (exact keys; orchestrator consumes verbatim, no placeholders).
+
 For each plan item:
 
 ```

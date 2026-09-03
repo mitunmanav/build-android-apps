@@ -8,7 +8,7 @@ SessionStart or `/where` / `/make-app`). Gitignored per-project.
 
 ## Schema
 
-`schema.json` is the contract. Current version: **1**. See `state.py`
+`schema.json` is the contract. Current version: **2**. See `state.py`
 for the field-by-field invariant checks (dependency-free).
 
 ## Why a dedicated module
@@ -24,7 +24,7 @@ gives every host and subagent a consistent API.
 |---|---|
 | `schema.json` | JSON Schema for validation (jsonschema-compatible; optional) |
 | `state.py` | load/save/validate; dependency-free |
-| `migrate.py` | version migrations (only v0→v1 today) |
+| `migrate.py` | version migrations (v0→v1→v2) |
 | `__init__.py` | re-exports public API |
 | `__main__.py` | CLI: `python -m state <cmd> [args]` |
 
@@ -35,7 +35,7 @@ gives every host and subagent a consistent API.
 python -m state load /path/to/.build-android/state.json
 
 # Write state.json (validates first)
-python -m state save /path/to/state.json '{"schema_version":1,"phase":"intake","plan":[],"cursor":{"phase":"intake","task_id":""},"history":[]}'
+python -m state save /path/to/state.json '{"schema_version":2,"phase":"intake","plan":[],"cursor":{"phase":"intake","task_id":""},"history":[]}'
 
 # Validate existing file
 python -m state validate /path/to/state.json
@@ -46,9 +46,9 @@ python -m state migrate old.json new.json
 
 ## What this is NOT
 
-- NOT the plan algebra. Phase 2 adds `state-manager` + `plan-mutator`
-  with `/add` `/remove` `/change` `/undo`.
-- NOT the phase router. Phase 3 adds Kahn's-algorithm deps resolver
+- NOT only plan algebra. `state/manager.py` ships plan-mutator
+  (`/add` `/remove` `/change` `/undo`) + orchestration ledger.
+- NOT only the phase router. `state/router.py` ships Kahn's-algorithm deps resolver
   that reads `plan[].deps` and emits the minimal phase sequence.
-- NOT the full snapshot system. `/import` snapshots go to
-  `.build-android/snapshot-<ts>/` (added in Phase 7).
+- NOT only snapshots. `/import` snapshots go to
+  `.build-android/snapshot-<ts>/`.

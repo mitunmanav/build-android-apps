@@ -1,0 +1,18 @@
+{
+  "skill": "android-media",
+  "positive": [
+    "add CameraX capture",
+    "play video with Media3",
+    "add ExoPlayer playback"
+  ],
+  "negative": [
+    {
+      "prompt": "add Room database",
+      "owner": "android-backend"
+    },
+    {
+      "prompt": "send push notification",
+      "owner": "android-ops"
+    }
+  ]
+}

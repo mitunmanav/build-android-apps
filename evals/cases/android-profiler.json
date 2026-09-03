@@ -1,0 +1,18 @@
+{
+  "skill": "android-profiler",
+  "positive": [
+    "profile slow scroll with Perfetto",
+    "trace app startup",
+    "capture CPU trace"
+  ],
+  "negative": [
+    {
+      "prompt": "fix memory leak",
+      "owner": "android-leak-analyzer"
+    },
+    {
+      "prompt": "fix recomposition",
+      "owner": "compose-performance-audit"
+    }
+  ]
+}

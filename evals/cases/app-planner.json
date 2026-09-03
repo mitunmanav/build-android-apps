@@ -1,0 +1,18 @@
+{
+  "skill": "app-planner",
+  "positive": [
+    "sequence the approved spec",
+    "plan from spec with Kahn",
+    "order tasks by deps"
+  ],
+  "negative": [
+    {
+      "prompt": "make a new app idea",
+      "owner": "app-intake"
+    },
+    {
+      "prompt": "build the app",
+      "owner": "android-scaffold"
+    }
+  ]
+}

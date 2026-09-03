@@ -1,0 +1,18 @@
+{
+  "skill": "android-app-functions",
+  "positive": [
+    "expose search via Assistant",
+    "add an AppFunction shortcut",
+    "trigger app action from Assistant"
+  ],
+  "negative": [
+    {
+      "prompt": "the app crashes when I open it",
+      "owner": "android-debug-fix"
+    },
+    {
+      "prompt": "build a release aab",
+      "owner": "android-publish-update"
+    }
+  ]
+}

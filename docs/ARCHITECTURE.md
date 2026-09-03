@@ -75,11 +75,23 @@ block-destructive.sh: scan command for `gradlew clean`, `rm -rf`, etc.
   ↓
 return permissionDecision: allow|deny
 
-PostToolUse (Edit|Write|MultiEdit on *.kt)
+PostToolUse (Edit|Write|MultiEdit|apply_patch on *.kt)
   ↓
 lint-kotlin.sh: run ktlint on the changed file
   ↓
 inject lint findings as context
+
+PostToolUse (Edit|Write|MultiEdit|apply_patch on *.kt)
+  ↓
+slop-gate.sh: block AI-slop residue
+  ↓
+deny or warn with repair prompt
+
+PreToolUse (play-store submit/upload)
+  ↓
+release-check.sh: gate keystore/listing/screenshots
+  ↓
+allow or deny with plain-English reason
 
 Stop
   ↓

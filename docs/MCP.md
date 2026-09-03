@@ -56,7 +56,7 @@ asyncio.run(go())
 
 ## gradlew-mcp
 
-7 tools wrapping `./gradlew` for build automation.
+13 tools wrapping `./gradlew` for build automation.
 
 ### Tool index
 
@@ -82,7 +82,7 @@ gradlew-mcp   # or: python -m gradlew_mcp
 
 ## play-store-mcp
 
-9 tools for Google Play Developer API: `auth`, `upload_aab`, `upload_listing`, `upload_screenshot`, `get_review_status`, `list_rejections`, `submit_for_review`, `rollout_staged`, `get_stats`.
+8 tools for Google Play Developer API: `auth`, `upload_aab`, `upload_listing`, `get_review_status`, `list_rejections`, `submit_for_review`, `rollout_staged`, `get_stats`.
 
 ## keystore-mcp
 

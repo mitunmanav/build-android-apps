@@ -31,7 +31,7 @@ verification, and banking setup.
 - Not multi-user collaboration (single-user per project state.json)
 - Not AGP 9.x (AGP 8.7 stable for v1.0; AGP 9 in v1.1)
 - Not a vibe-coder wrapper UI (plugin lives in Codex/Claude/.agents CLI hosts)
-- Not state schema v2+ migrations (only v1)
+- Not state schema v3+ migrations (v0→v1→v2 shipped in state/migrate.py)
 
 ## 2. Differentiation
 
@@ -94,16 +94,16 @@ Mitun — single maintainer, single brand, no co-authors.
 └──────────┬───────────────┬─────────────────┬─────────────┘
            │               │                 │
            ▼               ▼                 ▼
-        Skills (28)   Commands (30)   MCP servers (5)
-   (1 frontdoor + 27)  plain-English    adb, gradlew, play-store,
-        references/   per skill          keystore, asset
-               │                            │
-               ▼                            ▼
-           Subagents (4)              Hooks (5) handlers / 4 events
-           intake-clarifier           SessionStart, PreToolUse×2,
-           build-validator            PostToolUse, Stop
-           release-auditor            (release-check via PreToolUse
-           apk-inspector               matcher, no PreSubmit)
+         Skills (29)   Commands (32)   MCP servers (5)
+    (1 frontdoor + 28)  plain-English    adb, gradlew, play-store,
+         references/   per skill          keystore, asset
+                │                            │
+                ▼                            ▼
+            Subagents (8)              Hooks (6) handlers / 4 events
+            intake-clarifier           SessionStart, PreToolUse×2,
+            build-validator            PostToolUse×2, Stop
+            release-auditor            (release-check via PreToolUse
+            apk-inspector               matcher, no PreSubmit)
               │
               ▼
 ┌─────────────────────────────────────────────────────────┐
@@ -138,7 +138,7 @@ for task in plan where task.status != done and (deps met OR delta forces):
 return ordered phases from deps graph (Kahn's algorithm)
 ```
 
-## 5. Skills (28)
+## 5. Skills (29)
 
 All skills follow the [agentskills.io open-standard format](https://agentskills.io/specification).
 Per-skill UI metadata (Codex-only) lives in `agents/openai.yaml`; other hosts ignore it.
@@ -234,7 +234,7 @@ dependencies:
 | 0 | `build-android-apps` | **Frontdoor**: plain English → intent classify → delegate to one specialist (progressive disclosure, `allow_implicit_invocation:true`; specialists are `false`) | state |
 | 1 | `app-intake` | Vague prompt → concrete plan; asks N clarifying questions in plain English | (state.json only) |
 | 2 | `android-scaffold` | Bootstrap Gradle/Compose/signing project from spec | `gradlew-mcp` |
-| 3 | `android-build` | assembleDebug/release, sane defaults, --no-daemon, lightweight verification | `gradlew-mcp` |
+| 3 | `app-planner` | Spec → Kahn-sequenced resumable plan in state.json | state |
 | 4 | `android-run` | Install + launch + screenshot | `adb-mcp` |
 | 5 | `android-debug-fix` | Logcat + agent-driven fix loop | `adb-mcp` |
 | 6 | `android-debugger-agent` | JDWP attach + breakpoint flow | `adb-mcp` |
@@ -244,7 +244,7 @@ dependencies:
 | 10 | `android-app-functions` | App Functions exposure (Android 16+) | (none) |
 | 11 | `compose-performance-audit` | Recomposition, stability, baseline profiles | `gradlew-mcp` |
 | 12 | `compose-ui-patterns` | Lists, nav, forms, state hoisting | (none) |
-| 13 | `compose-view-refactor` | View → Compose migration | (none) |
+| 13 | `compose-view-refactor` | Split monolithic composable → hoisted testable pieces | (none) |
 | 14 | `material3-expressive` | M3 expressive theming | (none) |
 | 15 | `android-importer` | Detect + audit + finish apps built by other AI tools (Lovable, Bolt, v0, etc.); snapshot-on-import | `gradlew-mcp` |
 | 16 | `android-backend` | Data layer (Room + DataStore) + Network (Retrofit/OkHttp); Supabase + Firebase templates | (none) |
@@ -272,7 +272,7 @@ Pattern (matching Google's `android/skills` and `ayush016/android-lead-agent-ski
 - `references/checklist.md` — agent self-check + user checklist
 - `references/references.md` (optional) — external links, deeper reads
 
-## 6. Slash Commands (30)
+## 6. Slash Commands (32)
 
 Commands are Claude Code (and Antigravity/Gemini) slash-command aliases to the frontdoor skill. Codex does not load plugin slash commands — there, invoke the frontdoor skill directly (`$build-android-apps` or `@build-android-apps`).
 
@@ -343,6 +343,17 @@ $ARGUMENTS
 | 19 | `/help` | (none) | List of commands in plain English |
 | 20 | `/debug` (dev alias) | `adb.shell_command`, `adb.logcat_dump` | Set up JDWP debug session |
 | 21 | `/lint` (dev alias) | `gradlew.run_lint` | Run lint, summarize |
+| 22 | `/build` | `gradlew.run_task` | Gradle assembleDebug (default debug variant) |
+| 23 | `/clean` | `gradlew.clean` (destructive gate) | gradlew clean (confirm-first) |
+| 24 | `/crash` | `adb.logcat_dump` | Pull/analyze tombstone/ANR/logcat crash buffer |
+| 25 | `/device` | `adb.list_devices` | List/select devices, optionally launch AVD |
+| 26 | `/log` | `adb.logcat_dump` | Filter/stream logcat by tag/level/regex |
+| 27 | `/preview` | `adb.install_apk`, `adb.screencap` | Install+launch+screenshot + report what it sees |
+| 28 | `/run` | `gradlew.run_task`, `adb.install_apk` | Build-if-needed + install + launch on device |
+| 29 | `/run-plan` | all | Whole-plan autonomous orchestrator run with reviews+evidence |
+| 30 | `/slop` | (state.json only) | AI-slop residue scan on changed Kotlin + repair prompt |
+| 31 | `/test` | `gradlew.run_tests` | Unit tests + pass/fail/flake summary |
+| 32 | `/undo` | (state.json only) | Undo last plan mutation / loop-task undo |
 
 **MCP tool name format**: `<server>.<tool>` where `<server>` is the key in `.mcp.json`. When exposed by Codex, the fully-qualified tool name follows `mcp__plugin_<plugin_name_underscored>_<server>__<tool>`. For this plugin: `mcp__plugin_build_android_apps_<server>__<tool>`.
 
@@ -434,7 +445,7 @@ Codex sets `PLUGIN_ROOT` / `PLUGIN_DATA`; `CLAUDE_PLUGIN_ROOT` is compat alias. 
 | `shell_command` | (with elicitation) | `adb shell` with confirm |
 | `logcat_dump` | readOnly | `adb logcat -d` |
 | `logcat_clear` | destructive | `adb logcat -c` |
-| `logcat_filter` | (subscribable resource) | Filtered logcat |
+| `unzip` | readOnly | Extract a zip on the host |
 | `screencap` | readOnly | PNG capture |
 | `pull_file` | readOnly | `adb pull` |
 | `push_file` | destructive | `adb push` |
@@ -459,8 +470,6 @@ Plus:
 | `run_lint` | (Task) | `./gradlew lint` |
 | `run_tests` | (Task) | `./gradlew test` |
 | `clean` | destructive (elicitation) | `./gradlew clean` |
-| `stop_build` | (Task control) | Cancel running build |
-| `get_build_status` | readOnly | Task status |
 | `verify_keystore` | readOnly | Validate signing config |
 | `generate_keystore` | (elicitation) | Generate keystore with masked password input |
 | **`describe_project`** | readOnly | **NEW** — outputs JSON of build targets + APK paths (matches `android describe`) |
@@ -481,7 +490,6 @@ Plus:
 | `auth` | OAuth + service account JSON upload |
 | `upload_aab` | Upload AAB to internal test track |
 | `upload_listing` | Upload localized store listing (title/desc/short/long) |
-| `upload_screenshot` | Upload phone/tablet screenshots |
 | `get_review_status` | Query Play review status |
 | `list_rejections` | List past rejections with reasons |
 | `submit_for_review` | Submit current draft for review |
@@ -492,9 +500,9 @@ Plus:
 
 | Tool | Purpose |
 |---|---|
-| `generate_keystore` | Generate upload keystore with masked password elicitation |
-| `verify_keystore` | Validate keystore + alias + passwords match |
-| `rotate_keystore` | Rotate upload keystore (preserves app signing) |
+| `generate` | Generate upload keystore with masked password elicitation |
+| `verify` | Validate keystore + alias + passwords match |
+| `rotate` | Rotate upload keystore (preserves app signing) |
 | `backup` | Copy keystore to safe location with warning |
 | `fingerprint` | SHA-256 fingerprint for verification |
 
@@ -647,12 +655,13 @@ Apache-2.0 for the entire plugin. MCP servers, skills, scripts, hooks, docs — 
 ### 15.1 Install instructions
 
 ```bash
-# Codex CLI
-codex plugin install github.com/mitunmanav/build-android-apps
+# Codex CLI (marketplace route, canonical)
+codex plugin marketplace add mitunmanav/build-android-apps
+codex plugin add build-android-apps@build-android-apps
 
 # Claude Code CLI
-claude plugin marketplace add mitun/mitun
-claude plugin install build-android-apps@mitun
+claude plugin marketplace add mitunmanav/build-android-apps
+claude plugin install build-android-apps@build-android-apps
 
 # .agents standard host
 git clone https://github.com/mitunmanav/build-android-apps \
@@ -694,9 +703,9 @@ android skills add --all
 - Multi-user collaboration — single-user per project state.json
 - Advanced IAP — basic consumable IAP template only; subscriptions v1.1+
 - AGP 9.x — AGP 8.7 stable for v1.0; AGP 9 in v1.1
-- State schema v2+ migrations — only v1 schema supported
+- State schema v3+ migrations — v0→v1→v2 shipped; v3 not yet
 
-## 19. Implementation Phases (14)
+## 19. Implementation Phases (14, historical v1.0 record)
 
 | # | Phase | Files | Verifies by |
 |---|---|---|---|
@@ -713,9 +722,9 @@ android skills add --all
 | 10 | Supabase + Firebase template integration | 2 | app with backend works |
 | 11 | android-icons-assets + asset-mcp | 2 | icon generated |
 | 12 | android-store-listing + privacy/data-safety/content-rating generator | 1 | listing JSON validated |
-| 13 | keystore-mcp + play-store-mcp + PreSubmit hook + /why-rejected + android-publish-update | 6 | /publish uploads draft; rejection loop works |
+| 13 | keystore-mcp + play-store-mcp + PreToolUse release-check hook + /why-rejected + android-publish-update | 6 | /publish uploads draft; rejection loop works |
 | 14 | README + 3-host smoke + cold-start E2E + import E2E + tag v1.0.0 | 5 | all hosts load |
-| **TOTAL** | | **~57 files** | **~140h** |
+| **TOTAL** | | **~57 files (v1.0 estimate; now 29 skills / 32 cmds / 8 agents / 6 hooks / 5 MCP)** | **~140h** |
 
 At 6h/day = ~24 working days (~5 weeks).
 

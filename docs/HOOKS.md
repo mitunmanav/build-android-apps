@@ -1,6 +1,6 @@
 # Hooks Reference
 
-This plugin uses 5 hook handlers across 4 events to provide safety, automation, gating, and end-of-turn summaries.
+This plugin uses 6 hook handlers across 4 events to provide safety, automation, gating, and end-of-turn summaries.
 
 ## Hook events
 
@@ -9,8 +9,9 @@ This plugin uses 5 hook handlers across 4 events to provide safety, automation, 
 | `SessionStart` | `startup\|resume\|clear\|compact` | `session-start.sh` | Detect SDK / adb / devices; state.json phase report; frontdoor reminder |
 | `PreToolUse` | `Bash` | `block-destructive.sh` | Block destructive shell commands before they run |
 | `PreToolUse` | `mcp__plugin_build_android_apps_play_store__submit_for_review\|upload_aab` | `release-check.sh` | Gate Play Store submissions (keystore/listing/screenshots) |
-| `PostToolUse` | `Edit\|Write\|MultiEdit` | `lint-kotlin.sh` | Run ktlint on edited Kotlin files |
-| `Stop` | `.*` | `stop-review.sh` | Print git diff stat at end of turn |
+| `PostToolUse` | `Edit\|Write\|MultiEdit\|apply_patch` | `lint-kotlin.sh` | Run ktlint on edited Kotlin files |
+| `PostToolUse` | `Edit\|Write\|MultiEdit\|apply_patch` | `slop-gate.sh` | Block AI-slop residue in Kotlin (verbose comments, emoji, placeholder) |
+| `Stop` | (none — Stop event) | `stop-review.sh` | Print git diff stat at end of turn |
 
 ## Configuration
 
@@ -52,11 +53,12 @@ For non-blocking hooks (SessionStart, PostToolUse), use `additionalContext` inst
 
 | Script | Lines | Blocks? |
 |---|---|---|
-| `session-start.sh` | ~70 | No — emits info context (frontdoor + state) |
-| `block-destructive.sh` | 60 | Yes — denies 5 destructive patterns |
-| `release-check.sh` | 50 | Yes — denies submit if keystore/listing missing (via PreToolUse) |
-| `lint-kotlin.sh` | 50 | No — emits ktlint findings |
-| `stop-review.sh` | 30 | No — emits git diff stat |
+| `session-start.sh` | ~115 | No — emits info context (frontdoor + state) |
+| `block-destructive.sh` | ~58 | Yes — denies destructive patterns |
+| `release-check.sh` | ~66 | Yes — denies submit if keystore/listing missing (via PreToolUse) |
+| `lint-kotlin.sh` | ~75 | No — emits ktlint findings |
+| `slop-gate.sh` | ~79 | Yes — denies slop residue (via PostToolUse) |
+| `stop-review.sh` | ~35 | No — emits git diff stat |
 
 ## Patterns blocked by `block-destructive.sh`
 

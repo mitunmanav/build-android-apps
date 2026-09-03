@@ -1,0 +1,18 @@
+{
+  "skill": "android-r8-analyzer",
+  "positive": [
+    "shrink APK with R8",
+    "find keep rules",
+    "analyze APK size"
+  ],
+  "negative": [
+    {
+      "prompt": "inspect APK manifest",
+      "owner": "apk-inspector"
+    },
+    {
+      "prompt": "profile slow scroll",
+      "owner": "android-profiler"
+    }
+  ]
+}

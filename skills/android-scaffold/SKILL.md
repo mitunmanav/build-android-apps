@@ -174,7 +174,7 @@ args: { "command": "python3 -m state done .build-android/state.json --task <scaf
 
 - `app-intake` — upstream (writes the spec)
 - `app-planner` — produces the scaffold task in state.json
-- `android-build` — used by /build for later assembleDebug runs
+- `gradlew-mcp run_task assembleDebug` — used by /build for later assembleDebug runs (no android-build skill)
 - `android-icons-assets` — Phase 11 adds launcher icon + adaptive layers
 
 ## References

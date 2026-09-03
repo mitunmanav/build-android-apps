@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# scripts/smoke.sh — end-to-end smoke test for build-android-apps v1.0.0
+# scripts/smoke.sh — end-to-end smoke test for build-android-apps v2.0.0
 #
 # Verifies that:
 #   1. All Python modules import cleanly
@@ -19,11 +19,11 @@ cd "$ROOT"
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
 fail() { printf "  \033[31m✗\033[0m %s\n" "$1"; exit 1; }
 
-echo "=== build-android-apps v1.0.0 smoke test ==="
+echo "=== build-android-apps v2.0.0 smoke test ==="
 
 echo
 echo "[1] Python state module imports"
-PYTHONPATH="$ROOT" python3 -c "from state import SCHEMA_VERSION, StateManager, topological_order, detect_cycle, route_full, route_after, explain; assert SCHEMA_VERSION == 1; print('  ✓ all 7 public symbols import')" \
+PYTHONPATH="$ROOT" python3 -c "from state import SCHEMA_VERSION, StateManager, topological_order, detect_cycle, route_full, route_after, explain; assert SCHEMA_VERSION == 2; print('  ✓ all 7 public symbols import')" \
   || fail "state module import"
 
 echo
@@ -66,7 +66,7 @@ done
 echo
 echo "[5] State manager round-trip"
 TMP=$(mktemp -d)
-PYTHONPATH="$ROOT" python3 -m state save "$TMP/state.json" '{"schema_version":1,"phase":"intake","plan":[],"cursor":{"phase":"intake","task_id":""},"history":[]}' >/dev/null
+PYTHONPATH="$ROOT" python3 -m state save "$TMP/state.json" '{"schema_version":2,"phase":"intake","plan":[],"cursor":{"phase":"intake","task_id":""},"history":[]}' >/dev/null
 PYTHONPATH="$ROOT" python3 -m state add "$TMP/state.json" --title "Scaffold" --phase scaffold --id a1 >/dev/null
 PYTHONPATH="$ROOT" python3 -m state add "$TMP/state.json" --title "Build" --phase build --deps a1 --id a2 >/dev/null
 ROUTE=$(PYTHONPATH="$ROOT" python3 -m state route "$TMP/state.json")
@@ -83,7 +83,7 @@ rm -rf "$TMP"
 echo
 echo "[6] Cycle detection"
 TMP=$(mktemp -d)
-PYTHONPATH="$ROOT" python3 -m state save "$TMP/state.json" '{"schema_version":1,"phase":"intake","plan":[{"id":"x","title":"X","status":"pending","phase":"build","deps":["y"]},{"id":"y","title":"Y","status":"pending","phase":"build","deps":["x"]}],"cursor":{"phase":"build","task_id":""},"history":[]}' >/dev/null
+PYTHONPATH="$ROOT" python3 -m state save "$TMP/state.json" '{"schema_version":2,"phase":"intake","plan":[{"id":"x","title":"X","status":"pending","phase":"build","deps":["y"]},{"id":"y","title":"Y","status":"pending","phase":"build","deps":["x"]}],"cursor":{"phase":"build","task_id":""},"history":[]}' >/dev/null
 set +e
 CYCLE_OUT=$(PYTHONPATH="$ROOT" python3 -m state check-cycle "$TMP/state.json" 2>&1)
 set -e

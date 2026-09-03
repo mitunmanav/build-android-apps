@@ -109,7 +109,7 @@ Run /build --release after fixes.
 
 ## Pairing
 
-- `android-build` — produces the bundle to analyze
+- `gradlew-mcp run_task bundleRelease` — produces the bundle to analyze
 - `apk-inspector` subagent — for deeper binary inspection
 
 ## References

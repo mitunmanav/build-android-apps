@@ -3,8 +3,9 @@ name: android-restore-credentials
 description: >
   Restore a user's sign-in on a new device using Credential Manager's restore
   keys feature. Use this when the user has multiple devices and wants automatic
-  sign-in across them, or when they ask for "magic link", "sign in across
-  devices", or "restore my account". Do not use for first-time sign-in
+  sign-in across them, or when they ask for "sign in across
+  devices", or "restore my account". Do not use for magic-link/passwordless email
+  (use android-verified-email). Do not use for first-time sign-in
   (use android-auth) or for OTP-less email verification (use
   android-verified-email).
 license: Apache-2.0

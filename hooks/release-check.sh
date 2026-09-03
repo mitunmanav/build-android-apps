@@ -14,7 +14,7 @@ emit() {
 flush() {
     if [ "${#MSGS[@]}" -gt 0 ]; then
         COMBINED="$(printf '%s\n' ${MSGS[@]+"${MSGS[@]}"})"
-        ESC="$(python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' "$COMBINED" 2>/dev/null || printf '"%s"' "$(printf '%s' "$COMBINED" | sed 's/"/\\"/g')")"
+        ESC="$(printf '%s' "$COMBINED" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' 2>/dev/null || printf '"%s"' "$(printf '%s' "$COMBINED" | sed 's/"/\\"/g')")"
         printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":%s}}\n' "$ESC"
     fi
 }
