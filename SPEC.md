@@ -404,7 +404,7 @@ Per [Codex Hooks docs](https://developers.openai.com/codex/hooks) and [Claude Co
 
 | Event | Handler | Matcher | Purpose |
 |---|---|---|---|
-| `SessionStart` | `session-start.sh` | `startup\|resume\|clear\|compact` | Detect SDK/JDK/adb/devices; inject `hooks/bootstrap.md` meta-skill (routes plain English to the frontdoor, survives compaction); emit state.json phase |
+| `SessionStart` | `session-start` (via `run-hook.cmd`) | `startup\|resume\|clear\|compact` | Detect SDK/JDK/adb/devices; inject `hooks/bootstrap.md` meta-skill (routes plain English to the frontdoor, survives compaction); emit state.json phase |
 | `PreToolUse` | `block-destructive.sh` | `Bash` | Block `gradlew clean`, `rm -rf`, `git reset --hard` unless confirmed |
 | `PreToolUse` | `release-check.sh` | `mcp__plugin_build_android_apps_play_store__submit_for_review\|upload_aab` | Gate Play submissions (keystore/listing/screenshots) — PreToolUse is the verified event (no PreSubmit in Codex docs) |
 | `PostToolUse` | `lint-kotlin.sh` | `Edit\|Write\|MultiEdit` | Run ktlint on edited `.kt` files |

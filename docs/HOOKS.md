@@ -6,7 +6,7 @@ This plugin uses 6 hook handlers across 4 events to provide safety, automation, 
 
 | Event | Matcher | Script | Purpose |
 |---|---|---|---|
-| `SessionStart` | `startup\|resume\|clear\|compact` | `session-start.sh` | Detect SDK / adb / devices; state.json phase report; frontdoor reminder |
+| `SessionStart` | `startup\|resume\|clear\|compact` | `session-start` (via `run-hook.cmd`) | Detect SDK / adb / devices; state.json phase report; frontdoor reminder |
 | `PreToolUse` | `Bash` | `block-destructive.sh` | Block destructive shell commands before they run |
 | `PreToolUse` | `mcp__plugin_build_android_apps_play_store__submit_for_review\|upload_aab` | `release-check.sh` | Gate Play Store submissions (keystore/listing/screenshots) |
 | `PostToolUse` | `Edit\|Write\|MultiEdit\|apply_patch` | `lint-kotlin.sh` | Run ktlint on edited Kotlin files |
@@ -53,7 +53,7 @@ For non-blocking hooks (SessionStart, PostToolUse), use `additionalContext` inst
 
 | Script | Lines | Blocks? |
 |---|---|---|
-| `session-start.sh` | ~115 | No — emits info context (frontdoor + state) |
+| `session-start` | ~115 | No — emits info context (frontdoor + state) |
 | `block-destructive.sh` | ~58 | Yes — denies destructive patterns |
 | `release-check.sh` | ~66 | Yes — denies submit if keystore/listing missing (via PreToolUse) |
 | `lint-kotlin.sh` | ~75 | No — emits ktlint findings |
